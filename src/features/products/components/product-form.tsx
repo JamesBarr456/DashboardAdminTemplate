@@ -6,12 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage
 } from '@/components/ui/form';
-import { Product, categories, genders } from '@/constants/mock-api';
+import { Product, categories, genders, sizes } from '@/constants/mock-api';
 import {
   Select,
   SelectContent,
@@ -24,9 +25,9 @@ import { Button } from '@/components/ui/button';
 import { FileUploader } from '@/components/file-uploader';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { init } from '@sentry/nextjs';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Switch } from '@/components/ui/switch';
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -79,13 +80,14 @@ export default function ProductForm({
     cost_price: initialData?.cost_price || 0,
     description: initialData?.description || '',
     has_discount: initialData?.has_discount || false,
-    is_active: initialData?.is_active || false,
+    is_active: initialData?.is_active || true,
     sale_price: initialData?.sale_price || 0,
     brand: initialData?.brand || '',
     sizes: initialData?.sizes || [],
     colors: initialData?.colors || [],
     sku: initialData?.sku || '',
-    gender: initialData?.gender || ''
+    gender: initialData?.gender || '',
+    discount_percentage: initialData?.discount_percentage || 0
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -107,6 +109,7 @@ export default function ProductForm({
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+            {/* Image field Add */}
             <FormField
               control={form.control}
               name='image'
@@ -134,6 +137,7 @@ export default function ProductForm({
             />
 
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+              {/* SKU field Add */}
               <FormField
                 control={form.control}
                 name='sku'
@@ -147,6 +151,7 @@ export default function ProductForm({
                   </FormItem>
                 )}
               />
+              {/* Brand field Add */}
               <FormField
                 control={form.control}
                 name='brand'
@@ -160,6 +165,7 @@ export default function ProductForm({
                   </FormItem>
                 )}
               />
+              {/* Name field Add */}
               <FormField
                 control={form.control}
                 name='name'
@@ -173,7 +179,7 @@ export default function ProductForm({
                   </FormItem>
                 )}
               />
-
+              {/* Cost price field Add */}
               <FormField
                 control={form.control}
                 name='cost_price'
@@ -192,6 +198,7 @@ export default function ProductForm({
                   </FormItem>
                 )}
               />
+              {/* Sale Price field Add */}
               <FormField
                 control={form.control}
                 name='sale_price'
@@ -211,6 +218,95 @@ export default function ProductForm({
                 )}
               />
             </div>
+            {/* Discount field Add */}
+
+            <div className='grid grid-cols-1 items-start gap-6 md:grid-cols-2'>
+              <div className='space-y-4 rounded-md border border-gray-200 p-4'>
+                <FormField
+                  control={form.control}
+                  name='has_discount'
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className='flex items-center justify-between'>
+                        <div>
+                          <FormLabel className='text-base font-medium'>
+                            Apply Discount
+                          </FormLabel>
+                          <FormDescription>
+                            The product will be discounted if enabled.
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={(checked) =>
+                              field.onChange(checked)
+                            }
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div
+                  className={`overflow-hidden transition-all duration-300 ${
+                    form.watch('has_discount')
+                      ? 'max-h-40 opacity-100'
+                      : 'max-h-0 opacity-0'
+                  }`}
+                >
+                  <FormField
+                    control={form.control}
+                    name='discount_percentage'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Discount Percentage (%)</FormLabel>
+                        <FormControl>
+                          <Input
+                            type='number'
+                            min='0'
+                            max='100'
+                            placeholder='0'
+                            {...field}
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+              <FormField
+                control={form.control}
+                name='is_active'
+                render={({ field }) => (
+                  <FormItem>
+                    <div className='flex items-center justify-between rounded-md border border-gray-200 p-4'>
+                      <div>
+                        <FormLabel className='text-base font-medium'>
+                          Active Product
+                        </FormLabel>
+                        <FormDescription>
+                          The product will be visible in the store if enabled.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={(checked) => field.onChange(checked)}
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            {/* Description field Add */}
             <FormField
               control={form.control}
               name='description'
@@ -228,7 +324,8 @@ export default function ProductForm({
                 </FormItem>
               )}
             />
-            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+            <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
+              {/* Category field Add */}
               <FormField
                 control={form.control}
                 name='category'
@@ -237,7 +334,7 @@ export default function ProductForm({
                     <FormLabel>Category *</FormLabel>
                     <Select
                       onValueChange={(value) => field.onChange(value)}
-                      value={field.value[field.value.length - 1]}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -245,15 +342,6 @@ export default function ProductForm({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {/* <SelectItem value='tshirts'>T-shirts</SelectItem>
-                        <SelectItem value='pants'>Pants</SelectItem>
-                        <SelectItem value='blouses'>Blouses</SelectItem>
-                        <SelectItem value='sweatshirts'>Sweatshirts</SelectItem>
-                        <SelectItem value='kitchen'>Kitchen</SelectItem>
-                        <SelectItem value='underwear'>Underwear</SelectItem>
-                        <SelectItem value='winter'>Winter</SelectItem>
-
-                        <SelectItem value='summer'>Summer</SelectItem> */}
                         {categories.map((category) => (
                           <SelectItem key={category} value={category}>
                             {category}
@@ -265,6 +353,7 @@ export default function ProductForm({
                   </FormItem>
                 )}
               />
+              {/* Gender field Add */}
               <FormField
                 control={form.control}
                 name='gender'
@@ -273,7 +362,7 @@ export default function ProductForm({
                     <FormLabel>Gender *</FormLabel>
                     <Select
                       onValueChange={(value) => field.onChange(value)}
-                      value={field.value[field.value.length - 1]}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -285,7 +374,7 @@ export default function ProductForm({
                           <SelectItem
                             key={gender}
                             value={gender}
-                            className='capitalize'
+                            className='w-full'
                           >
                             {gender}
                           </SelectItem>
@@ -293,6 +382,82 @@ export default function ProductForm({
                       </SelectContent>
                     </Select>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='sizes'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sizes *</FormLabel>
+                    <Select
+                      onValueChange={(value) => {
+                        if (!field.value.includes(value)) {
+                          field.onChange([...field.value, value]);
+                        }
+                      }}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder='Select sizes' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {sizes.map((size) => (
+                          <SelectItem
+                            key={size}
+                            value={size}
+                            className='capitalize'
+                          >
+                            {size}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {/* Contenedor animado para evitar salto brusco */}
+                    <div
+                      className={`mt-2 overflow-hidden transition-all duration-300 ease-in-out ${
+                        field.value.length > 0
+                          ? 'max-h-40 opacity-100'
+                          : 'max-h-0 opacity-0'
+                      }`}
+                    >
+                      <div className='flex flex-wrap gap-2'>
+                        {field.value.map((size) => (
+                          <span
+                            key={size}
+                            className='flex scale-100 transform items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700 opacity-100 transition-all duration-200 ease-out'
+                          >
+                            {size}
+                            <button
+                              type='button'
+                              className='ml-1 text-blue-500 hover:text-blue-700'
+                              onClick={() => {
+                                const el = document.getElementById(
+                                  `size-${size}`
+                                );
+                                if (el) {
+                                  el.classList.add('opacity-0', 'scale-75');
+                                  setTimeout(() => {
+                                    field.onChange(
+                                      field.value.filter((s) => s !== size)
+                                    );
+                                  }, 200);
+                                } else {
+                                  field.onChange(
+                                    field.value.filter((s) => s !== size)
+                                  );
+                                }
+                              }}
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </FormItem>
                 )}
               />

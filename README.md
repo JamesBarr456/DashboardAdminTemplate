@@ -7,7 +7,7 @@
 <div align="center">Built with the Next.js 15 App Router</div>
 <br />
 <div align="center">
-<a href="https://dub.sh/shadcn-dashboard">View Demo</a>
+<!-- <a href="https://dub.sh/shadcn-dashboard">View Demo</a> -->
 <span>
 </div>
 
@@ -32,7 +32,7 @@ This is a starter template using the following stack:
 - Pre-commit Hooks - [Husky](https://typicode.github.io/husky/)
 - Formatting - [Prettier](https://prettier.io)
 
-_If you are looking for a Tanstack start dashboard template, here is the [repo](https://git.new/tanstack-start-dashboard)._
+<!-- _If you are looking for a Tanstack start dashboard template, here is the [repo](https://git.new/tanstack-start-dashboard)._ -->
 
 ## Pages
 
@@ -109,7 +109,7 @@ To configure the environment for this project, refer to the `env.example.txt` fi
 
 You should now be able to access the application at http://localhost:3000.
 
-> [!WARNING]
+<!-- > [!WARNING]
 > After cloning or forking the repository, be cautious when pulling or syncing with the latest changes, as this may result in breaking conflicts.
 
-Cheers! 🥂
+Cheers! 🥂 -->
