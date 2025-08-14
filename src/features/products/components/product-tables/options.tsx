@@ -1,10 +1,13 @@
 export const CATEGORY_OPTIONS = [
-  { value: 'Electronics', label: 'Electronics' },
-  { value: 'Furniture', label: 'Furniture' },
   { value: 'Clothing', label: 'Clothing' },
-  { value: 'Toys', label: 'Toys' },
-  { value: 'Groceries', label: 'Groceries' },
-  { value: 'Books', label: 'Books' },
-  { value: 'Jewelry', label: 'Jewelry' },
-  { value: 'Beauty Products', label: 'Beauty Products' }
+  { value: 'T-shirts', label: 'T-shirts' },
+  { value: 'Pants', label: 'Pants' },
+  { value: 'Blouses', label: 'Blouses' },
+  { value: 'Sweatshirts', label: 'Sweatshirts' },
+  { value: 'Home', label: 'Home' },
+  { value: 'Sportswear', label: 'Sportswear' },
+  { value: 'Kitchen', label: 'Kitchen' },
+  { value: 'Underwear', label: 'Underwear' },
+  { value: 'Winter', label: 'Winter' },
+  { value: 'Summer', label: 'Summer' }
 ];

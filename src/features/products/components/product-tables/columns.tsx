@@ -1,12 +1,13 @@
 'use client';
 import { Badge } from '@/components/ui/badge';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
-import { Product } from '@/constants/data';
+
 import { Column, ColumnDef } from '@tanstack/react-table';
 import { CheckCircle2, Text, XCircle } from 'lucide-react';
 import Image from 'next/image';
 import { CellAction } from './cell-action';
 import { CATEGORY_OPTIONS } from './options';
+import { Product } from '@/constants/mock-api';
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -65,8 +66,38 @@ export const columns: ColumnDef<Product>[] = [
     }
   },
   {
-    accessorKey: 'price',
-    header: 'PRICE'
+    id: 'gender',
+    accessorKey: 'gender',
+    header: ({ column }: { column: Column<Product, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Gender' />
+    ),
+    cell: ({ cell }) => (
+      <Badge variant='outline' className='capitalize'>
+        {cell.getValue<Product['gender']>()}
+      </Badge>
+    ),
+    enableColumnFilter: true,
+    meta: {
+      label: 'gender',
+      variant: 'multiSelect',
+      options: [
+        { value: 'men', label: 'Men' },
+        { value: 'women', label: 'Women' },
+        { value: 'kids', label: 'Kids' }
+      ]
+    }
+  },
+  {
+    accessorKey: 'cost_price',
+    header: 'COST PRICE'
+  },
+  {
+    accessorKey: 'sale_price',
+    header: 'SALE PRICE'
+  },
+  {
+    accessorKey: 'discount_percentage',
+    header: 'DISCOUNT %'
   },
   {
     accessorKey: 'description',
