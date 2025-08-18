@@ -1,37 +1,39 @@
 import {
   IconAlertTriangle,
   IconArrowRight,
+  IconBrandGithub,
+  IconBrandTwitter,
   IconCheck,
   IconChevronLeft,
   IconChevronRight,
   IconCommand,
   IconCreditCard,
+  IconDeviceLaptop,
+  IconDotsVertical,
   IconFile,
   IconFileText,
   IconHelpCircle,
-  IconPhoto,
-  IconDeviceLaptop,
   IconLayoutDashboard,
+  IconLayoutKanban,
   IconLoader2,
   IconLogin,
-  IconProps,
-  IconShoppingBag,
   IconMoon,
-  IconDotsVertical,
+  IconPhoto,
   IconPizza,
   IconPlus,
+  IconProps,
   IconSettings,
+  IconShoppingBag,
   IconSun,
   IconTrash,
-  IconBrandTwitter,
   IconUser,
   IconUserCircle,
   IconUserEdit,
   IconUserX,
-  IconX,
-  IconLayoutKanban,
-  IconBrandGithub
+  IconX
 } from '@tabler/icons-react';
+
+import { ClipboardList } from 'lucide-react';
 
 export type Icon = React.ComponentType<IconProps>;
 
@@ -66,5 +68,6 @@ export const Icons = {
   laptop: IconDeviceLaptop,
   github: IconBrandGithub,
   twitter: IconBrandTwitter,
-  check: IconCheck
+  check: IconCheck,
+  order: ClipboardList
 };

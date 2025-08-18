@@ -56,7 +56,7 @@ export const colors = [
   'pink',
   'purple'
 ];
-// Mock product data store
+
 export const fakeProducts = {
   records: [] as Product[],
 
@@ -74,7 +74,7 @@ export const fakeProducts = {
 
       return {
         id,
-        photo_url: faker.image.urlLoremFlickr({ category: 'fashion' }),
+        photo_url: `https://api.slingacademy.com/public/sample-products/${id}.png`,
         name: faker.commerce.productName(),
         sku: faker.string.alphanumeric({ length: 8, casing: 'upper' }),
         brand: faker.company.name(),
@@ -168,24 +168,35 @@ export const fakeProducts = {
     };
   },
 
-  async getProductById(id: number) {
-    await delay(1000);
-    const product = this.records.find((product) => product.id === id);
+  async getProductBySKU(sku: string) {
+    await delay(500);
+    const product = this.records.find((product) => product.sku === sku);
 
     if (!product) {
       return {
         success: false,
-        message: `Product with ID ${id} not found`
+        message: `Product with SKU ${sku} not found`
       };
     }
 
     return {
       success: true,
       time: new Date().toISOString(),
-      message: `Product with ID ${id} found`,
+      message: `Product with SKU ${sku} found`,
       product
     };
   }
 };
 
-fakeProducts.initialize();
+// 📌 Persistencia en desarrollo para evitar regenerar productos en cada import
+declare global {
+  // Solo para TypeScript
+  var _fakeProducts: typeof fakeProducts | undefined;
+}
+
+if (!global._fakeProducts) {
+  fakeProducts.initialize();
+  global._fakeProducts = fakeProducts;
+}
+
+export default global._fakeProducts;

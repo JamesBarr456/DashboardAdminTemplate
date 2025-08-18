@@ -19,6 +19,14 @@ export const navItems: NavItem[] = [
     items: [] // No child items
   },
   {
+    title: 'Order',
+    url: '/dashboard/order',
+    icon: 'order',
+    shortcut: ['o', 'o'],
+    isActive: false,
+    items: [] // No child items
+  },
+  {
     title: 'Account',
     url: '#', // Placeholder as there is no direct link for the parent
     icon: 'billing',

@@ -1,7 +1,8 @@
-import { fakeProducts, Product } from '@/constants/mock-api';
-import { searchParamsCache } from '@/lib/searchparams';
+import { Product, fakeProducts } from '@/constants/mock-api';
+
 import { ProductTable } from './product-tables';
 import { columns } from './product-tables/columns';
+import { searchParamsCache } from '@/lib/searchparams';
 
 type ProductListingPage = {};
 

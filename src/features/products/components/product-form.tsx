@@ -24,10 +24,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { FileUploader } from '@/components/file-uploader';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Switch } from '@/components/ui/switch';
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = [
