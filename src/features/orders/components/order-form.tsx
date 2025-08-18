@@ -19,6 +19,8 @@ import { Separator } from '@/components/ui/separator';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Customer } from '@/constants/mocks/customers';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 ('@/components/ui/form');
 
@@ -71,11 +73,14 @@ export default function OrderForm({
   initialData,
   pageTitle
 }: {
-  initialData: Order | null;
+  initialData: {
+    order: Order | null;
+    customer: Customer | null;
+  };
   pageTitle: string;
 }) {
-  const order = initialData;
-
+  const order = initialData.order;
+  const customer = initialData.customer;
   const form = useForm<OrderEditFormData>({
     resolver: zodResolver(orderEditSchema),
     defaultValues: {
@@ -224,24 +229,54 @@ export default function OrderForm({
                   </CardTitle>
                 </CardHeader>
                 <CardContent className='space-y-4'>
+                  <div className='flex justify-center'>
+                    <Avatar className='h-24 w-24'>
+                      <AvatarImage src={customer?.avatar} alt='@shadcn' />
+                      <AvatarFallback>{`${customer?.firstName[0]}${customer?.lastName[0]}`}</AvatarFallback>
+                    </Avatar>
+                  </div>
                   <div>
                     <p className='text-sm text-gray-600'>Nombre</p>
-                    <p className='font-medium'>{order.user_name}</p>
+                    <p className='font-medium'>{`${customer?.firstName} ${customer?.lastName}`}</p>
                   </div>
                   <div>
                     <p className='text-sm text-gray-600'>Email</p>
                     <p className='flex items-center gap-2 font-medium'>
                       <Mail className='h-4 w-4 text-gray-400' />
-                      {'test@gmail.com'}
+                      {customer?.email}
                     </p>
                   </div>
                   <div>
                     <p className='text-sm text-gray-600'>Teléfono</p>
                     <p className='flex items-center gap-2 font-medium'>
                       <Phone className='h-4 w-4 text-gray-400' />
-                      {'3718441861'}
+                      {customer?.phone}
                     </p>
                   </div>
+                  <div>
+                    <p className='text-sm text-gray-600'>DNI</p>
+                    <p className='flex items-center gap-2 font-medium'>
+                      <Phone className='h-4 w-4 text-gray-400' />
+                      {customer?.dni}
+                    </p>
+                  </div>
+                  {/* Defective Products Alert */}
+                  {Number(customer?.cancelledOrders) > 0 ||
+                  Number(customer?.rejectedOrders) > 0 ? (
+                    <Card className='border-yellow-200 bg-yellow-50'>
+                      <CardHeader>
+                        <CardTitle className='flex items-center justify-center gap-2 text-yellow-800'>
+                          <AlertTriangle className='h-5 w-5' />
+                          Historial de Riesgo
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className='text-center font-medium text-yellow-800'>
+                          {`Este cliente tiene ${customer?.cancelledOrders} de ordenes calcelada.`}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ) : null}
                 </CardContent>
               </Card>
 
@@ -255,8 +290,8 @@ export default function OrderForm({
                 </CardHeader>
                 <CardContent>
                   <div className='space-y-1 text-sm'>
-                    <p className='font-medium'>{order.user_name}</p>
-                    <p>Necochea 248</p>
+                    <p className='font-medium'></p>
+                    <p>Neochcea 248</p>
                   </div>
                 </CardContent>
               </Card>

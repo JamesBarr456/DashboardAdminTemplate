@@ -1,4 +1,4 @@
-import { delay } from './mock-api';
+import { delay } from './product-mock-api';
 import { matchSorter } from 'match-sorter';
 import { ordersMock } from './mocks/orders';
 
@@ -19,7 +19,6 @@ export interface OrderProduct {
 export interface Order {
   id: string;
   user_id: string;
-  user_name: string;
   total: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   created_at: string;
@@ -75,7 +74,7 @@ export const fakeOrders = {
 
     if (search) {
       orders = matchSorter(orders, search, {
-        keys: ['id', 'user_name', 'products.product_name']
+        keys: ['id']
       });
     }
 

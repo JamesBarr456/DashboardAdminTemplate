@@ -9,20 +9,20 @@ type OrderListingPage = {};
 export default async function OrderListingPage({}: OrderListingPage) {
   // Showcasing the use of search params cache in nested RSCs
   const page = searchParamsOrderCache.get('page');
-  const search = searchParamsOrderCache.get('user_name');
   const id = searchParamsOrderCache.get('id');
   const pageLimit = searchParamsOrderCache.get('perPage');
   const status = searchParamsOrderCache.get('status');
 
+  const search = id;
   const filters = {
     page,
     limit: pageLimit,
     ...(search && { search }),
-    ...(status && { status }),
-    ...(id && { id })
+    ...(status && { status })
   };
 
   const data = await fakeOrders.getOrders(filters);
+
   const totalOrders = data.total_orders;
   const orders: Order[] = data.orders;
 

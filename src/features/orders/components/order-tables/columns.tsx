@@ -25,20 +25,7 @@ export const columns: ColumnDef<Order>[] = [
     },
     enableColumnFilter: true
   },
-  {
-    id: 'user_name',
-    accessorKey: 'user_name',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Customer' />
-    ),
-    cell: ({ cell }) => <span>{cell.getValue<string>()}</span>,
-    enableColumnFilter: true,
-    meta: {
-      label: 'Customer',
-      placeholder: 'Search customers...',
-      variant: 'text'
-    }
-  },
+
   {
     id: 'status',
     accessorKey: 'status',

@@ -12,7 +12,12 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form';
-import { Product, categories, genders, sizes } from '@/constants/mock-api';
+import {
+  Product,
+  categories,
+  genders,
+  sizes
+} from '@/constants/product-mock-api';
 import {
   Select,
   SelectContent,

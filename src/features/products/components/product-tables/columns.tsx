@@ -7,7 +7,7 @@ import { CATEGORY_OPTIONS } from './options';
 import { CellAction } from './cell-action';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
 import Image from 'next/image';
-import { Product } from '@/constants/mock-api';
+import { Product } from '@/constants/product-mock-api';
 import { Text } from 'lucide-react';
 
 export const columns: ColumnDef<Product>[] = [

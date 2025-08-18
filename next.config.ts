@@ -14,6 +14,11 @@ const baseConfig: NextConfig = {
         protocol: 'https',
         hostname: 'loremflickr.com',
         port: ''
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.dicebear.com',
+        port: ''
       }
     ]
   },
