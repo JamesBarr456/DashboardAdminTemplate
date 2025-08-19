@@ -1,4 +1,7 @@
 'use client';
+
+import * as React from 'react';
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -14,6 +17,15 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import {
+  IconBell,
+  IconChevronRight,
+  IconChevronsDown,
+  IconCreditCard,
+  IconLogout,
+  IconPhotoUp,
+  IconUserCircle
+} from '@tabler/icons-react';
+import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -28,25 +40,17 @@ import {
   SidebarMenuSubItem,
   SidebarRail
 } from '@/components/ui/sidebar';
+import { usePathname, useRouter } from 'next/navigation';
+
+import { Icons } from '../icons';
+import Link from 'next/link';
+import { OrgSwitcher } from '../org-switcher';
+import { SignOutButton } from '@clerk/nextjs';
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
 import { navItems } from '@/constants/data';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useUser } from '@clerk/nextjs';
-import {
-  IconBell,
-  IconChevronRight,
-  IconChevronsDown,
-  IconCreditCard,
-  IconLogout,
-  IconPhotoUp,
-  IconUserCircle
-} from '@tabler/icons-react';
-import { SignOutButton } from '@clerk/nextjs';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import * as React from 'react';
-import { Icons } from '../icons';
-import { OrgSwitcher } from '../org-switcher';
+
 export const company = {
   name: 'Acme Inc',
   logo: IconPhotoUp,
@@ -186,15 +190,15 @@ export default function AppSidebar() {
                     onClick={() => router.push('/dashboard/profile')}
                   >
                     <IconUserCircle className='mr-2 h-4 w-4' />
-                    Profile
+                    Perfil
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <IconCreditCard className='mr-2 h-4 w-4' />
-                    Billing
+                    Facturación
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <IconBell className='mr-2 h-4 w-4' />
-                    Notifications
+                    Notificaciones
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />

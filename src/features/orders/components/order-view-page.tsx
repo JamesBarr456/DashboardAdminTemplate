@@ -1,9 +1,9 @@
 import { Order, fakeOrders } from '@/constants/order-mock-api';
 
-import OrderForm from './order-form';
-import { notFound } from 'next/navigation';
-import { fakeCustomers } from '@/constants/customers-mok-api';
 import { Customer } from '@/constants/mocks/customers';
+import OrderForm from './order-form';
+import { fakeCustomers } from '@/constants/customers-mok-api';
+import { notFound } from 'next/navigation';
 
 type TProductViewPageProps = {
   orderId: string;
@@ -14,7 +14,7 @@ export default async function OrderViewPage({
 }: TProductViewPageProps) {
   let order = null;
   let customer = null;
-  let pageTitle = 'Edit Order';
+  let pageTitle = 'Editar Órden';
 
   try {
     const data = await fakeOrders.getOrderById(orderId);

@@ -1,9 +1,9 @@
 'use client';
 
+import { CATEGORY_OPTIONS, GENRE_OPTIONS } from './options';
 import { Column, ColumnDef } from '@tanstack/react-table';
 
 import { Badge } from '@/components/ui/badge';
-import { CATEGORY_OPTIONS } from './options';
 import { CellAction } from './cell-action';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
 import Image from 'next/image';
@@ -13,7 +13,7 @@ import { Text } from 'lucide-react';
 export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: 'photo_url',
-    header: 'IMAGE',
+    header: 'Imagen',
     cell: ({ row }) => {
       return (
         <div className='relative aspect-square'>
@@ -28,15 +28,28 @@ export const columns: ColumnDef<Product>[] = [
     }
   },
   {
+    accessorKey: 'sku',
+    header: 'Código',
+    cell: ({ cell }) => {
+      const status = cell.getValue<Product['sku']>();
+
+      return (
+        <Badge variant='outline' className='capitalize'>
+          {status}
+        </Badge>
+      );
+    }
+  },
+  {
     id: 'name',
     accessorKey: 'name',
     header: ({ column }: { column: Column<Product, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Name' />
+      <DataTableColumnHeader column={column} title='Nombre' />
     ),
     cell: ({ cell }) => <div>{cell.getValue<Product['name']>()}</div>,
     meta: {
       label: 'Name',
-      placeholder: 'Search products...',
+      placeholder: 'Buscar Producto...',
       variant: 'text',
       icon: Text
     },
@@ -46,20 +59,22 @@ export const columns: ColumnDef<Product>[] = [
     id: 'category',
     accessorKey: 'category',
     header: ({ column }: { column: Column<Product, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Category' />
+      <DataTableColumnHeader column={column} title='Categoria' />
     ),
-    cell: ({ cell }) => {
-      const status = cell.getValue<Product['category']>();
+    cell: ({ cell, column }) => {
+      const value = cell.getValue<Product['category']>();
+      const options = column.columnDef.meta?.options || [];
+      const option = options.find((opt: any) => opt.value === value);
 
       return (
         <Badge variant='outline' className='capitalize'>
-          {status}
+          {option ? option.label : value}
         </Badge>
       );
     },
     enableColumnFilter: true,
     meta: {
-      label: 'categories',
+      label: 'categorias',
       variant: 'multiSelect',
       options: CATEGORY_OPTIONS
     }
@@ -68,39 +83,40 @@ export const columns: ColumnDef<Product>[] = [
     id: 'gender',
     accessorKey: 'gender',
     header: ({ column }: { column: Column<Product, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Gender' />
+      <DataTableColumnHeader column={column} title='Género' />
     ),
-    cell: ({ cell }) => (
-      <Badge variant='outline' className='capitalize'>
-        {cell.getValue<Product['gender']>()}
-      </Badge>
-    ),
+    cell: ({ cell, column }) => {
+      const value = cell.getValue<Product['gender']>();
+      const options = column.columnDef.meta?.options || [];
+      const option = options.find((opt: any) => opt.value === value);
+
+      return (
+        <Badge variant='outline' className='capitalize'>
+          {option ? option.label : value}
+        </Badge>
+      );
+    },
     enableColumnFilter: true,
     meta: {
-      label: 'gender',
+      label: 'género',
       variant: 'multiSelect',
-      options: [
-        { value: 'men', label: 'Men' },
-        { value: 'women', label: 'Women' },
-        { value: 'kids', label: 'Kids' }
-      ]
+      options: GENRE_OPTIONS
     }
   },
   {
     accessorKey: 'cost_price',
-    header: 'COST PRICE'
+    header: 'Precio de Costo',
+    cell: ({ cell }) => <p>${cell.getValue<Product['cost_price']>()}</p>
   },
   {
     accessorKey: 'sale_price',
-    header: 'SALE PRICE'
+    header: 'Precio de Venta',
+    cell: ({ cell }) => <p>${cell.getValue<Product['sale_price']>()}</p>
   },
-  {
-    accessorKey: 'discount_percentage',
-    header: 'DISCOUNT %'
-  },
+
   {
     accessorKey: 'description',
-    header: 'DESCRIPTION'
+    header: 'Descripción'
   },
 
   {

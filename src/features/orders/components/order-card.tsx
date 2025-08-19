@@ -60,7 +60,7 @@ export function ProductEditCard({
   return (
     <Card>
       <CardContent className='p-6'>
-        <div className='flex items-start gap-4'>
+        <div className='flex flex-col justify-center gap-4 xl:flex-row'>
           {/* Product Image Placeholder */}
           <div className='flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-gray-100'>
             <Package className='h-6 w-6 text-gray-400' />
@@ -73,7 +73,7 @@ export function ProductEditCard({
               <div className='space-y-1'>
                 <h4
                   className={cn(
-                    'font-medium text-gray-900',
+                    'font-medium',
                     isUnavailable && 'text-gray-500 line-through'
                   )}
                 >
@@ -156,7 +156,7 @@ export function ProductEditCard({
 
                 {/* Defective Quantity and Comment */}
                 {isDefective && (
-                  <div className='grid grid-cols-1 gap-4 rounded-lg border p-4 md:grid-cols-2'>
+                  <div className='grid grid-cols-1 gap-4 rounded-lg border p-4 xl:grid-cols-2'>
                     <div className='space-y-2'>
                       <Label
                         htmlFor={`quantity-${product.id}`}

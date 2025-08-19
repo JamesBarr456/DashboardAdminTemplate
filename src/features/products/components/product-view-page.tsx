@@ -11,7 +11,7 @@ export default async function ProductViewPage({
   productSKU
 }: TProductViewPageProps) {
   let product = null;
-  let pageTitle = 'Create New Product';
+  let pageTitle = 'Crear Nuevo Producto';
 
   if (productSKU !== 'new') {
     const data = await fakeProducts.getProductBySKU(productSKU);
@@ -19,7 +19,7 @@ export default async function ProductViewPage({
     if (!product) {
       notFound();
     }
-    pageTitle = `Edit Product`;
+    pageTitle = `Editar Producto`;
   }
 
   return <ProductForm initialData={product} pageTitle={pageTitle} />;

@@ -14,16 +14,16 @@ export type Product = {
   photo_url: string;
   name: string;
   sku: string;
-  brand: string;
+  brand?: string;
   gender: string;
-  sizes: string[];
+  sizes: string;
   colors: string[];
   cost_price: number;
   sale_price: number;
   has_discount: boolean;
   discount_percentage?: number;
   is_active: boolean;
-  stock: number;
+  stock: Record<string, number>;
 
   description: string;
   category: string;

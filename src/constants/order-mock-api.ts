@@ -18,9 +18,11 @@ export interface OrderProduct {
 
 export interface Order {
   id: string;
+  user_name: string;
+  payment_method: 'efectivo' | 'transferencia';
   user_id: string;
   total: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'rejected' | 'processing' | 'sending' | 'cancelled';
   created_at: string;
   products: OrderProduct[];
 }

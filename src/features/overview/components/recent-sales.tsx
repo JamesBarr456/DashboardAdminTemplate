@@ -1,10 +1,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Card,
-  CardHeader,
   CardContent,
-  CardTitle,
-  CardDescription
+  CardDescription,
+  CardHeader,
+  CardTitle
 } from '@/components/ui/card';
 
 const salesData = [
@@ -49,8 +49,8 @@ export function RecentSales() {
   return (
     <Card className='h-full'>
       <CardHeader>
-        <CardTitle>Recent Sales</CardTitle>
-        <CardDescription>You made 265 sales this month.</CardDescription>
+        <CardTitle>Ventas Recientes</CardTitle>
+        <CardDescription>Hiciste 265 ventas este mes.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className='space-y-8'>

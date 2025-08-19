@@ -1,6 +1,7 @@
 'use client';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+
 import { IconAlertCircle } from '@tabler/icons-react';
 
 export default function PieStatsError({ error }: { error: Error }) {
@@ -9,7 +10,7 @@ export default function PieStatsError({ error }: { error: Error }) {
       <IconAlertCircle className='h-4 w-4' />
       <AlertTitle>Error</AlertTitle>
       <AlertDescription>
-        Failed to load pie statistics: {error.message}
+        Error al cargar los datos del gráfico circular: {error.message}
       </AlertDescription>
     </Alert>
   );

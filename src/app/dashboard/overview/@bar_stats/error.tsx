@@ -1,12 +1,14 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
+
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { useEffect, useTransition } from 'react';
+
+import { Button } from '@/components/ui/button';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useTransition } from 'react';
-import * as Sentry from '@sentry/nextjs';
 
 interface StatsErrorProps {
   error: Error;
@@ -35,7 +37,7 @@ export default function StatsError({ error, reset }: StatsErrorProps) {
             <IconAlertCircle className='h-4 w-4' />
             <AlertTitle>Error</AlertTitle>
             <AlertDescription className='mt-2'>
-              Failed to load statistics: {error.message}
+              Error al cargar las estadisticas: {error.message}
             </AlertDescription>
           </Alert>
         </div>
@@ -43,7 +45,7 @@ export default function StatsError({ error, reset }: StatsErrorProps) {
       <CardContent className='flex h-[316px] items-center justify-center p-6'>
         <div className='text-center'>
           <p className='text-muted-foreground mb-4 text-sm'>
-            Unable to display statistics at this time
+            No es posible mostrar estadísticas en este momento
           </p>
           <Button
             onClick={() => reload()}
@@ -51,7 +53,7 @@ export default function StatsError({ error, reset }: StatsErrorProps) {
             className='min-w-[120px]'
             disabled={isPending}
           >
-            Try again
+            Intenta de nuevo
           </Button>
         </div>
       </CardContent>
