@@ -5,9 +5,7 @@ import { create } from 'zustand';
 // --- Store con Zustand ---
 export interface SaleItem {
   product: Product;
-  selectedSize?: string;
-  selectedColor?: string;
-  quantity: number;
+  sizes: { [size: string]: number }; // Ejemplo: { M: 5, L: 7 }
   unit_price: number;
   subtotal: number;
 }
@@ -52,7 +50,7 @@ interface POSState {
 
   openRegister: (initialAmount: number, cashier: string) => void;
   closeRegister: () => void;
-  addToSale: (product: Product, quantity: number) => void;
+  addToSale: (product: Product, quantity: number, selectedSize: string) => void;
   removeFromSale: (productId: string) => void;
   updateSaleQuantity: (productId: string, quantity: number) => void;
   clearSale: () => void;
@@ -64,7 +62,7 @@ interface POSState {
   addMovement: (movement: Omit<Movement, 'id' | 'timestamp'>) => void;
 }
 
-export const usePOSStore = create<POSState>((set) => ({
+export const usePOSStore = create<POSState>((set, get) => ({
   cashRegister: {
     isOpen: false,
     initialAmount: 0,
@@ -114,34 +112,41 @@ export const usePOSStore = create<POSState>((set) => ({
       }
     })),
 
-  addToSale: (product, quantity) =>
+  addToSale: (product, quantity, selectedSize: string) =>
     set((state) => {
       const existingItem = state.currentSale.find(
         (item) => item.product.id === product.id
       );
 
       if (existingItem) {
+        // si ya existe el producto, sumamos al talle correspondiente
+        const updatedSizes = {
+          ...existingItem.sizes,
+          [selectedSize]: (existingItem.sizes[selectedSize] || 0) + quantity
+        };
+
+        const newSubtotal =
+          Object.values(updatedSizes).reduce((sum, qty) => sum + qty, 0) *
+          existingItem.unit_price;
+
         return {
           currentSale: state.currentSale.map((item) =>
             item.product.id === product.id
-              ? {
-                  ...item,
-                  quantity: item.quantity + quantity,
-                  subtotal: (item.quantity + quantity) * item.product.sale_price
-                }
+              ? { ...item, sizes: updatedSizes, subtotal: newSubtotal }
               : item
           )
         };
       }
 
+      // si no existe el producto, lo creamos con el primer talle
       return {
         currentSale: [
           ...state.currentSale,
           {
             product,
-            quantity,
-            subtotal: product.sale_price * quantity,
-            unit_price: product.sale_price
+            sizes: { [selectedSize]: quantity },
+            unit_price: product.sale_price,
+            subtotal: product.sale_price * quantity
           }
         ]
       };
@@ -167,10 +172,15 @@ export const usePOSStore = create<POSState>((set) => ({
 
   completeSale: (paymentMethod, discount = 0) =>
     set((state) => {
-      const total = state.currentSale.reduce(
-        (sum, item) => sum + item.subtotal,
-        0
-      );
+      // calcular el total sumando todos los talles de todos los productos
+      const total = state.currentSale.reduce((sum, item) => {
+        const totalQty = Object.values(item.sizes).reduce(
+          (acc, qty) => acc + qty,
+          0
+        );
+        return sum + totalQty * item.unit_price;
+      }, 0);
+
       const finalTotal = total - discount;
       const tax = finalTotal * 0.18;
 
@@ -194,6 +204,7 @@ export const usePOSStore = create<POSState>((set) => ({
         timestamp: new Date()
       };
 
+      // actualizar stock restando por talle
       const updatedProducts = state.products.map((product) => {
         const saleItem = state.currentSale.find(
           (item) => item.product.id === product.id
@@ -201,12 +212,24 @@ export const usePOSStore = create<POSState>((set) => ({
 
         if (!saleItem) return product;
 
+        // si tu Product ya maneja stock por talle:
+        const updatedStock = { ...product.stock };
+
+        for (const [size, qty] of Object.entries(saleItem.sizes)) {
+          if (updatedStock[size] !== undefined) {
+            updatedStock[size] = Math.max(0, (updatedStock[size] ?? 0) - qty);
+          } else {
+            // si no existe el talle en stock, lo restamos del "default"
+            updatedStock.default = Math.max(
+              0,
+              (updatedStock.default ?? 0) - qty
+            );
+          }
+        }
+
         return {
           ...product,
-          stock: {
-            ...product.stock,
-            default: (product.stock.default ?? 0) - saleItem.quantity
-          }
+          stock: updatedStock
         };
       });
 

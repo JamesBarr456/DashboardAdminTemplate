@@ -8,7 +8,7 @@ import { Suspense } from 'react';
 
 export default function Dashboard() {
   return (
-    <PageContainer scrollable={false}>
+    <PageContainer scrollable={true}>
       <div className='flex flex-1 flex-col space-y-4'>
         <Heading
           title='Ventas'

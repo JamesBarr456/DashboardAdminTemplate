@@ -18,7 +18,7 @@ import { cn } from '@/lib/utils';
 interface ProductSearchDropdownProps {
   products: Product[];
   placeholder?: string;
-  onSelect?: (product: Product) => void;
+  onSelect?: (product: Product, quantity: number, size: string) => void;
   className?: string;
 }
 
@@ -85,7 +85,8 @@ export function ProductSearchDropdown({
     const product = products.find((p) => p.id.toString() === productId);
     if (product) {
       setQuery(product.name);
-      onSelect?.(product);
+      // ⚡️ Por ahora hardcodeamos talle y cantidad
+      onSelect?.(product, 1, 'M');
       setIsOpen(false);
     }
   };

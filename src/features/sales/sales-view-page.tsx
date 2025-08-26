@@ -1,7 +1,12 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CircleDollarSign, Scan, Search, ShoppingCart } from 'lucide-react';
+import {
+  CircleDollarSign,
+  Search,
+  ShoppingCart,
+  ShoppingCartIcon
+} from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,12 +14,28 @@ import { Input } from '@/components/ui/input';
 import { ProductSearchDropdown } from './sales-search-product';
 import { toast } from 'sonner';
 import { usePOSStore } from '@/store/pos-state';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { SalesProductTable } from './sales-product-table';
+import { columnsSale } from './sales-product-table/columns';
+import SalesSummary from './sales-summary';
 
 export default function SalesViewPage() {
-  const { cashRegister, openRegister, closeRegister, products } = usePOSStore();
+  const {
+    cashRegister,
+    openRegister,
+    closeRegister,
+    products,
+    fetchProducts,
+    currentSale,
+    addToSale,
+    completeSale
+  } = usePOSStore();
 
   const [initialAmount, setInitialAmount] = useState('');
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   // 📌 Handlers
   const handleOpenRegister = () => {
@@ -111,17 +132,36 @@ export default function SalesViewPage() {
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle className='flex items-center gap-2'>
-              <Search className='h-5 w-5' />
-              Buscar Productos
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ProductSearchDropdown products={products} />
-          </CardContent>
-        </Card>
+        <div className='mb-5 space-y-6'>
+          <Card>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <Search className='h-5 w-5' />
+                Buscar Productos
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ProductSearchDropdown products={products} onSelect={addToSale} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <ShoppingCartIcon className='h-5 w-5' />
+                Venta Actual
+              </CardTitle>
+            </CardHeader>
+            <CardContent className='flex h-[500px] flex-col'>
+              <SalesProductTable
+                columns={columnsSale}
+                data={currentSale}
+                totalItems={currentSale.length}
+              />
+            </CardContent>
+          </Card>
+          <SalesSummary completeSale={completeSale} currentSale={currentSale} />
+        </div>
       )}
     </div>
   );
