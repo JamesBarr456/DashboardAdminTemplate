@@ -1,3 +1,4 @@
+import { ClipboardList, History, ShoppingCart, Wallet } from 'lucide-react';
 import {
   IconAlertTriangle,
   IconArrowRight,
@@ -33,8 +34,6 @@ import {
   IconX
 } from '@tabler/icons-react';
 
-import { ClipboardList } from 'lucide-react';
-
 export type Icon = React.ComponentType<IconProps>;
 
 export const Icons = {
@@ -69,5 +68,8 @@ export const Icons = {
   github: IconBrandGithub,
   twitter: IconBrandTwitter,
   check: IconCheck,
-  order: ClipboardList
+  order: ClipboardList,
+  wallet: Wallet,
+  shoppingCart: ShoppingCart,
+  history: History
 };

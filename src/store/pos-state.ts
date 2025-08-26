@@ -1,4 +1,5 @@
-import { fakeProducts, Product } from '@/constants/product-mock-api';
+import { Product, fakeProducts } from '@/constants/product-mock-api';
+
 import { create } from 'zustand';
 
 // --- Store con Zustand ---
@@ -63,7 +64,7 @@ interface POSState {
   addMovement: (movement: Omit<Movement, 'id' | 'timestamp'>) => void;
 }
 
-export const usePOSStore = create<POSState>((set, get) => ({
+export const usePOSStore = create<POSState>((set) => ({
   cashRegister: {
     isOpen: false,
     initialAmount: 0,
