@@ -1,10 +1,3 @@
-import {
-  Collapsible,
-  CollapsibleTrigger,
-  CollapsibleContent
-} from '@/components/ui/collapsible';
-import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronRight } from 'lucide-react';
 import { SaleItem } from '@/store/pos-state';
 import { ColumnDef } from '@tanstack/react-table';
 import Image from 'next/image';
@@ -51,40 +44,26 @@ export const columnsSale: ColumnDef<SaleItem>[] = [
     header: 'Subtotal',
     cell: ({ row }) => <span>${row.original.subtotal}</span>
   },
-  {
-    id: 'sizes',
-    header: 'Talles',
-    cell: ({ row }) => {
-      const item = row.original;
 
-      return (
-        <Collapsible>
-          <CollapsibleTrigger asChild>
-            <Button
-              variant='ghost'
-              size='sm'
-              className='flex items-center gap-2'
-            >
-              <ChevronRight className='h-4 w-4 data-[state=open]:hidden' />
-              <ChevronDown className='hidden h-4 w-4 data-[state=open]:block' />
-              Ver talles
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className='mt-2 space-y-1 pl-4'>
-            {Object.entries(item.sizes).map(([size, qty]) => (
-              <div key={size} className='flex justify-between text-sm'>
-                <span className='font-medium'>{size}</span>
-                <span>{qty} u.</span>
-              </div>
-            ))}
-          </CollapsibleContent>
-        </Collapsible>
-      );
-    }
+  {
+    accessorKey: 'size',
+    header: 'Talle',
+    cell: ({ row }) => (
+      <Badge variant='outline' className='uppercase'>
+        {row.original.size}
+      </Badge>
+    )
+  },
+  {
+    accessorKey: 'quantity',
+    header: 'Cantidad',
+    cell: ({ row }) => (
+      <Badge variant='outline'>{row.original.quantity} U.</Badge>
+    )
   },
 
   {
     id: 'actions',
-    cell: ({ row }) => <CellSalesAction data={row.original.product} />
+    cell: ({ row }) => <CellSalesAction data={row.original} />
   }
 ];

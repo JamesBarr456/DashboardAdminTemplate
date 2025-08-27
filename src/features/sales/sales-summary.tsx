@@ -15,21 +15,16 @@ interface Props {
     discount?: number
   ) => void;
 }
+
 export default function SalesSummary({ currentSale, completeSale }: Props) {
   const [discount, setDiscount] = useState(0);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
     'cash' | 'card' | 'qr'
   >('cash');
 
-  // subtotal calculado sumando todas las cantidades por talle
+  // subtotal ahora es solo la suma de los subtotales de cada SaleItem
   const subtotal = useMemo(() => {
-    return currentSale.reduce((sum, item) => {
-      const totalQty = Object.values(item.sizes).reduce(
-        (acc, qty) => acc + qty,
-        0
-      );
-      return sum + totalQty * item.unit_price;
-    }, 0);
+    return currentSale.reduce((sum, item) => sum + item.subtotal, 0);
   }, [currentSale]);
 
   const total = subtotal - discount;

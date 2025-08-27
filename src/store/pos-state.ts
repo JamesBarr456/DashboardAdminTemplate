@@ -1,12 +1,12 @@
 import { Product, fakeProducts } from '@/constants/product-mock-api';
-
 import { create } from 'zustand';
 
 // --- Store con Zustand ---
 export interface SaleItem {
   product: Product;
-  sizes: { [size: string]: number }; // Ejemplo: { M: 5, L: 7 }
+  size: string;
   unit_price: number;
+  quantity: number;
   subtotal: number;
 }
 
@@ -38,6 +38,7 @@ export interface CashRegister {
   closedAt?: Date;
   cashier: string;
 }
+
 interface POSState {
   cashRegister: CashRegister;
   products: Product[];
@@ -51,14 +52,22 @@ interface POSState {
   openRegister: (initialAmount: number, cashier: string) => void;
   closeRegister: () => void;
   addToSale: (product: Product, quantity: number, selectedSize: string) => void;
-  removeFromSale: (productId: string) => void;
-  updateSaleQuantity: (productId: string, quantity: number) => void;
+  removeFromSale: (productId: string, size: string) => void;
+  updateSaleQuantity: (
+    productId: string,
+    size: string,
+    quantity: number
+  ) => void;
   clearSale: () => void;
   completeSale: (
     paymentMethod: 'cash' | 'card' | 'qr',
     discount?: number
   ) => void;
-  updateProductStock: (productId: string, newStock: number) => void;
+  updateProductStock: (
+    productId: string,
+    size: string,
+    newStock: number
+  ) => void;
   addMovement: (movement: Omit<Movement, 'id' | 'timestamp'>) => void;
 }
 
@@ -80,6 +89,7 @@ export const usePOSStore = create<POSState>((set, get) => ({
       set({ products: res });
     }
   },
+
   openRegister: (initialAmount, cashier) => {
     set((state) => ({
       cashRegister: {
@@ -115,36 +125,32 @@ export const usePOSStore = create<POSState>((set, get) => ({
   addToSale: (product, quantity, selectedSize: string) =>
     set((state) => {
       const existingItem = state.currentSale.find(
-        (item) => item.product.id === product.id
+        (item) => item.product.id === product.id && item.size === selectedSize
       );
 
       if (existingItem) {
-        // si ya existe el producto, sumamos al talle correspondiente
-        const updatedSizes = {
-          ...existingItem.sizes,
-          [selectedSize]: (existingItem.sizes[selectedSize] || 0) + quantity
+        const updatedItem = {
+          ...existingItem,
+          quantity: existingItem.quantity + quantity,
+          subtotal: (existingItem.quantity + quantity) * existingItem.unit_price
         };
-
-        const newSubtotal =
-          Object.values(updatedSizes).reduce((sum, qty) => sum + qty, 0) *
-          existingItem.unit_price;
 
         return {
           currentSale: state.currentSale.map((item) =>
-            item.product.id === product.id
-              ? { ...item, sizes: updatedSizes, subtotal: newSubtotal }
+            item.product.id === product.id && item.size === selectedSize
+              ? updatedItem
               : item
           )
         };
       }
 
-      // si no existe el producto, lo creamos con el primer talle
       return {
         currentSale: [
           ...state.currentSale,
           {
             product,
-            sizes: { [selectedSize]: quantity },
+            size: selectedSize,
+            quantity,
             unit_price: product.sale_price,
             subtotal: product.sale_price * quantity
           }
@@ -152,18 +158,22 @@ export const usePOSStore = create<POSState>((set, get) => ({
       };
     }),
 
-  removeFromSale: (productId) =>
+  removeFromSale: (productId, size) =>
     set((state) => ({
       currentSale: state.currentSale.filter(
-        (item) => item.product.id !== +productId
+        (item) => !(item.product.id === +productId && item.size === size)
       )
     })),
 
-  updateSaleQuantity: (productId, quantity) =>
+  updateSaleQuantity: (productId, size, quantity) =>
     set((state) => ({
       currentSale: state.currentSale.map((item) =>
-        item.product.id === +productId
-          ? { ...item, quantity, subtotal: item.product.sale_price * quantity }
+        item.product.id === +productId && item.size === size
+          ? {
+              ...item,
+              quantity,
+              subtotal: item.unit_price * quantity
+            }
           : item
       )
     })),
@@ -172,14 +182,10 @@ export const usePOSStore = create<POSState>((set, get) => ({
 
   completeSale: (paymentMethod, discount = 0) =>
     set((state) => {
-      // calcular el total sumando todos los talles de todos los productos
-      const total = state.currentSale.reduce((sum, item) => {
-        const totalQty = Object.values(item.sizes).reduce(
-          (acc, qty) => acc + qty,
-          0
-        );
-        return sum + totalQty * item.unit_price;
-      }, 0);
+      const total = state.currentSale.reduce(
+        (sum, item) => sum + item.subtotal,
+        0
+      );
 
       const finalTotal = total - discount;
       const tax = finalTotal * 0.18;
@@ -206,31 +212,24 @@ export const usePOSStore = create<POSState>((set, get) => ({
 
       // actualizar stock restando por talle
       const updatedProducts = state.products.map((product) => {
-        const saleItem = state.currentSale.find(
+        const saleItems = state.currentSale.filter(
           (item) => item.product.id === product.id
         );
 
-        if (!saleItem) return product;
+        if (!saleItems.length) return product;
 
-        // si tu Product ya maneja stock por talle:
         const updatedStock = { ...product.stock };
 
-        for (const [size, qty] of Object.entries(saleItem.sizes)) {
-          if (updatedStock[size] !== undefined) {
-            updatedStock[size] = Math.max(0, (updatedStock[size] ?? 0) - qty);
-          } else {
-            // si no existe el talle en stock, lo restamos del "default"
-            updatedStock.default = Math.max(
+        for (const saleItem of saleItems) {
+          if (updatedStock[saleItem.size] !== undefined) {
+            updatedStock[saleItem.size] = Math.max(
               0,
-              (updatedStock.default ?? 0) - qty
+              (updatedStock[saleItem.size] ?? 0) - saleItem.quantity
             );
           }
         }
 
-        return {
-          ...product,
-          stock: updatedStock
-        };
+        return { ...product, stock: updatedStock };
       });
 
       return {
@@ -248,11 +247,11 @@ export const usePOSStore = create<POSState>((set, get) => ({
       };
     }),
 
-  updateProductStock: (productId, newStock) =>
+  updateProductStock: (productId, size, newStock) =>
     set((state) => ({
       products: state.products.map((p) =>
         p.id === +productId
-          ? { ...p, stock: { ...p.stock, default: newStock } }
+          ? { ...p, stock: { ...p.stock, [size]: newStock } }
           : p
       )
     })),
