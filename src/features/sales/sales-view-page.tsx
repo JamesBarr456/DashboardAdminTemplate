@@ -7,17 +7,17 @@ import {
   ShoppingCart,
   ShoppingCartIcon
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ProductSearchDropdown } from './sales-search-product';
+import { SalesProductTable } from './sales-product-table';
+import SalesSummary from './sales-summary';
+import { columnsSale } from './sales-product-table/columns';
 import { toast } from 'sonner';
 import { usePOSStore } from '@/store/pos-state';
-import { useEffect, useState } from 'react';
-import { SalesProductTable } from './sales-product-table';
-import { columnsSale } from './sales-product-table/columns';
-import SalesSummary from './sales-summary';
 
 export default function SalesViewPage() {
   const {
@@ -132,35 +132,45 @@ export default function SalesViewPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className='mb-5 space-y-6'>
-          <Card>
-            <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Search className='h-5 w-5' />
-                Buscar Productos
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ProductSearchDropdown products={products} onSelect={addToSale} />
-            </CardContent>
-          </Card>
+        <div className='mb-5 grid grid-cols-1 gap-6 xl:grid-cols-3'>
+          <div className='space-y-6 xl:col-span-2'>
+            <Card>
+              <CardHeader>
+                <CardTitle className='flex items-center gap-2'>
+                  <Search className='h-5 w-5' />
+                  Buscar Productos
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ProductSearchDropdown
+                  products={products}
+                  onSelect={addToSale}
+                />
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <ShoppingCartIcon className='h-5 w-5' />
-                Venta Actual
-              </CardTitle>
-            </CardHeader>
-            <CardContent className='flex h-[500px] flex-col'>
-              <SalesProductTable
-                columns={columnsSale}
-                data={currentSale}
-                totalItems={currentSale.length}
-              />
-            </CardContent>
-          </Card>
-          <SalesSummary completeSale={completeSale} currentSale={currentSale} />
+            <Card>
+              <CardHeader>
+                <CardTitle className='flex items-center gap-2'>
+                  <ShoppingCartIcon className='h-5 w-5' />
+                  Venta Actual
+                </CardTitle>
+              </CardHeader>
+              <CardContent className='flex h-[500px] flex-col'>
+                <SalesProductTable
+                  columns={columnsSale}
+                  data={currentSale}
+                  totalItems={currentSale.length}
+                />
+              </CardContent>
+            </Card>
+          </div>
+          <div className='xl:cols-span-1'>
+            <SalesSummary
+              completeSale={completeSale}
+              currentSale={currentSale}
+            />
+          </div>
         </div>
       )}
     </div>
