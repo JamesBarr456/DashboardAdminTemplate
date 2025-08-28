@@ -3,37 +3,38 @@ import { useState, useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle, CardHeader } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { CreditCard, DollarSign, QrCode } from 'lucide-react';
+import { CreditCard, DollarSign } from 'lucide-react';
 import { SaleItem } from '@/store/pos-state';
+import { toast } from 'sonner';
 
 interface Props {
   currentSale: SaleItem[];
-  completeSale: (
-    paymentMethod: 'cash' | 'card' | 'qr',
-    discount?: number
-  ) => void;
+  completeSale: (items: SaleItem[], paymentMethod: 'cash' | 'transfer') => void;
 }
 
 export default function SalesSummary({ currentSale, completeSale }: Props) {
-  const [discount, setDiscount] = useState(0);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
-    'cash' | 'card' | 'qr'
+    'cash' | 'transfer'
   >('cash');
 
-  // subtotal ahora es solo la suma de los subtotales de cada SaleItem
   const subtotal = useMemo(() => {
     return currentSale.reduce((sum, item) => sum + item.subtotal, 0);
   }, [currentSale]);
 
-  const total = subtotal - discount;
-  const tax = total * 0.21;
+  const baseTotal = subtotal;
+
+  const finalTotal =
+    selectedPaymentMethod === 'transfer' ? baseTotal * 1.05 : baseTotal;
 
   const handleFinalizeSale = () => {
-    completeSale(selectedPaymentMethod, discount);
-    setDiscount(0);
+    if (currentSale.length === 0) return;
+    completeSale(currentSale, selectedPaymentMethod);
     setSelectedPaymentMethod('cash');
+
+    toast('¡Venta realizada!', {
+      description: `La venta se ha completado correctamente con pago en ${selectedPaymentMethod === 'cash' ? 'efectivo' : 'transferencia'}.`
+    });
   };
 
   return (
@@ -48,34 +49,25 @@ export default function SalesSummary({ currentSale, completeSale }: Props) {
             <span>${subtotal.toLocaleString()}</span>
           </div>
 
-          <div className='flex items-center gap-2'>
-            <span>Descuento:</span>
-            <Input
-              type='number'
-              placeholder='0'
-              value={discount}
-              onChange={(e) => setDiscount(Number(e.target.value))}
-              className='h-8 w-20'
-            />
-          </div>
-
-          <div className='flex justify-between'>
-            <span>IVA (21%):</span>
-            <span>${tax.toLocaleString()}</span>
-          </div>
+          {selectedPaymentMethod === 'transfer' && (
+            <div className='flex justify-between font-medium text-red-600'>
+              <span>Recargo (5% por transferencia):</span>
+              <span>${(baseTotal * 0.05).toLocaleString()}</span>
+            </div>
+          )}
 
           <Separator />
 
           <div className='flex justify-between text-lg font-bold'>
             <span>Total:</span>
-            <span>${total.toLocaleString()}</span>
+            <span>${finalTotal.toLocaleString()}</span>
           </div>
         </div>
 
         {/* Método de Pago */}
         <div className='space-y-2'>
           <label className='text-sm font-medium'>Método de Pago:</label>
-          <div className='grid grid-cols-3 gap-2'>
+          <div className='grid grid-cols-2 gap-2'>
             <Button
               variant={selectedPaymentMethod === 'cash' ? 'default' : 'outline'}
               onClick={() => setSelectedPaymentMethod('cash')}
@@ -85,20 +77,14 @@ export default function SalesSummary({ currentSale, completeSale }: Props) {
               Efectivo
             </Button>
             <Button
-              variant={selectedPaymentMethod === 'card' ? 'default' : 'outline'}
-              onClick={() => setSelectedPaymentMethod('card')}
+              variant={
+                selectedPaymentMethod === 'transfer' ? 'default' : 'outline'
+              }
+              onClick={() => setSelectedPaymentMethod('transfer')}
               className='text-xs'
             >
               <CreditCard className='mr-1 h-4 w-4' />
-              Tarjeta
-            </Button>
-            <Button
-              variant={selectedPaymentMethod === 'qr' ? 'default' : 'outline'}
-              onClick={() => setSelectedPaymentMethod('qr')}
-              className='text-xs'
-            >
-              <QrCode className='mr-1 h-4 w-4' />
-              QR
+              Transferencia
             </Button>
           </div>
         </div>

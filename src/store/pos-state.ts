@@ -14,8 +14,7 @@ export interface Sale {
   id: string;
   items: SaleItem[];
   total: number;
-  tax: number;
-  paymentMethod: 'cash' | 'card' | 'qr';
+  paymentMethod: 'cash' | 'transfer';
   cashier: string;
   timestamp: Date;
   discount?: number;
@@ -59,10 +58,7 @@ interface POSState {
     quantity: number
   ) => void;
   clearSale: () => void;
-  completeSale: (
-    paymentMethod: 'cash' | 'card' | 'qr',
-    discount?: number
-  ) => void;
+  completeSale: (items: SaleItem[], paymentMethod: 'cash' | 'transfer') => void;
   updateProductStock: (
     productId: string,
     size: string,
@@ -71,7 +67,7 @@ interface POSState {
   addMovement: (movement: Omit<Movement, 'id' | 'timestamp'>) => void;
 }
 
-export const usePOSStore = create<POSState>((set, get) => ({
+export const usePOSStore = create<POSState>((set) => ({
   cashRegister: {
     isOpen: false,
     initialAmount: 0,
@@ -180,25 +176,21 @@ export const usePOSStore = create<POSState>((set, get) => ({
 
   clearSale: () => set({ currentSale: [] }),
 
-  completeSale: (paymentMethod, discount = 0) =>
+  completeSale: (items: SaleItem[], paymentMethod: 'cash' | 'transfer') =>
     set((state) => {
-      const total = state.currentSale.reduce(
-        (sum, item) => sum + item.subtotal,
-        0
-      );
-
-      const finalTotal = total - discount;
-      const tax = finalTotal * 0.18;
+      const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
+      const baseTotal = subtotal;
+      const finalTotal =
+        paymentMethod === 'transfer' ? baseTotal * 1.05 : baseTotal;
 
       const sale: Sale = {
         id: Date.now().toString(),
-        items: state.currentSale,
+        items,
+
         total: finalTotal,
-        tax,
         paymentMethod,
         cashier: state.cashRegister.cashier,
-        timestamp: new Date(),
-        discount
+        timestamp: new Date()
       };
 
       const movement: Movement = {
@@ -210,9 +202,8 @@ export const usePOSStore = create<POSState>((set, get) => ({
         timestamp: new Date()
       };
 
-      // actualizar stock restando por talle
       const updatedProducts = state.products.map((product) => {
-        const saleItems = state.currentSale.filter(
+        const saleItems = items.filter(
           (item) => item.product.id === product.id
         );
 
@@ -235,8 +226,11 @@ export const usePOSStore = create<POSState>((set, get) => ({
       return {
         sales: [sale, ...state.sales],
         movements: [movement, ...state.movements],
-        currentSale: [],
         products: updatedProducts,
+
+        // 🔑 vaciamos el carrito después de confirmar
+        currentSale: [],
+
         cashRegister: {
           ...state.cashRegister,
           currentAmount:

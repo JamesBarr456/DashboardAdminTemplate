@@ -1,5 +1,3 @@
-'use client';
-
 import { Heading } from '@/components/ui/heading';
 import PageContainer from '@/components/layout/page-container';
 import SalesViewPage from '@/features/sales/sales-view-page';
