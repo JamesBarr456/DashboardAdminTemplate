@@ -1,84 +1,54 @@
-import { SaleItem } from '@/store/pos-state';
-import { ColumnDef } from '@tanstack/react-table';
-import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
-import { CellSalesAction } from './cell-action';
-import { Text } from 'lucide-react';
+import { ColumnDef } from '@tanstack/react-table';
+import { HISTORY_TYPES } from './options';
+import { Movement } from '@/store/pos-state';
 
-export const columnsSale: ColumnDef<SaleItem>[] = [
+export const columnsHistory: ColumnDef<Movement>[] = [
   {
-    accessorKey: 'product.photo_url',
-    header: 'Imagen',
+    accessorKey: 'timestamp',
+    header: 'Fecha y Hora',
     cell: ({ row }) => {
-      return (
-        <Image
-          src={row.original.product.photo_url}
-          alt={row.original.product.name}
-          width={150}
-          height={200}
-          className='rounded-lg'
-        />
-      );
+      const value = row.getValue('timestamp') as string;
+      return <span>{new Date(value).toLocaleString()}</span>;
+    },
+    enableColumnFilter: true,
+    meta: {
+      label: 'Por Fecha',
+      variant: 'date'
     }
   },
   {
-    accessorKey: 'product.sku',
-    header: 'Código',
+    accessorKey: 'type',
+    header: 'Tipo',
     cell: ({ row }) => (
       <Badge variant='outline' className='capitalize'>
-        {row.original.product.sku}
+        {row.original.type}
       </Badge>
     ),
+    enableColumnFilter: true,
     meta: {
-      label: 'SKU',
-      placeholder: 'Buscar por Código',
-      variant: 'text',
-      icon: Text
-    },
-    enableColumnFilter: true
+      label: 'Por Tipo',
+      variant: 'multiSelect',
+      options: HISTORY_TYPES
+    }
   },
   {
-    accessorKey: 'product.name',
-    header: 'Producto',
-    cell: ({ row }) => <span>{row.original.product.name}</span>,
-    meta: {
-      label: 'Name',
-      placeholder: 'Buscar por Nombre',
-      variant: 'text',
-      icon: Text
-    },
-    enableColumnFilter: true
+    accessorKey: 'amount',
+    header: 'Monto',
+    cell: ({ row }) => <span>${row.original.amount}</span>
   },
   {
-    accessorKey: 'unit_price',
-    header: 'Precio Unit.',
-    cell: ({ row }) => <span>${row.original.unit_price}</span>
+    accessorKey: 'description',
+    header: 'Descripción',
+    cell: ({ row }) => <span>{row.original.description}</span>
   },
   {
-    accessorKey: 'subtotal',
-    header: 'Subtotal',
-    cell: ({ row }) => <span>${row.original.subtotal}</span>
-  },
-
-  {
-    accessorKey: 'size',
-    header: 'Talle',
+    accessorKey: 'cashier',
+    header: 'Cajero',
     cell: ({ row }) => (
-      <Badge variant='outline' className='uppercase'>
-        {row.original.size}
+      <Badge variant='outline' className='capitalize'>
+        {row.original.cashier}
       </Badge>
     )
-  },
-  {
-    accessorKey: 'quantity',
-    header: 'Cantidad',
-    cell: ({ row }) => (
-      <Badge variant='outline'>{row.original.quantity} U.</Badge>
-    )
-  },
-
-  {
-    id: 'actions',
-    cell: ({ row }) => <CellSalesAction data={row.original} />
   }
 ];

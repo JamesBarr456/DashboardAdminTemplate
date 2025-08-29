@@ -1,18 +1,18 @@
 'use client';
 
-import { DataTable } from '@/components/ui/table/data-table';
-import { DataTableToolbar } from '@/components/ui/table/data-table-toolbar';
-
-import { useDataTable } from '@/hooks/use-data-table';
+import { parseAsInteger, useQueryState } from 'nuqs';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { parseAsInteger, useQueryState } from 'nuqs';
+import { DataTable } from '@/components/ui/table/data-table';
+import { DataTableToolbar } from '@/components/ui/table/data-table-toolbar';
+import { useDataTable } from '@/hooks/use-data-table';
+
 interface ProductTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
   columns: ColumnDef<TData, TValue>[];
 }
-export function SalesProductTable<TData, TValue>({
+export function HistoryTable<TData, TValue>({
   data,
   totalItems,
   columns

@@ -4,7 +4,7 @@ import SalesViewPage from '@/features/sales/sales-view-page';
 import { Separator } from '@/components/ui/separator';
 import { Suspense } from 'react';
 
-export default function Dashboard() {
+export default function SalesPage() {
   return (
     <PageContainer scrollable={true}>
       <div className='flex flex-1 flex-col space-y-4'>
@@ -14,10 +14,7 @@ export default function Dashboard() {
         />
 
         <Separator />
-        <Suspense
-          // key={key}
-          fallback={<div>Loading....</div>}
-        >
+        <Suspense fallback={<div>Loading....</div>}>
           <SalesViewPage />
         </Suspense>
       </div>

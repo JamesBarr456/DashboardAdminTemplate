@@ -1,13 +1,26 @@
+import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton';
 import { Heading } from '@/components/ui/heading';
+import HistoryListingPage from '@/features/history/history-listing';
 import PageContainer from '@/components/layout/page-container';
-
+import { SearchParams } from 'nuqs';
 import { Separator } from '@/components/ui/separator';
 import { Suspense } from 'react';
-import HistoryViewPage from '@/features/history/history-view-page';
+import { searchParamsCacheHistory } from '@/lib/searh-params-history';
 
-export default function HistoryPage() {
+type pageProps = {
+  searchParams: Promise<SearchParams>;
+};
+
+export default async function Page(props: pageProps) {
+  const searchParams = await props.searchParams;
+  // Allow nested RSCs to access the search params (in a type-safe way)
+  searchParamsCacheHistory.parse(searchParams);
+
+  // This key is used for invoke suspense if any of the search params changed (used for filters).
+  // const key = serialize({ ...searchParams });
+
   return (
-    <PageContainer scrollable={true}>
+    <PageContainer scrollable={false}>
       <div className='flex flex-1 flex-col space-y-4'>
         <Heading
           title='Historial de Movimientos'
@@ -17,9 +30,11 @@ export default function HistoryPage() {
         <Separator />
         <Suspense
           // key={key}
-          fallback={<div>Loading....</div>}
+          fallback={
+            <DataTableSkeleton columnCount={5} rowCount={8} filterCount={3} />
+          }
         >
-          <HistoryViewPage />
+          <HistoryListingPage />
         </Suspense>
       </div>
     </PageContainer>
