@@ -2,16 +2,11 @@
 
 import { IconTrash } from '@tabler/icons-react';
 import { AlertModal } from '@/components/modal/alert-modal';
-import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger
-} from '@/components/ui/tooltip';
 
 import { MinusCircle, PlusCircle } from 'lucide-react';
 import { SaleItem, usePOSStore } from '@/store/pos-state';
-import { JSX, useState } from 'react';
+import { useState } from 'react';
+import { IconTooltipButton } from '@/features/sales/utils';
 
 interface CellActionProps {
   data: SaleItem;
@@ -41,22 +36,6 @@ export const CellSalesAction: React.FC<CellActionProps> = ({ data }) => {
     setOpen(false);
   };
 
-  const renderTooltipButton = (
-    icon: JSX.Element,
-    onClick: () => void,
-    label: string,
-    variant: 'outline' | 'destructive' = 'outline'
-  ) => (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button variant={variant} size='sm' onClick={onClick}>
-          {icon}
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>{label}</TooltipContent>
-    </Tooltip>
-  );
-
   return (
     <>
       <AlertModal
@@ -66,17 +45,17 @@ export const CellSalesAction: React.FC<CellActionProps> = ({ data }) => {
         loading={false}
       />
       <div className='flex gap-2'>
-        {renderTooltipButton(
+        {IconTooltipButton(
           <PlusCircle className='h-4 w-4 text-green-600' />,
           handleAdd,
           'Agregar'
         )}
-        {renderTooltipButton(
+        {IconTooltipButton(
           <MinusCircle className='h-4 w-4 text-yellow-600' />,
           handleRemove,
           'Quitar'
         )}
-        {renderTooltipButton(
+        {IconTooltipButton(
           <IconTrash className='h-4 w-4' />,
           handleDelete,
           'Eliminar',

@@ -3,7 +3,7 @@ import PageContainer from '@/components/layout/page-container';
 
 import { Separator } from '@/components/ui/separator';
 import { Suspense } from 'react';
-import HistoryViewPage from '@/features/history/history-view-page';
+import HistoryViewPage from '@/features/history/components/history-view-page';
 
 export default function HistoryPage() {
   return (

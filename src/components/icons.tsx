@@ -1,4 +1,10 @@
-import { ClipboardList, History, ShoppingCart, Wallet } from 'lucide-react';
+import {
+  ChartColumn,
+  ClipboardList,
+  History,
+  ShoppingCart,
+  Wallet
+} from 'lucide-react';
 import {
   IconAlertTriangle,
   IconArrowRight,
@@ -71,5 +77,6 @@ export const Icons = {
   order: ClipboardList,
   wallet: Wallet,
   shoppingCart: ShoppingCart,
-  history: History
+  history: History,
+  report: ChartColumn
 };

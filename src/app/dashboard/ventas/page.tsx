@@ -1,6 +1,6 @@
 import { Heading } from '@/components/ui/heading';
 import PageContainer from '@/components/layout/page-container';
-import SalesViewPage from '@/features/sales/sales-view-page';
+import SalesViewPage from '@/features/sales/components/sales-view-page';
 import { Separator } from '@/components/ui/separator';
 import { Suspense } from 'react';
 
