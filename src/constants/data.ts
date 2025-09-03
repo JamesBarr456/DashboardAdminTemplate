@@ -3,7 +3,7 @@ import { NavItem } from '@/types';
 //Info: The following data is used for the sidebar navigation and Cmd K bar.
 export const navItems: NavItem[] = [
   {
-    title: 'Panel',
+    title: 'Panel General',
     url: '/dashboard/overview',
     icon: 'dashboard',
     isActive: false,
@@ -13,15 +13,15 @@ export const navItems: NavItem[] = [
 
   {
     title: 'Ventas',
-    url: '/dashboard/ventas',
+    url: '/dashboard/sells',
     icon: 'shoppingCart',
     isActive: false,
     shortcut: ['v', 'v'],
     items: []
   },
   {
-    title: 'Movimientos',
-    url: '/dashboard/movimientos',
+    title: 'Historial de Movimientos',
+    url: '/dashboard/cash-history',
     icon: 'history',
     isActive: false,
     shortcut: ['m', 'm'],
@@ -36,21 +36,14 @@ export const navItems: NavItem[] = [
     items: [] // No child items
   },
   {
-    title: 'Orden',
+    title: 'Ordenes',
     url: '/dashboard/order',
     icon: 'order',
     shortcut: ['o', 'o'],
     isActive: false,
     items: [] // No child items
   },
-  {
-    title: 'Reporte',
-    url: '/dashboard/report',
-    icon: 'report',
-    shortcut: ['r', 'r'],
-    isActive: false,
-    items: [] // No child items
-  },
+
   {
     title: 'Cuenta',
     url: '#', // Placeholder as there is no direct link for the parent
