@@ -1,6 +1,6 @@
-import { Product, fakeProducts } from '@/services/product-mock-api';
-
+import { Product } from '@/types/product';
 import { create } from 'zustand';
+import { fakeProducts } from '@/services/product-mock-api';
 
 // --- Store con Zustand ---
 export interface SaleItem {

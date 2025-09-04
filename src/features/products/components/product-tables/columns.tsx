@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { CellAction } from './cell-action';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
 import Image from 'next/image';
-import { Product } from '@/services/product-mock-api';
+import { Product } from '@/types/product';
 import { Text } from 'lucide-react';
 
 export const columns: ColumnDef<Product>[] = [

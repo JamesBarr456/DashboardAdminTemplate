@@ -1,7 +1,7 @@
-import { Order, fakeOrders } from '@/services/order-mock-api';
-
+import { Order } from '@/types/order';
 import { OrderTable } from './order-tables';
 import { columns } from './order-tables/columns';
+import { fakeOrders } from '@/services/order-mock-api';
 import { searchParamsOrderCache } from '@/lib/search-params-order';
 
 type OrderListingPage = {};

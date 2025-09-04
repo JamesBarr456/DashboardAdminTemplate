@@ -13,9 +13,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { Badge } from '@/components/ui/badge';
-import { Customer } from '@/constants/mocks/customers';
+import { Customer } from '@/types/user';
 import { Form } from '@/components/ui/form';
-import { Order } from '@/services/order-mock-api';
+import { Order } from '@/types/order';
 import { ProductEditCard } from './order-card';
 import { Separator } from '@/components/ui/separator';
 import { useForm } from 'react-hook-form';
