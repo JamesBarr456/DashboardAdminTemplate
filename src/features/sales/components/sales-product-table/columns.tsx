@@ -1,8 +1,8 @@
-import { SaleItem } from '@/store/pos-state';
-import { ColumnDef } from '@tanstack/react-table';
-import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { CellSalesAction } from './cell-action';
+import { ColumnDef } from '@tanstack/react-table';
+import Image from 'next/image';
+import { SaleItem } from '@/store/pos-state';
 import { Text } from 'lucide-react';
 
 export const columnsSale: ColumnDef<SaleItem>[] = [
@@ -12,7 +12,7 @@ export const columnsSale: ColumnDef<SaleItem>[] = [
     cell: ({ row }) => {
       return (
         <Image
-          src={row.original.product.photo_url}
+          src={row.original.product.images[0]}
           alt={row.original.product.name}
           width={150}
           height={200}
