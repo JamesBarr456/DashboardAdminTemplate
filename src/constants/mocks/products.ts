@@ -3,9 +3,12 @@ import { Product } from '@/types/product';
 export const mockProducts: Product[] = [
   {
     id: 1,
-    photo_url: 'https://api.slingacademy.com/public/sample-products/1.png',
+    category: 'T-shirts',
+    images: [
+      'https://api.slingacademy.com/public/sample-products/1.png',
+      'https://api.slingacademy.com/public/sample-products/2.png'
+    ],
     sku: '1001',
-    category: '',
     name: 'Remera básica',
     brand: 'Acme',
     description: 'Remera básica de algodón para uso diario.',
@@ -28,9 +31,9 @@ export const mockProducts: Product[] = [
   },
   {
     id: 2,
-    photo_url: 'https://api.slingacademy.com/public/sample-products/2.png',
+    images: ['https://api.slingacademy.com/public/sample-products/2.png'],
+    category: 'Pants',
     sku: '2002',
-    category: '',
     name: 'Pantalón entallado',
     brand: 'DenimPro',
     description: 'Jean entallado para un look moderno.',
@@ -52,9 +55,10 @@ export const mockProducts: Product[] = [
   },
   {
     id: 3,
-    photo_url: 'https://api.slingacademy.com/public/sample-products/3.png',
+
+    images: ['https://api.slingacademy.com/public/sample-products/3.png'],
+    category: 'T-shirts',
     sku: '2003',
-    category: '',
     name: 'Blusa casual',
     description: 'Blusa liviana y suave para verano.',
     segment: { code: 2, name: 'dama' },
@@ -74,7 +78,6 @@ export const mockProducts: Product[] = [
     created_at: '2025-07-18T16:00:00Z'
   }
 ];
-
 export const categories = [
   'Clothing',
   'T-shirts',
@@ -130,3 +133,14 @@ export const PACK_SIZE_OPTIONS = [
   { label: 'x6', value: '6' },
   { label: 'x12', value: '12' }
 ];
+
+export const colorMap: Record<string, string> = {
+  red: 'bg-red-500',
+  blue: 'bg-blue-500',
+  green: 'bg-green-500',
+  black: 'bg-black',
+  white: 'bg-white border-2 border-gray-300',
+  yellow: 'bg-yellow-400',
+  pink: 'bg-pink-500',
+  purple: 'bg-purple-500'
+};

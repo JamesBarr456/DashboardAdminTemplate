@@ -12,14 +12,14 @@ import { Text } from 'lucide-react';
 
 export const columns: ColumnDef<Product>[] = [
   {
-    accessorKey: 'photo_url',
+    accessorKey: 'images',
     header: 'Imagen',
     cell: ({ row }) => {
       return (
         <div className='relative aspect-square'>
           <Image
-            src={row.getValue('photo_url')}
-            alt={row.getValue('name')}
+            src={row.original.images[0]}
+            alt={row.original.name}
             fill
             className='rounded-lg'
           />
