@@ -1,4 +1,4 @@
-import { Order, fakeOrders } from '@/constants/order-mock-api';
+import { Order, fakeOrders } from '@/services/order-mock-api';
 
 import { OrderTable } from './order-tables';
 import { columns } from './order-tables/columns';

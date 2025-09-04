@@ -11,7 +11,7 @@ import { IconDotsVertical, IconTrash } from '@tabler/icons-react';
 
 import { AlertModal } from '@/components/modal/alert-modal';
 import { Button } from '@/components/ui/button';
-import { Order } from '@/constants/order-mock-api';
+import { Order } from '@/services/order-mock-api';
 import { View } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

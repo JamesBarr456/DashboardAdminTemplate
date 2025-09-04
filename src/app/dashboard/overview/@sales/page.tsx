@@ -1,5 +1,5 @@
-import { delay } from '@/constants/product-mock-api';
 import { RecentSales } from '@/features/overview/components/recent-sales';
+import { delay } from '@/services/product-mock-api';
 
 export default async function Sales() {
   await delay(3000);

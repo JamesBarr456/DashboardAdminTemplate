@@ -3,19 +3,20 @@
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogFooter
+  DialogTitle
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import Image from 'next/image';
-import { Product } from '@/constants/product-mock-api';
+import { Minus, Package, Plus, ShoppingBag, Tag } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { Minus, Plus, Package, Tag, ShoppingBag } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Product } from '@/services/product-mock-api';
+import { Separator } from '@/components/ui/separator';
 
 interface Props {
   isModalOpen: boolean;

@@ -1,4 +1,5 @@
-import { Product, fakeProducts } from '@/constants/product-mock-api';
+import { Product, fakeProducts } from '@/services/product-mock-api';
+
 import { create } from 'zustand';
 
 // --- Store con Zustand ---

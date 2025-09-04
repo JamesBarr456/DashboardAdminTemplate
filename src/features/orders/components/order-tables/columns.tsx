@@ -5,7 +5,7 @@ import { Column, ColumnDef } from '@tanstack/react-table';
 import { Badge } from '@/components/ui/badge';
 import { CellAction } from './cell-action';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
-import { Order } from '@/constants/order-mock-api';
+import { Order } from '@/services/order-mock-api';
 import { format } from 'date-fns';
 
 export const columns: ColumnDef<Order>[] = [

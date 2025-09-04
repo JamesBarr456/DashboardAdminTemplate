@@ -1,6 +1,6 @@
-import { Product, fakeProducts } from '@/constants/product-mock-api';
-
+import { Product } from '@/types/product';
 import ProductForm from './product-form';
+import { fakeProducts } from '@/services/product-mock-api';
 import { notFound } from 'next/navigation';
 
 type TProductViewPageProps = {

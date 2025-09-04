@@ -1,5 +1,6 @@
-import { Customer, mockCustomers } from './mocks/customers';
+import { Customer } from '@/types/user';
 import { delay } from './product-mock-api';
+import { mockCustomers } from '@/constants/mocks/customers';
 
 export const fakeCustomers = {
   records: mockCustomers as Customer[],

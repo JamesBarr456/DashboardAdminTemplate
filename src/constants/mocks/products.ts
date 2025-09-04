@@ -1,4 +1,4 @@
-import { Product } from '../product-mock-api';
+import { Product } from '@/types/product';
 
 export const mockProducts: Product[] = [
   {
@@ -255,4 +255,60 @@ export const mockProducts: Product[] = [
     updated_at: '2025-08-16T14:00:00Z',
     created_at: '2025-07-27T14:00:00Z'
   }
+];
+
+export const categories = [
+  'Clothing',
+  'T-shirts',
+  'Pants',
+  'Blouses',
+  'Sweatshirts',
+  'Home',
+  'Sportswear',
+  'Kitchen',
+  'Underwear',
+  'Winter',
+  'Summer'
+];
+export const genders = ['male', 'female', 'unisex', 'kids', 'baby'];
+export const sizes = ['XS', 'S', 'M', 'L', 'XL'];
+export const colors = [
+  'red',
+  'blue',
+  'green',
+  'black',
+  'white',
+  'yellow',
+  'pink',
+  'purple'
+];
+
+export const SEGMENT_OPTIONS = [
+  { label: 'Hombre', value: JSON.stringify({ code: 1, name: 'hombre' }) },
+  { label: 'Dama', value: JSON.stringify({ code: 2, name: 'dama' }) },
+  { label: 'Nene', value: JSON.stringify({ code: 3, name: 'nene' }) },
+  { label: 'Nena', value: JSON.stringify({ code: 4, name: 'nena' }) },
+  { label: 'Bebé', value: JSON.stringify({ code: 5, name: 'bebe' }) },
+  { label: 'Beba', value: JSON.stringify({ code: 6, name: 'beba' }) },
+  { label: 'Otros', value: JSON.stringify({ code: 7, name: 'otros' }) },
+  {
+    label: 'Ropa interior',
+    value: JSON.stringify({ code: 8, name: 'ropa interior' })
+  },
+  {
+    label: 'Ropa interior importada',
+    value: JSON.stringify({ code: 9, name: 'ropa interior importada' })
+  }
+];
+
+export const SEASON_OPTIONS = [
+  { label: 'Invierno', value: 'winter' },
+  { label: 'Verano', value: 'summer' },
+  { label: 'Temporada', value: 'seasonal' }
+];
+
+export const PACK_SIZE_OPTIONS = [
+  { label: 'x1', value: '1' },
+  { label: 'x6', value: '6' },
+  { label: 'x12', value: '12' }
 ];

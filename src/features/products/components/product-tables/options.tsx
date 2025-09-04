@@ -14,15 +14,8 @@ export const CATEGORY_OPTIONS = [
 
 export const GENRE_OPTIONS = [
   { value: 'men', label: 'Hombre' },
-  { value: 'women', label: 'Mujer' },
-  { value: 'boy', label: 'Nene' },
-  { value: 'girl', label: 'Nena' },
-  { value: 'baby', label: 'Bebé' },
-  { value: 'unisex', label: 'Unisex' }, // agregado
-  { value: 'kids', label: 'Niños' }, // agregado
-  { value: 'import', label: 'Importados' },
-  { value: 'kitchen', label: 'Repasadores u otros' },
-  { value: 'other', label: 'Otros' }
+  { value: 'famale', label: 'Mujer' },
+  { value: 'unisex', label: 'Unisex' } // agregado
 ];
 
 export const CODIGO_OPTIONS = [

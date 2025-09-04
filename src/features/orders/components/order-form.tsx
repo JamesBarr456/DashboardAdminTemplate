@@ -15,7 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Customer } from '@/constants/mocks/customers';
 import { Form } from '@/components/ui/form';
-import { Order } from '@/constants/order-mock-api';
+import { Order } from '@/services/order-mock-api';
 import { ProductEditCard } from './order-card';
 import { Separator } from '@/components/ui/separator';
 import { useForm } from 'react-hook-form';

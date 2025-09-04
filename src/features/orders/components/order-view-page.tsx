@@ -1,8 +1,8 @@
-import { Order, fakeOrders } from '@/constants/order-mock-api';
+import { Order, fakeOrders } from '@/services/order-mock-api';
 
 import { Customer } from '@/constants/mocks/customers';
 import OrderForm from './order-form';
-import { fakeCustomers } from '@/constants/customers-mok-api';
+import { fakeCustomers } from '@/services/customers-mok-api';
 import { notFound } from 'next/navigation';
 
 type TProductViewPageProps = {

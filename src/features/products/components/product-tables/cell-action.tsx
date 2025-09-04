@@ -11,7 +11,7 @@ import { IconDotsVertical, IconEdit, IconTrash } from '@tabler/icons-react';
 
 import { AlertModal } from '@/components/modal/alert-modal';
 import { Button } from '@/components/ui/button';
-import { Product } from '@/constants/product-mock-api';
+import { Product } from '@/services/product-mock-api';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 

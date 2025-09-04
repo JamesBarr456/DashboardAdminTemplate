@@ -1,4 +1,4 @@
-import { Order } from '../order-mock-api';
+import { Order } from '@/types/order';
 
 export const ordersMock: Order[] = [
   {

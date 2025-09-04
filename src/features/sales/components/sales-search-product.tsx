@@ -12,9 +12,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
-import { Product } from '@/constants/product-mock-api';
-import { cn } from '@/lib/utils';
+import { Product } from '@/services/product-mock-api';
 import SalesModalProduct from './sales-modal-product';
+import { cn } from '@/lib/utils';
 
 interface ProductSearchDropdownProps {
   products: Product[];

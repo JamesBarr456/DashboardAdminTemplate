@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { OrderEditFormData } from './order-form';
-import { OrderProduct } from '@/constants/order-mock-api';
+import { OrderProduct } from '@/services/order-mock-api';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';

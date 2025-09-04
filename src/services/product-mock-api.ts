@@ -2,60 +2,14 @@
 // 🛑 Nothing in here has anything to do with Nextjs, it's just a fake database
 ////////////////////////////////////////////////////////////////////////////////
 
+import { Product } from '@/types/product';
 import { matchSorter } from 'match-sorter'; // For filtering
-import { mockProducts } from './mocks/products';
+import { mockProducts } from '../constants/mocks/products';
 
 export const delay = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 // Define the shape of Product data
-export type Product = {
-  id: number;
-  photo_url: string;
-  name: string;
-  sku: string;
-  brand?: string;
-  gender: string;
-  sizes: string;
-  colors: string[];
-  cost_price: number;
-  sale_price: number;
-  has_discount: boolean;
-  discount_percentage?: number;
-  is_active: boolean;
-  stock: Record<string, number>;
-
-  description: string;
-  category: string;
-  updated_at: string;
-  created_at: string;
-};
-
-export const categories = [
-  'Clothing',
-  'T-shirts',
-  'Pants',
-  'Blouses',
-  'Sweatshirts',
-  'Home',
-  'Sportswear',
-  'Kitchen',
-  'Underwear',
-  'Winter',
-  'Summer'
-];
-export const genders = ['male', 'female', 'unisex', 'kids', 'baby'];
-export const sizes = ['XS', 'S', 'M', 'L', 'XL'];
-export const colors = [
-  'red',
-  'blue',
-  'green',
-  'black',
-  'white',
-  'yellow',
-  'pink',
-  'purple'
-];
 
 export const fakeProducts = {
   records: mockProducts as Product[],

@@ -1,4 +1,4 @@
-import { Product, fakeProducts } from '@/constants/product-mock-api';
+import { Product, fakeProducts } from '@/services/product-mock-api';
 
 import { ProductTable } from './product-tables';
 import { columns } from './product-tables/columns';
