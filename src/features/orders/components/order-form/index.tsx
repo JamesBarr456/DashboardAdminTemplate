@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { OrderEditFormData, orderEditSchema } from '@/schemas/order-schema';
 
 import { Badge } from '@/components/ui/badge';
 import { Customer } from '@/types/user';
@@ -21,6 +20,7 @@ import { ProductEditCard } from '../order-card';
 import { STATUS } from '@/constants/mocks/orders';
 import { Separator } from '@/components/ui/separator';
 import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 ('@/components/ui/form');
@@ -37,6 +37,34 @@ const statusLabels = {
   sending: 'Enviandose',
   cancelled: 'Cancelado'
 };
+export const productEditSchema = z
+  .object({
+    id: z.string(),
+    defective: z.boolean(),
+    defective_quantity: z.number().min(0),
+    defect_comment: z
+      .string()
+      .max(500, 'El comentario no puede exceder 500 caracteres')
+      .optional(),
+    unavailable: z.boolean()
+  })
+  .refine(
+    (data) => {
+      // Esta validación se aplicará dinámicamente en el componente
+      // ya que necesitamos acceso a la cantidad total del producto
+      return true;
+    },
+    {
+      message: 'La cantidad defectuosa no puede ser mayor a la cantidad total',
+      path: ['defective_quantity']
+    }
+  );
+
+export const orderEditSchema = z.object({
+  products: z.array(productEditSchema)
+});
+
+export type OrderEditFormData = z.infer<typeof orderEditSchema>;
 export default function OrderForm({
   initialData,
   pageTitle
@@ -168,14 +196,14 @@ export default function OrderForm({
                   <div className='space-y-4'>
                     {order.products.map((product, index) => (
                       <div key={product.id}>
-                        <ProductEditCard
+                        {/* <ProductEditCard
                           product={product}
                           index={index}
                           control={control}
                           register={register}
                           errors={errors}
                           setValue={setValue}
-                        />
+                        /> */}
                         {index < order.products.length - 1 && (
                           <Separator className='my-4' />
                         )}

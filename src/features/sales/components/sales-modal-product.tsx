@@ -99,7 +99,7 @@ function SalesModalProduct({
                 <div className='mx-auto flex-shrink-0 sm:mx-0'>
                   <div className='relative h-32 w-32 overflow-hidden rounded-lg border-2 sm:h-24 sm:w-24'>
                     <Image
-                      src={product.photo_url || '/placeholder.svg'}
+                      src={product.images[0] || '/placeholder.svg'}
                       alt={product.name}
                       fill
                       className='object-cover'
