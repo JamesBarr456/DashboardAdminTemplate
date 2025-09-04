@@ -54,11 +54,6 @@ import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import {
-  PACK_SIZE_OPTIONS,
-  SEASON_OPTIONS,
-  SEGMENT_OPTIONS
-} from '@/constants/mocks/products';
 
 export default function ProductFormImproved({
   initialData,

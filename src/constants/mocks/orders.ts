@@ -1,3 +1,4 @@
+import { NewOrder } from '@/types/order-new';
 import { Order } from '@/types/order';
 
 export const ordersMock: Order[] = [
@@ -268,5 +269,76 @@ export const ordersMock: Order[] = [
         defective: false
       }
     ]
+  }
+];
+
+export const newOrderMock: NewOrder[] = [
+  {
+    _id: '66d7c72a3a2c9f5e9a1b1234',
+    customer: {
+      customerId: '1', // referencia al user en DB
+      snapshot: {
+        firstName: 'Santiago',
+        lastName: 'Barreto',
+        dni: '39320266',
+        email: 'palmirabarrett@gmail.com',
+        phone: {
+          areaCode: '3718',
+          number: '441861'
+        }
+      },
+      stats: {
+        cancelledOrders: 0, // puedes ajustar según tu DB
+        rejectedOrders: 0
+      }
+    },
+    payment_method: 'cash',
+    items: [
+      {
+        _id: '5b48cc25-6441-40f5-9a57-ad79be6e619a',
+        productId: '64cbbd2f3a2c9f5e9a1b0005',
+        name: 'Blusa casual',
+        quantity: 2,
+        size: 'XL', // XL → puedes mapear a número si quieres
+        price: 22000,
+        total_mount: 44000
+      }
+    ],
+    shipping_information: {
+      delivery_option: 'delivery',
+      adress: 'Necochea 248',
+      locality: 'Itaibate',
+      shipping_type: 'express'
+    },
+    summary: {
+      items_total: 44000,
+      shipping_cost: 2500,
+      grand_total: 46500
+    },
+    status: 'pending',
+    createdAt: '2025-09-04T18:00:00.000Z',
+    updatedAt: '2025-09-04T18:00:00.000Z'
+  }
+];
+export const STATUS = [
+  {
+    label: 'confirmed',
+    value: 'canceled',
+    color: 'bg-green-100 text-green-800 border-green-200'
+  },
+  {
+    label: 'en proceso',
+    value: 'pending',
+    color: 'bg-blue-100 text-blue-800 border-blue-200'
+  },
+  {
+    label: 'enviandose',
+    value: 'delivered',
+    color: 'bg-purple-100 text-purple-800 border-purple-200'
+  },
+  {
+    label: 'cancelado',
+    value: 'cancelled',
+    color: 'bg-red-100 text-red-800 border-red-200'
   }
 ];

@@ -11,48 +11,19 @@ import {
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { OrderEditFormData, orderEditSchema } from '@/schemas/order-schema';
 
 import { Badge } from '@/components/ui/badge';
 import { Customer } from '@/types/user';
 import { Form } from '@/components/ui/form';
 import { Order } from '@/types/order';
-import { ProductEditCard } from './order-card';
+import { ProductEditCard } from '../order-card';
+import { STATUS } from '@/constants/mocks/orders';
 import { Separator } from '@/components/ui/separator';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 ('@/components/ui/form');
-
-export const productEditSchema = z
-  .object({
-    id: z.string(),
-    defective: z.boolean(),
-    defective_quantity: z.number().min(0),
-    defect_comment: z
-      .string()
-      .max(500, 'El comentario no puede exceder 500 caracteres')
-      .optional(),
-    unavailable: z.boolean()
-  })
-  .refine(
-    (data) => {
-      // Esta validación se aplicará dinámicamente en el componente
-      // ya que necesitamos acceso a la cantidad total del producto
-      return true;
-    },
-    {
-      message: 'La cantidad defectuosa no puede ser mayor a la cantidad total',
-      path: ['defective_quantity']
-    }
-  );
-
-export const orderEditSchema = z.object({
-  products: z.array(productEditSchema)
-});
-
-export type OrderEditFormData = z.infer<typeof orderEditSchema>;
-
 const statusColors = {
   rejected: 'bg-red-100 text-red-800 border-red-200', // Rechazado
   processing: 'bg-blue-100 text-blue-800 border-blue-200', // En proceso
@@ -66,7 +37,6 @@ const statusLabels = {
   sending: 'Enviandose',
   cancelled: 'Cancelado'
 };
-
 export default function OrderForm({
   initialData,
   pageTitle

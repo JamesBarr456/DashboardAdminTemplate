@@ -22,5 +22,23 @@ export const fakeCustomers = {
       message: `Customer with ID: ${id} found`,
       customer
     };
+  },
+  async getCustomerByDNI(dni: string) {
+    await delay(500);
+    const customer = this.records.find((customer) => customer.dni === dni);
+
+    if (!customer) {
+      return {
+        success: false,
+        message: `Customer with DNI: ${dni} not found`
+      };
+    }
+
+    return {
+      success: true,
+      time: new Date().toISOString(),
+      message: `Customer with DNI: ${dni} found`,
+      customer
+    };
   }
 };
