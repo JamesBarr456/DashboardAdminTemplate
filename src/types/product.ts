@@ -13,7 +13,7 @@ export type Segment = {
 };
 export type Product = {
   id: number;
-  photo_url: string;
+  images: string[];
   name: string;
   sku: string;
   brand?: string;

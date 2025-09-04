@@ -12,6 +12,8 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import {
+  colorMap,
+  colors,
   PACK_SIZE_OPTIONS,
   SEASON_OPTIONS,
   SEGMENT_OPTIONS
@@ -44,7 +46,8 @@ import {
   DollarSign,
   Palette,
   Ruler,
-  ImageIcon
+  ImageIcon,
+  Check
 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
@@ -61,7 +64,7 @@ export default function ProductFormImproved({
 }) {
   const [stockQuantities, setStockQuantities] = useState<
     Record<string, number>
-  >({});
+  >(initialData?.stock || {});
   const [purchaseDate, setPurchaseDate] = useState<Date>();
 
   const defaultValues: Partial<ProductType> = {
@@ -73,13 +76,11 @@ export default function ProductFormImproved({
     sale_price: initialData?.sale_price || 0,
     brand: initialData?.brand || '',
     sizes: initialData?.sizes || '',
-
     gender: initialData?.gender || 'unisex',
     colors: initialData?.colors || [],
     season: initialData?.season || 'seasonal',
     provider: initialData?.provider || '',
     pack_size: initialData?.pack_size || '1',
-    stock: initialData?.stock || {},
     purchase_date: initialData?.purchase_date || ''
   };
 
@@ -91,7 +92,14 @@ export default function ProductFormImproved({
   function onSubmit(values: ProductType) {
     console.log('✅ Producto enviado:', values);
   }
-
+  const handleColorToggle = (color: string, currentColors: string[]) => {
+    const isSelected = currentColors.includes(color);
+    if (isSelected) {
+      return currentColors.filter((c) => c !== color);
+    } else {
+      return [...currentColors, color];
+    }
+  };
   const getAvailableSizes = (sizeRange: string) => {
     const selectedRange = SIZE_RANGE_OPTIONS.find(
       (option) => option.value === sizeRange
@@ -525,10 +533,10 @@ export default function ProductFormImproved({
                             min='0'
                             placeholder='0'
                             className='text-center'
-                            value={stockQuantities[size] || ''}
+                            value={stockQuantities[size.toLowerCase()] || ''}
                             onChange={(e) =>
                               handleStockChange(
-                                size,
+                                size.toLowerCase(),
                                 Number(e.target.value) || 0
                               )
                             }
@@ -558,23 +566,58 @@ export default function ProductFormImproved({
                   <FormItem>
                     <FormLabel>Colores Disponibles</FormLabel>
                     <FormDescription>
-                      Ingrese los colores separados por comas (ej: rojo, azul,
-                      verde)
+                      Seleccione los colores disponibles para este producto
                     </FormDescription>
                     <FormControl>
-                      <Input
-                        placeholder='Ej: rojo, azul, verde, negro'
-                        value={field.value?.join(', ') || ''}
-                        onChange={(e) =>
-                          field.onChange(
-                            e.target.value
-                              .split(',')
-                              .map((c) => c.trim())
-                              .filter((c) => c)
-                          )
-                        }
-                      />
+                      <div className='grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-8'>
+                        {colors.map((color) => {
+                          const isSelected =
+                            field.value?.includes(color) || false;
+                          return (
+                            <Button
+                              key={color}
+                              type='button'
+                              variant={isSelected ? 'ghost' : 'outline'}
+                              size='sm'
+                              className={cn(
+                                'relative h-12 w-full cursor-pointer flex-col gap-1 transition-all duration-200',
+                                isSelected &&
+                                  'ring-primary ring-2 ring-offset-2'
+                              )}
+                              onClick={() => {
+                                const newColors = handleColorToggle(
+                                  color,
+                                  field.value || []
+                                );
+                                field.onChange(newColors);
+                              }}
+                              aria-pressed={isSelected}
+                              aria-label={`${isSelected ? 'Deseleccionar' : 'Seleccionar'} color ${color}`}
+                            >
+                              <div className='flex items-center gap-2'>
+                                <div
+                                  className={cn(
+                                    'h-4 w-4 rounded-full border',
+                                    colorMap[color]
+                                  )}
+                                  aria-hidden='true'
+                                />
+                                {isSelected && (
+                                  <Check
+                                    className='h-3 w-3'
+                                    aria-hidden='true'
+                                  />
+                                )}
+                              </div>
+                              <span className='text-xs font-medium capitalize'>
+                                {color}
+                              </span>
+                            </Button>
+                          );
+                        })}
+                      </div>
                     </FormControl>
+
                     <FormMessage />
                   </FormItem>
                 )}
