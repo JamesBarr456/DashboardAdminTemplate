@@ -16,7 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Customer } from '@/types/user';
 import { Form } from '@/components/ui/form';
 import { NewOrder as Order } from '@/types/order-new';
-import { ProductEditCard } from '../order-card';
+// import { ProductEditCard } from '../order-card';
 import { STATUS } from '@/constants/mocks/orders';
 import { Separator } from '@/components/ui/separator';
 import { useForm } from 'react-hook-form';
