@@ -11,7 +11,7 @@ import { IconDotsVertical, IconTrash } from '@tabler/icons-react';
 
 import { AlertModal } from '@/components/modal/alert-modal';
 import { Button } from '@/components/ui/button';
-import { Order } from '@/types/order';
+import { NewOrder as Order } from '@/types/order-new';
 import { View } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -46,7 +46,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/order/${data.id}`)}
+            onClick={() => router.push(`/dashboard/order/${data._id}`)}
           >
             <View className='mr-2 h-4 w-4' /> View
           </DropdownMenuItem>

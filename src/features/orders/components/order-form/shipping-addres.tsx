@@ -8,7 +8,7 @@ import React from 'react';
 interface ShippingAddressProps {
   data: ShippingInformation;
   status: OrderStatus;
-  onUpdate?: (field: keyof ShippingInformation, value: string) => void;
+  onUpdate?: (update: { path: string; value: string }) => void;
 }
 
 export const ShippingAddress = ({
@@ -22,7 +22,7 @@ export const ShippingAddress = ({
   const renderField = (
     label: string,
     value: string | undefined,
-    field: keyof ShippingInformation,
+    path: string,
     icon?: React.ReactNode
   ) => {
     return (
@@ -33,7 +33,7 @@ export const ShippingAddress = ({
           {isEditable ? (
             <Input
               defaultValue={value}
-              onChange={(e) => onUpdate?.(field, e.target.value)}
+              onChange={(e) => onUpdate?.({ path, value: e.target.value })}
               className='h-8 w-full'
             />
           ) : (

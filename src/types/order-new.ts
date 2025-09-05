@@ -27,12 +27,16 @@ export interface ShippingInformation {
 }
 export interface Item {
   _id: string; // uuid generado en front
-  productId: string; // id en Mongo
+  product_sku: string; // SKU del producto
   name: string;
   quantity: number;
   size?: string; // opcional, no todos los productos tendrán talle
   price: number;
   total_mount: number;
+  defective?: boolean; // indica si el producto es defectuoso
+  defective_quantity?: number; // cantidad de productos defectuosos
+  defect_comment?: string; // comentario sobre el defecto
+  unavailable?: boolean; // indica si el producto no está disponible
 }
 
 export interface Summary {

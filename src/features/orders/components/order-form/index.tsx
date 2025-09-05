@@ -15,88 +15,53 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Customer } from '@/types/user';
 import { Form } from '@/components/ui/form';
-import { Order } from '@/types/order';
+import { NewOrder as Order } from '@/types/order-new';
 import { ProductEditCard } from '../order-card';
 import { STATUS } from '@/constants/mocks/orders';
 import { Separator } from '@/components/ui/separator';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { CustomerInfo } from './customer-info';
+import { ShippingAddress } from './shipping-addres';
+import { PaymentInfo } from './payment-info';
+import { OrderStatusCard } from './information-order';
+import { OrderUpdate, orderUpdateSchema } from '@/schemas/order-schema';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 
-('@/components/ui/form');
-const statusColors = {
-  rejected: 'bg-red-100 text-red-800 border-red-200', // Rechazado
-  processing: 'bg-blue-100 text-blue-800 border-blue-200', // En proceso
-  sending: 'bg-purple-100 text-purple-800 border-purple-200', // Enviandose
-  cancelled: 'bg-red-100 text-red-800 border-red-200' // Cancelado
-};
-
-const statusLabels = {
-  rejected: 'Rechazado',
-  processing: 'En proceso',
-  sending: 'Enviandose',
-  cancelled: 'Cancelado'
-};
-export const productEditSchema = z
-  .object({
-    id: z.string(),
-    defective: z.boolean(),
-    defective_quantity: z.number().min(0),
-    defect_comment: z
-      .string()
-      .max(500, 'El comentario no puede exceder 500 caracteres')
-      .optional(),
-    unavailable: z.boolean()
-  })
-  .refine(
-    (data) => {
-      // Esta validación se aplicará dinámicamente en el componente
-      // ya que necesitamos acceso a la cantidad total del producto
-      return true;
-    },
-    {
-      message: 'La cantidad defectuosa no puede ser mayor a la cantidad total',
-      path: ['defective_quantity']
-    }
-  );
-
-export const orderEditSchema = z.object({
-  products: z.array(productEditSchema)
-});
-
-export type OrderEditFormData = z.infer<typeof orderEditSchema>;
 export default function OrderForm({
   initialData,
   pageTitle
 }: {
   initialData: {
     order: Order | null;
-    customer: Customer | null;
   };
   pageTitle: string;
 }) {
+  const [pendingChanges, setPendingChanges] = useState<Record<string, any>>({});
   const order = initialData.order;
-  const customer = initialData.customer;
-  const form = useForm<OrderEditFormData>({
-    resolver: zodResolver(orderEditSchema),
+  const form = useForm<OrderUpdate>({
+    resolver: zodResolver(orderUpdateSchema),
     defaultValues: {
-      products:
-        order?.products.map((product) => ({
-          id: product.id,
-          defective: product.defective || false,
-          defective_quantity: product.defective_quantity || 0,
-          defect_comment: product.defect_comment || '',
-          unavailable: product.unavailable || false
-        })) || []
+      snapshot: {
+        firstName: order?.customer.snapshot.firstName,
+        lastName: order?.customer.snapshot.lastName,
+        dni: order?.customer.snapshot.dni,
+        email: order?.customer.snapshot.email,
+        phone: {
+          areaCode: order?.customer.snapshot.phone.areaCode,
+          number: order?.customer.snapshot.phone.number
+        }
+      },
+      shipping_information: {
+        delivery_option: order?.shipping_information.delivery_option,
+        adress: order?.shipping_information.adress,
+        locality: order?.shipping_information.locality,
+        shipping_type: order?.shipping_information.shipping_type
+      }
     }
   });
-  const {
-    control,
-    register,
-    formState: { errors },
-    setValue
-  } = form;
-
   if (!order) {
     return (
       <div className='space-y-6'>
@@ -112,21 +77,25 @@ export default function OrderForm({
       </div>
     );
   }
+  function handleUpdate(field: string, value: any) {
+    setPendingChanges((prev) => ({
+      ...prev,
+      [field]: value
+    }));
+  }
+  async function handleSave() {
+    const result = orderUpdateSchema.safeParse({
+      ...order, // datos actuales
+      ...pendingChanges // cambios locales
+    });
 
-  const defectiveProducts = order.products.filter((p) => p.defective);
-  const totalDefectiveValue = defectiveProducts.reduce(
-    (sum, p) => sum + p.subtotal,
-    0
-  );
-
-  function onSubmit(values: OrderEditFormData) {
-    try {
-      // Simular API call
-      console.log('Datos del formulario:', values);
-    } catch (error) {
-      console.error('Error al actualizar la orden:', error);
-      alert('Error al actualizar la orden');
+    if (!result.success) {
+      console.error('Errores:', result.error.format());
+      return; // no mandes nada
     }
+
+    console.log('Cambios guardados!', result.data);
+    setPendingChanges({}); // limpiás cambios pendientes
   }
   return (
     <Card className='mx-auto w-full'>
@@ -134,219 +103,74 @@ export default function OrderForm({
         <CardTitle className='text-left text-2xl font-bold'>
           {pageTitle}
         </CardTitle>
+        <Button
+          disabled={Object.keys(pendingChanges).length === 0}
+          onClick={handleSave}
+        >
+          Guardar Cambios
+        </Button>
       </CardHeader>
       <CardContent>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className='grid grid-cols-1 gap-6 md:grid-cols-3'
-          >
-            <div className='space-y-6 md:col-span-2'>
-              {/* Order Status */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className='flex items-center justify-between'>
-                    <span>Estado de la Orden</span>
-                    <Badge className={statusColors[order.status]}>
-                      {statusLabels[order.status]}
-                    </Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
-                    <div>
-                      <p className='text-sm text-gray-600'>Fecha de Orden</p>
-                      <p className='font-medium'>
-                        {new Date(order.created_at).toLocaleDateString('es-ES')}
-                      </p>
+        <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
+          <div className='space-y-6 md:col-span-2'>
+            <OrderStatusCard
+              order={order}
+              totalDefectiveValue={0}
+              // onUpdate={handleUpdate}
+            />
+            {/* Products */}
+            <Card>
+              <CardHeader>
+                <CardTitle className='flex items-center gap-2'>
+                  <Package className='h-5 w-5' />
+                  Productos ({order.items.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className='space-y-4'>
+                  {order.items.map((product, index) => (
+                    <div key={product._id}>
+                      {/* <ProductEditCard
+                        product={product}
+                        index={index}
+                        control={control}
+                        register={register}
+                        errors={errors}
+                        setValue={setValue}
+                      /> */}
+                      {index < order.items.length - 1 && (
+                        <Separator className='my-4' />
+                      )}
                     </div>
-                    <div>
-                      <p className='text-sm text-gray-600'>Total Original</p>
-                      <p className='font-medium'>
-                        ${(order.total + totalDefectiveValue).toFixed(2)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className='text-sm text-gray-600'>
-                        Productos Defectuosos
-                      </p>
-                      <p className='font-medium text-red-600'>
-                        -${totalDefectiveValue.toFixed(2)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className='text-sm text-gray-600'>Total Final</p>
-                      <p className='text-lg font-bold'>
-                        ${order.total.toFixed(2)}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          {/* Sidebar */}
+          <div className='space-y-6 md:col-span-1'>
+            {/* Customer Info */}
+            <CustomerInfo
+              order={order.customer}
+              status={order.status}
+              onUpdate={(update) => handleUpdate(update.path, update.value)}
+            />
 
-              {/* Products */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2'>
-                    <Package className='h-5 w-5' />
-                    Productos ({order.products.length})
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className='space-y-4'>
-                    {order.products.map((product, index) => (
-                      <div key={product.id}>
-                        {/* <ProductEditCard
-                          product={product}
-                          index={index}
-                          control={control}
-                          register={register}
-                          errors={errors}
-                          setValue={setValue}
-                        /> */}
-                        {index < order.products.length - 1 && (
-                          <Separator className='my-4' />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            {/* Shipping Address */}
+            <ShippingAddress
+              data={order.shipping_information}
+              status={order.status}
+              // onUpdate={handleUpdate}
+            />
 
-            {/* Sidebar */}
-            <div className='space-y-6 md:col-span-1'>
-              {/* Customer Info */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2'>
-                    <User className='h-5 w-5' />
-                    Información del Cliente
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className='space-y-4'>
-                  <div className='flex justify-center'>
-                    <Avatar className='h-24 w-24'>
-                      <AvatarImage src={customer?.avatar} alt='@shadcn' />
-                      <AvatarFallback>{`${customer?.firstName[0]}${customer?.lastName[0]}`}</AvatarFallback>
-                    </Avatar>
-                  </div>
-                  <div>
-                    <p className='text-sm text-gray-600'>Nombre</p>
-                    <p className='font-medium'>{`${customer?.firstName} ${customer?.lastName}`}</p>
-                  </div>
-                  <div>
-                    <p className='text-sm text-gray-600'>Email</p>
-                    <p className='flex items-center gap-2 font-medium'>
-                      <Mail className='h-4 w-4 text-gray-400' />
-                      {customer?.email}
-                    </p>
-                  </div>
-                  <div>
-                    <p className='text-sm text-gray-600'>Teléfono</p>
-                    <p className='flex items-center gap-2 font-medium'>
-                      <Phone className='h-4 w-4 text-gray-400' />
-                      {customer?.phone}
-                    </p>
-                  </div>
-                  <div>
-                    <p className='text-sm text-gray-600'>DNI</p>
-                    <p className='flex items-center gap-2 font-medium'>
-                      <Phone className='h-4 w-4 text-gray-400' />
-                      {customer?.dni}
-                    </p>
-                  </div>
-                  {/* Defective Products Alert */}
-                  {Number(customer?.cancelledOrders) > 0 ||
-                  Number(customer?.rejectedOrders) > 0 ? (
-                    <Card className='border-yellow-200 bg-yellow-50'>
-                      <CardHeader>
-                        <CardTitle className='flex items-center justify-center gap-2 text-yellow-800'>
-                          <AlertTriangle className='h-5 w-5' />
-                          Historial de Riesgo
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className='text-center font-medium text-yellow-800'>
-                          {`Este cliente tiene ${customer?.cancelledOrders} de ordenes calcelada.`}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ) : null}
-                </CardContent>
-              </Card>
-
-              {/* Shipping Address */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2'>
-                    <MapPin className='h-5 w-5' />
-                    Dirección de Envío
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className='space-y-1 text-sm'>
-                    <p className='font-medium'></p>
-                    <p>Neochcea 248</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Payment Info */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2'>
-                    <CreditCard className='h-5 w-5' />
-                    Información de Pago
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className='space-y-2 text-sm'>
-                    <div className='flex justify-between'>
-                      <span>Método:</span>
-                      <span className='font-medium'>transferencia</span>
-                    </div>
-                    <div className='flex justify-between'>
-                      <span>Estado:</span>
-                      <Badge
-                        variant='outline'
-                        className='border-green-200 bg-green-50 text-green-700'
-                      >
-                        process
-                      </Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Defective Products Alert */}
-              {defectiveProducts.length > 0 && (
-                <Card className='border-red-200 bg-red-50'>
-                  <CardHeader>
-                    <CardTitle className='flex items-center gap-2 text-red-800'>
-                      <AlertTriangle className='h-5 w-5' />
-                      Productos Defectuosos
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className='space-y-2 text-sm'>
-                      <p className='text-red-700'>
-                        {defectiveProducts.length} producto
-                        {defectiveProducts.length > 1 ? 's' : ''} marcado
-                        {defectiveProducts.length > 1 ? 's' : ''} como
-                        defectuoso
-                        {defectiveProducts.length > 1 ? 's' : ''}
-                      </p>
-                      <p className='font-medium text-red-800'>
-                        Descuento aplicado: ${totalDefectiveValue.toFixed(2)}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </form>
-        </Form>
+            {/* Payment Info */}
+            <PaymentInfo
+              paymentMethod={order.payment_method}
+              status={order.status}
+              // onUpdate={handleUpdate}
+            />
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

@@ -1,16 +1,15 @@
 'use client';
 
-import { AlertTriangle, Mail, Phone, User } from 'lucide-react';
+import { AlertTriangle, BookCheck, Mail, Phone, User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CustomerOrder, OrderStatus } from '@/types/order-new';
-
 import { Input } from '@/components/ui/input';
 
 interface CustomerInfoProps {
   order: CustomerOrder;
   status: OrderStatus;
-  onUpdate?: (field: keyof CustomerOrder['snapshot'], value: string) => void;
+  onUpdate?: (update: { path: string; value: string }) => void;
 }
 
 export const CustomerInfo = ({
@@ -26,25 +25,25 @@ export const CustomerInfo = ({
     value: string,
     field: keyof CustomerOrder['snapshot'],
     icon?: React.ReactNode
-  ) => {
-    return (
-      <div>
-        <p className='text-sm text-gray-600'>{label}</p>
-        <div className='flex items-center gap-2 font-medium'>
-          {icon}
-          {isEditable ? (
-            <Input
-              defaultValue={value}
-              onChange={(e) => onUpdate?.(field, e.target.value)}
-              className='h-8 w-full'
-            />
-          ) : (
-            <span>{value}</span>
-          )}
-        </div>
+  ) => (
+    <div>
+      <p className='text-sm text-gray-600'>{label}</p>
+      <div className='flex items-center gap-2 font-medium'>
+        {icon}
+        {isEditable ? (
+          <Input
+            defaultValue={value}
+            onChange={(e) =>
+              onUpdate?.({ path: `snapshot.${field}`, value: e.target.value })
+            }
+            className='h-8 w-full'
+          />
+        ) : (
+          <span>{value}</span>
+        )}
       </div>
-    );
-  };
+    </div>
+  );
 
   return (
     <Card>
@@ -68,7 +67,8 @@ export const CustomerInfo = ({
         {renderField(
           'Nombre',
           `${snapshot.firstName} ${snapshot.lastName}`,
-          'firstName'
+          'firstName',
+          <User className='h-4 w-4 text-gray-400' />
         )}
         {renderField(
           'Email',
@@ -79,13 +79,14 @@ export const CustomerInfo = ({
         {renderField(
           'Teléfono',
           `+${snapshot.phone.areaCode} ${snapshot.phone.number}`,
-          'phone'
+          'phone',
+          <Phone className='h-4 w-4 text-gray-400' />
         )}
         {renderField(
           'DNI',
           snapshot.dni,
           'dni',
-          <Phone className='h-4 w-4 text-gray-400' />
+          <BookCheck className='h-4 w-4 text-gray-400' />
         )}
 
         {/* Risk Alert */}

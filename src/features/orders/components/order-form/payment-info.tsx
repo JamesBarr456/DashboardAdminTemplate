@@ -9,7 +9,7 @@ import { STATUS } from '@/constants/mocks/orders';
 interface PaymentInfoProps {
   paymentMethod: NewOrder['payment_method'];
   status: OrderStatus;
-  onUpdate?: (field: 'payment_method', value: string) => void;
+  onUpdate?: (update: { path: string; value: string }) => void;
 }
 
 export const PaymentInfo = ({
@@ -19,18 +19,14 @@ export const PaymentInfo = ({
 }: PaymentInfoProps) => {
   const isEditable = status === 'pending';
 
-  const renderField = (
-    label: string,
-    value: string,
-    field: 'payment_method'
-  ) => (
+  const renderField = (label: string, value: string, path: string) => (
     <div className='space-y-1'>
       <p className='text-sm text-gray-600'>{label}</p>
       <div className='flex items-center gap-2 font-medium'>
         {isEditable ? (
           <Input
             defaultValue={value}
-            onChange={(e) => onUpdate?.(field, e.target.value)}
+            onChange={(e) => onUpdate?.({ path, value: e.target.value })}
             className='h-8 w-full'
           />
         ) : (

@@ -5,7 +5,7 @@ import { Column, ColumnDef } from '@tanstack/react-table';
 import { Badge } from '@/components/ui/badge';
 import { CellAction } from './cell-action';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
-import { Order } from '@/types/order';
+import { NewOrder as Order } from '@/types/order-new';
 import { format } from 'date-fns';
 
 export const columns: ColumnDef<Order>[] = [
@@ -16,7 +16,7 @@ export const columns: ColumnDef<Order>[] = [
       <DataTableColumnHeader column={column} title='ID de Órden' />
     ),
     cell: ({ cell }) => (
-      <span className='font-medium'>{cell.getValue<string>()}</span>
+      <span className='font-medium'>{cell.row.original._id}</span>
     ),
     meta: {
       label: 'Order ID',
@@ -31,7 +31,13 @@ export const columns: ColumnDef<Order>[] = [
     header: ({ column }: { column: Column<Order, unknown> }) => (
       <DataTableColumnHeader column={column} title='Nombre de Cliente' />
     ),
-    cell: ({ cell }) => <div>{cell.getValue<Order['user_name']>()}</div>,
+    cell: ({ cell }) => (
+      <div>
+        {cell.row.original.customer.snapshot.firstName +
+          ' ' +
+          cell.row.original.customer.snapshot.lastName}
+      </div>
+    ),
     meta: {
       label: 'Name',
       placeholder: 'Buscar por nombre...',
@@ -54,10 +60,10 @@ export const columns: ColumnDef<Order>[] = [
         Order['status'],
         'outline' | 'secondary' | 'default' | 'destructive'
       > = {
-        cancelled: 'secondary',
-        processing: 'outline',
-        sending: 'default',
-        rejected: 'destructive'
+        canceled: 'destructive',
+        pending: 'outline',
+        delivered: 'default',
+        confirmed: 'secondary'
       } as const;
 
       return (
@@ -71,10 +77,10 @@ export const columns: ColumnDef<Order>[] = [
       label: 'estado',
       variant: 'multiSelect',
       options: [
-        { value: 'rejected', label: 'Rechazado' },
-        { value: 'processing', label: 'En proceso' },
-        { value: 'sending', label: 'Enviandose' },
-        { value: 'cancelled', label: 'Cancelado' }
+        { value: 'confirmed', label: 'Confirmado' },
+        { value: 'pending', label: 'En proceso' },
+        { value: 'delivered', label: 'Enviandose' },
+        { value: 'canceled', label: 'Cancelado' }
       ]
     }
   },
@@ -82,7 +88,7 @@ export const columns: ColumnDef<Order>[] = [
     accessorKey: 'total',
     header: 'Total',
     cell: ({ cell }) => {
-      const value = cell.getValue<number>();
+      const value = cell.row.original.summary.grand_total;
       return <span>${value.toFixed(2)}</span>;
     }
   },
@@ -103,7 +109,7 @@ export const columns: ColumnDef<Order>[] = [
     accessorKey: 'created_at',
     header: 'Creado',
     cell: ({ cell }) => {
-      const date = new Date(cell.getValue<string>());
+      const date = new Date(cell.row.original.createdAt);
       return <span>{format(date, 'dd/MM/yyyy')}</span>;
     }
   },

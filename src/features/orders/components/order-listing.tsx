@@ -1,8 +1,8 @@
-import { Order } from '@/types/order';
 import { OrderTable } from './order-tables';
 import { columns } from './order-tables/columns';
 import { fakeOrders } from '@/services/order-mock-api';
 import { searchParamsOrderCache } from '@/lib/search-params-order';
+import { NewOrder } from '@/types/order-new';
 
 type OrderListingPage = {};
 
@@ -24,8 +24,9 @@ export default async function OrderListingPage({}: OrderListingPage) {
   const data = await fakeOrders.getOrders(filters);
 
   const totalOrders = data.total_orders;
-  const orders: Order[] = data.orders;
+  const orders: NewOrder[] = data.orders;
 
+  // console.log('Orders fetched:', orders);
   return (
     <OrderTable data={orders} totalItems={totalOrders} columns={columns} />
   );

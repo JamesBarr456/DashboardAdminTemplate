@@ -1,19 +1,19 @@
-import { Order } from '@/types/order';
 import { delay } from './product-mock-api';
 import { matchSorter } from 'match-sorter';
-import { ordersMock } from '../constants/mocks/orders';
+import { newOrderMock } from '../constants/mocks/orders';
+import { NewOrder } from '@/types/order-new';
 
 export const fakeOrders = {
-  records: [] as Order[],
+  records: [] as NewOrder[],
 
   initialize() {
     // Cargamos directamente desde ordersMock
-    this.records = [...ordersMock];
+    this.records = [...newOrderMock];
   },
 
   async getOrderById(orderId: string) {
     await delay(500);
-    const order = this.records.find((o) => o.id === orderId);
+    const order = this.records.find((o) => o._id === orderId);
 
     if (!order) {
       return { success: false, message: `Order ${orderId} not found` };
