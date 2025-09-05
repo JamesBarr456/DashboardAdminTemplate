@@ -19,7 +19,12 @@ export const shippingInformationSchema = z.object({
   locality: z.string().optional(),
   shipping_type: z.enum(['express', 'standard']).optional()
 });
-
+export const statusSchema = z.enum([
+  'pending',
+  'confirmed',
+  'delivered',
+  'canceled'
+]);
 // Lo que efectivamente podés mandar en el PATCH
 export const orderUpdateSchema = z.object({
   snapshot: customerSnapshotSchema.optional(),
