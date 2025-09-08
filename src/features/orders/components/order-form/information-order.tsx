@@ -25,16 +25,12 @@ interface OrderStatusCardProps {
   order: Order;
   totalDefectiveValue: number;
   control: Control<OrderUpdate>;
-
-  statusValue: string | undefined;
 }
 
 export function OrderStatusCard({
   order,
   totalDefectiveValue,
-  control,
-
-  statusValue
+  control
 }: OrderStatusCardProps) {
   return (
     <Card>
@@ -49,11 +45,7 @@ export function OrderStatusCard({
                 <FormItem>
                   <FormLabel className='sr-only'>Estado</FormLabel>
                   <FormControl>
-                    <Select
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      disabled={order.status !== 'pending'}
-                    >
+                    <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger className='w-[150px]'>
                         <SelectValue placeholder='Actualizar estado' />
                       </SelectTrigger>

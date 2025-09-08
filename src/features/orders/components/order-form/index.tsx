@@ -78,12 +78,13 @@ export default function OrderForm({
 
   async function handleSave(data: OrderUpdate) {
     if (!order) return;
+
     // Actualiza solo el status, o toda la orden según tu lógica
     if (data.status && data.status !== order.status) {
       updateOrderStatus(order._id, data.status);
     }
     // Si quieres actualizar más campos:
-    // updateOrder(order._id, data);
+    updateOrder(order._id, data);
   }
 
   return (
@@ -102,7 +103,6 @@ export default function OrderForm({
                   order={order}
                   totalDefectiveValue={0}
                   control={form.control}
-                  statusValue={form.watch('status')}
                 />
                 {/* Products */}
                 <Card>
@@ -119,7 +119,7 @@ export default function OrderForm({
                           <ProductEditCard
                             product={product}
                             index={index}
-                            status={order.status}
+                            status={form.watch('status')}
                           />
                           {index < order.items.length - 1 && (
                             <Separator className='my-4' />
@@ -136,25 +136,31 @@ export default function OrderForm({
                 <CustomerInfo
                   control={form.control}
                   order={order.customer}
-                  status={order.status}
+                  status={form.watch('status')}
                 />
 
                 {/* Shipping Address */}
                 <ShippingAddress
                   data={order.shipping_information}
-                  status={order.status}
+                  status={form.watch('status')}
                   control={form.control}
                 />
 
                 {/* Payment Info */}
                 <PaymentInfo
                   paymentMethod={order.payment_method}
-                  status={order.status}
+                  status={form.watch('status')}
                   control={form.control}
                 />
               </div>
             </div>
-            <Button type='submit'>Guardar Cambios</Button>
+            <Button
+              type='submit'
+              className='cursor-pointer'
+              disabled={form.watch('status') !== 'pending'}
+            >
+              Guardar Cambios
+            </Button>
           </form>
         </Form>
       </CardContent>

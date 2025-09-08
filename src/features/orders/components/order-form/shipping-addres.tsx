@@ -15,7 +15,7 @@ import { OrderUpdate } from '@/schemas/order-schema';
 
 interface ShippingAddressProps {
   data: ShippingInformation;
-  status: OrderStatus;
+  status: OrderStatus | undefined;
   control: Control<OrderUpdate>;
 }
 

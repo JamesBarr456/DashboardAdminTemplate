@@ -8,7 +8,13 @@ export const productSchema = z
   .object({
     id: z.string(),
     defective: z.boolean(),
-    defective_quantity: z.number().min(0),
+    defective_quantity: z.preprocess((val) => {
+      if (typeof val === 'string' && val.trim() !== '') {
+        const parsed = Number(val);
+        return isNaN(parsed) ? undefined : parsed;
+      }
+      return val;
+    }, z.number().min(0)),
     defect_comment: z
       .string()
       .max(500, 'El comentario no puede exceder 500 caracteres')
@@ -35,10 +41,10 @@ export const customerSnapshotSchema = z.object({
 });
 
 export const shippingInformationSchema = z.object({
-  delivery_option: z.enum(['delivery', 'pickup']).optional(),
+  delivery_option: z.enum(['delivery', 'pickup']),
   adress: z.string().optional(),
   locality: z.string().optional(),
-  shipping_type: z.enum(['express', 'standard']).optional()
+  shipping_type: z.enum(['express', 'standard'])
 });
 export const statusSchema = z.enum([
   'pending',
@@ -50,10 +56,9 @@ export const statusSchema = z.enum([
 export const orderUpdateSchema = z.object({
   snapshot: customerSnapshotSchema.optional(),
   shipping_information: shippingInformationSchema.optional(),
-  payment_method: z
-    .string()
-    .min(1, 'El método de pago es requerido')
-    .optional(),
+  payment_method: z.enum(['cash', 'transfer'], {
+    required_error: 'El método de pago es requerido'
+  }),
   status: statusSchema.optional(),
   items: z.array(productSchema).optional()
 });

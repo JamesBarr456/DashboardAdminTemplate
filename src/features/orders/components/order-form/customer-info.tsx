@@ -18,7 +18,7 @@ import { OrderUpdate } from '@/schemas/order-schema';
 
 interface CustomerInfoProps {
   order: CustomerOrder;
-  status: OrderStatus;
+  status: OrderStatus | undefined;
   control: Control<OrderUpdate>;
 }
 

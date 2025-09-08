@@ -17,7 +17,7 @@ import { STATUS } from '@/constants/mocks/orders';
 
 interface PaymentInfoProps {
   paymentMethod: string;
-  status: OrderStatus;
+  status: OrderStatus | undefined;
   control: Control<OrderUpdate>;
 }
 

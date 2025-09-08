@@ -14,7 +14,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Item } from '@/types/order-new';
+import { Item, OrderStatus } from '@/types/order-new';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils';
 interface ProductEditCardProps {
   product: Item;
   index: number;
-  status: string;
+  status: OrderStatus | undefined;
 }
 
 export const ProductEditCard = ({
@@ -48,12 +48,12 @@ export const ProductEditCard = ({
       )}
     >
       <CardContent className='p-6'>
-        <div className='flex items-start gap-4'>
+        <div className='flex flex-col gap-4'>
           <div className='flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-gray-100'>
             <Package className='h-6 w-6 text-gray-400' />
           </div>
           <div className='flex-1 space-y-4'>
-            <div className='flex items-start justify-between'>
+            <div className='flex justify-between'>
               <div className='space-y-1'>
                 <h4
                   className={cn(
