@@ -50,7 +50,7 @@ export const CustomerInfo = ({ order, status, control }: CustomerInfoProps) => {
           control={control}
           name='snapshot.firstName'
           render={({ field }) => (
-            <FormItem>
+            <FormItem className={!isEditable ? 'cursor-not-allowed' : ''}>
               <FormLabel>Nombre</FormLabel>
               <FormControl>
                 <Input {...field} disabled={!isEditable} placeholder='Nombre' />
@@ -65,7 +65,7 @@ export const CustomerInfo = ({ order, status, control }: CustomerInfoProps) => {
           control={control}
           name='snapshot.lastName'
           render={({ field }) => (
-            <FormItem>
+            <FormItem className={!isEditable ? 'cursor-not-allowed' : ''}>
               <FormLabel>Apellido</FormLabel>
               <FormControl>
                 <Input
@@ -84,7 +84,7 @@ export const CustomerInfo = ({ order, status, control }: CustomerInfoProps) => {
           control={control}
           name='snapshot.email'
           render={({ field }) => (
-            <FormItem>
+            <FormItem className={!isEditable ? 'cursor-not-allowed' : ''}>
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input
@@ -105,7 +105,9 @@ export const CustomerInfo = ({ order, status, control }: CustomerInfoProps) => {
             control={control}
             name='snapshot.phone.areaCode'
             render={({ field }) => (
-              <FormItem className='w-1/3'>
+              <FormItem
+                className={!isEditable ? 'w-1/3 cursor-not-allowed' : 'w-1/3'}
+              >
                 <FormLabel>Cod. Área</FormLabel>
                 <FormControl>
                   <Input {...field} disabled={!isEditable} placeholder='11' />
@@ -118,7 +120,9 @@ export const CustomerInfo = ({ order, status, control }: CustomerInfoProps) => {
             control={control}
             name='snapshot.phone.number'
             render={({ field }) => (
-              <FormItem className='w-2/3'>
+              <FormItem
+                className={!isEditable ? 'w-2/3 cursor-not-allowed' : 'w-2/3'}
+              >
                 <FormLabel>Número</FormLabel>
                 <FormControl>
                   <Input
@@ -138,7 +142,7 @@ export const CustomerInfo = ({ order, status, control }: CustomerInfoProps) => {
           control={control}
           name='snapshot.dni'
           render={({ field }) => (
-            <FormItem>
+            <FormItem className={!isEditable ? 'cursor-not-allowed' : ''}>
               <FormLabel>DNI</FormLabel>
               <FormControl>
                 <Input {...field} disabled={!isEditable} placeholder='DNI' />

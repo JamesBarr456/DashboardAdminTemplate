@@ -6,11 +6,17 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 
 import { Badge } from '@/components/ui/badge';
 import { Control } from 'react-hook-form';
 import { CreditCard } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 import { OrderStatus } from '@/types/order-new';
 import { OrderUpdate } from '@/schemas/order-schema';
 import { STATUS } from '@/constants/mocks/orders';
@@ -34,18 +40,33 @@ export const PaymentInfo = ({ status, control }: PaymentInfoProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent className='space-y-2 text-sm'>
+        {/* --- Opciones de entrega --- */}
         <FormField
           control={control}
           name='payment_method'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Método</FormLabel>
+              <FormLabel>Opción de entrega</FormLabel>
               <FormControl>
-                <Input
-                  {...field}
+                <Select
                   disabled={!isEditable}
-                  placeholder='Método de pago'
-                />
+                  onValueChange={field.onChange}
+                  value={field.value}
+                >
+                  <SelectTrigger
+                    className={
+                      !isEditable ? 'w-full cursor-not-allowed' : 'w-full'
+                    }
+                  >
+                    <SelectValue placeholder='Seleccionar opción' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value='transfer'>
+                      Pago por transferencia
+                    </SelectItem>
+                    <SelectItem value='cash'>Pago en efectivo</SelectItem>
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>

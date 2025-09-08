@@ -33,17 +33,17 @@ export const productSchema = z
     }
   );
 export const customerSnapshotSchema = z.object({
-  firstName: z.string().min(1, 'El nombre es requerido').optional(),
-  lastName: z.string().min(1, 'El apellido es requerido').optional(),
-  dni: z.string().min(7, 'El DNI debe tener al menos 7 caracteres').optional(),
-  email: z.string().email('Formato de email inválido').optional(),
+  firstName: z.string().min(1, 'El nombre es requerido'),
+  lastName: z.string().min(1, 'El apellido es requerido'),
+  dni: z.string().min(7, 'El DNI debe tener al menos 7 caracteres'),
+  email: z.string().email('Formato de email inválido'),
   phone: phoneSchema.partial().optional()
 });
 
 export const shippingInformationSchema = z.object({
   delivery_option: z.enum(['delivery', 'pickup']),
-  adress: z.string().optional(),
-  locality: z.string().optional(),
+  adress: z.string().min(1, 'La dirección es requerido'),
+  locality: z.string().min(1, 'La localidad es requerida'),
   shipping_type: z.enum(['express', 'standard'])
 });
 export const statusSchema = z.enum([

@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Control, useWatch } from 'react-hook-form';
 import {
   FormControl,
   FormField,
@@ -7,8 +8,14 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { OrderStatus, ShippingInformation } from '@/types/order-new';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 
-import { Control } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { MapPin } from 'lucide-react';
 import { OrderUpdate } from '@/schemas/order-schema';
@@ -24,8 +31,13 @@ export const ShippingAddress = ({
   status,
   control
 }: ShippingAddressProps) => {
-  const isEditable =
-    status === 'pending' && data.delivery_option === 'delivery';
+  const delivery_option = useWatch({
+    control,
+    name: `shipping_information.delivery_option`,
+    defaultValue: data.delivery_option ?? ''
+  });
+
+  const isEditable = status === 'pending';
 
   return (
     <Card>
@@ -35,8 +47,40 @@ export const ShippingAddress = ({
           Dirección de Envío
         </CardTitle>
       </CardHeader>
-      <CardContent className='space-y-2 text-sm'>
-        {data.delivery_option === 'delivery' ? (
+      <CardContent className='space-y-4 text-sm'>
+        {/* --- Opciones de entrega --- */}
+        <FormField
+          control={control}
+          name='shipping_information.delivery_option'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Opción de entrega</FormLabel>
+              <FormControl>
+                <Select
+                  disabled={!isEditable}
+                  onValueChange={field.onChange}
+                  value={field.value}
+                >
+                  <SelectTrigger
+                    className={
+                      !isEditable ? 'w-full cursor-not-allowed' : 'w-full'
+                    }
+                  >
+                    <SelectValue placeholder='Seleccionar opción' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value='delivery'>Envío a domicilio</SelectItem>
+                    <SelectItem value='pickup'>Retiro en el local</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* --- Si es envío a domicilio --- */}
+        {delivery_option === 'delivery' && (
           <>
             <FormField
               control={control}
@@ -55,6 +99,7 @@ export const ShippingAddress = ({
                 </FormItem>
               )}
             />
+
             <FormField
               control={control}
               name='shipping_information.locality'
@@ -72,6 +117,8 @@ export const ShippingAddress = ({
                 </FormItem>
               )}
             />
+
+            {/* --- Select de tipo de envío --- */}
             <FormField
               control={control}
               name='shipping_information.shipping_type'
@@ -79,19 +126,29 @@ export const ShippingAddress = ({
                 <FormItem>
                   <FormLabel>Tipo de envío</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
+                    <Select
                       disabled={!isEditable}
-                      placeholder='Tipo de envío'
-                    />
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <SelectTrigger
+                        className={
+                          !isEditable ? 'w-full cursor-not-allowed' : 'w-full'
+                        }
+                      >
+                        <SelectValue placeholder='Seleccionar tipo' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='express'>Express</SelectItem>
+                        <SelectItem value='standard'>Estándar</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </>
-        ) : (
-          <p className='text-gray-600 italic'>Pickup en local</p>
         )}
       </CardContent>
     </Card>

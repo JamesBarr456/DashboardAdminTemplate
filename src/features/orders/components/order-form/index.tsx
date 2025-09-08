@@ -89,14 +89,21 @@ export default function OrderForm({
 
   return (
     <Card className='mx-auto w-full'>
-      <CardHeader>
-        <CardTitle className='text-left text-2xl font-bold'>
-          {pageTitle}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSave)} className='space-y-8'>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSave)} className='space-y-8'>
+          <CardHeader className='flex items-center justify-between'>
+            <CardTitle className='text-left text-2xl font-bold'>
+              {pageTitle}
+            </CardTitle>
+            <Button
+              type='submit'
+              className='cursor-pointer'
+              disabled={form.watch('status') !== 'pending'}
+            >
+              Guardar Cambios
+            </Button>
+          </CardHeader>
+          <CardContent>
             <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
               <div className='space-y-6 md:col-span-2'>
                 <OrderStatusCard
@@ -154,16 +161,9 @@ export default function OrderForm({
                 />
               </div>
             </div>
-            <Button
-              type='submit'
-              className='cursor-pointer'
-              disabled={form.watch('status') !== 'pending'}
-            >
-              Guardar Cambios
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
+          </CardContent>
+        </form>
+      </Form>
     </Card>
   );
 }
