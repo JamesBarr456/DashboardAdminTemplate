@@ -1,49 +1,30 @@
 'use client';
 
-import { AlertTriangle, BookCheck, Mail, Phone, User } from 'lucide-react';
+import { AlertTriangle, User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CustomerOrder, OrderStatus } from '@/types/order-new';
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+
+import { Control } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
+import { OrderUpdate } from '@/schemas/order-schema';
 
 interface CustomerInfoProps {
   order: CustomerOrder;
   status: OrderStatus;
-  onUpdate?: (update: { path: string; value: string }) => void;
+  control: Control<OrderUpdate>;
 }
 
-export const CustomerInfo = ({
-  order,
-  status,
-  onUpdate
-}: CustomerInfoProps) => {
+export const CustomerInfo = ({ order, status, control }: CustomerInfoProps) => {
   const { snapshot, stats } = order;
   const isEditable = status === 'pending';
-
-  const renderField = (
-    label: string,
-    value: string,
-    field: keyof CustomerOrder['snapshot'],
-    icon?: React.ReactNode
-  ) => (
-    <div>
-      <p className='text-sm text-gray-600'>{label}</p>
-      <div className='flex items-center gap-2 font-medium'>
-        {icon}
-        {isEditable ? (
-          <Input
-            defaultValue={value}
-            onChange={(e) =>
-              onUpdate?.({ path: `snapshot.${field}`, value: e.target.value })
-            }
-            className='h-8 w-full'
-          />
-        ) : (
-          <span>{value}</span>
-        )}
-      </div>
-    </div>
-  );
 
   return (
     <Card>
@@ -64,30 +45,108 @@ export const CustomerInfo = ({
           </Avatar>
         </div>
 
-        {renderField(
-          'Nombre',
-          `${snapshot.firstName} ${snapshot.lastName}`,
-          'firstName',
-          <User className='h-4 w-4 text-gray-400' />
-        )}
-        {renderField(
-          'Email',
-          snapshot.email,
-          'email',
-          <Mail className='h-4 w-4 text-gray-400' />
-        )}
-        {renderField(
-          'Teléfono',
-          `+${snapshot.phone.areaCode} ${snapshot.phone.number}`,
-          'phone',
-          <Phone className='h-4 w-4 text-gray-400' />
-        )}
-        {renderField(
-          'DNI',
-          snapshot.dni,
-          'dni',
-          <BookCheck className='h-4 w-4 text-gray-400' />
-        )}
+        {/* Nombre */}
+        <FormField
+          control={control}
+          name='snapshot.firstName'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nombre</FormLabel>
+              <FormControl>
+                <Input {...field} disabled={!isEditable} placeholder='Nombre' />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Apellido */}
+        <FormField
+          control={control}
+          name='snapshot.lastName'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Apellido</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  disabled={!isEditable}
+                  placeholder='Apellido'
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Email */}
+        <FormField
+          control={control}
+          name='snapshot.email'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  disabled={!isEditable}
+                  placeholder='Email'
+                  type='email'
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Teléfono */}
+        <div className='flex gap-2'>
+          <FormField
+            control={control}
+            name='snapshot.phone.areaCode'
+            render={({ field }) => (
+              <FormItem className='w-1/3'>
+                <FormLabel>Cod. Área</FormLabel>
+                <FormControl>
+                  <Input {...field} disabled={!isEditable} placeholder='11' />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name='snapshot.phone.number'
+            render={({ field }) => (
+              <FormItem className='w-2/3'>
+                <FormLabel>Número</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    disabled={!isEditable}
+                    placeholder='12345678'
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* DNI */}
+        <FormField
+          control={control}
+          name='snapshot.dni'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>DNI</FormLabel>
+              <FormControl>
+                <Input {...field} disabled={!isEditable} placeholder='DNI' />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {/* Risk Alert */}
         {stats.cancelledOrders > 0 || stats.rejectedOrders > 0 ? (

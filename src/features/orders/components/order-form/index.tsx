@@ -1,34 +1,21 @@
 'use client';
 
-import {
-  AlertTriangle,
-  CreditCard,
-  Mail,
-  MapPin,
-  Package,
-  Phone,
-  User
-} from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { OrderUpdate, orderUpdateSchema } from '@/schemas/order-schema';
 
-import { Badge } from '@/components/ui/badge';
-import { Customer } from '@/types/user';
+import { Button } from '@/components/ui/button';
+import { CustomerInfo } from './customer-info';
 import { Form } from '@/components/ui/form';
 import { NewOrder as Order } from '@/types/order-new';
-// import { ProductEditCard } from '../order-card';
-import { STATUS } from '@/constants/mocks/orders';
-import { Separator } from '@/components/ui/separator';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { CustomerInfo } from './customer-info';
-import { ShippingAddress } from './shipping-addres';
-import { PaymentInfo } from './payment-info';
 import { OrderStatusCard } from './information-order';
-import { OrderUpdate, orderUpdateSchema } from '@/schemas/order-schema';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Package } from 'lucide-react';
+import { PaymentInfo } from './payment-info';
+import { ProductEditCard } from './products';
+import { Separator } from '@/components/ui/separator';
+import { ShippingAddress } from './shipping-addres';
+import { useForm } from 'react-hook-form';
+import { useOrderStore } from '@/store/order-state';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export default function OrderForm({
   initialData,
@@ -39,8 +26,9 @@ export default function OrderForm({
   };
   pageTitle: string;
 }) {
-  const [pendingChanges, setPendingChanges] = useState<Record<string, any>>({});
   const order = initialData.order;
+  const updateOrderStatus = useOrderStore((s) => s.updateOrderStatus);
+  const updateOrder = useOrderStore((s) => s.updateOrder);
   const form = useForm<OrderUpdate>({
     resolver: zodResolver(orderUpdateSchema),
     defaultValues: {
@@ -59,7 +47,17 @@ export default function OrderForm({
         adress: order?.shipping_information.adress,
         locality: order?.shipping_information.locality,
         shipping_type: order?.shipping_information.shipping_type
-      }
+      },
+      payment_method: order?.payment_method,
+      status: order?.status,
+      items:
+        order?.items?.map((item) => ({
+          id: item._id,
+          defective: item.defective || false,
+          defective_quantity: item.defective_quantity || 0,
+          defect_comment: item.defect_comment || '',
+          unavailable: item.unavailable || false
+        })) || []
     }
   });
   if (!order) {
@@ -77,100 +75,88 @@ export default function OrderForm({
       </div>
     );
   }
-  function handleUpdate(field: string, value: any) {
-    setPendingChanges((prev) => ({
-      ...prev,
-      [field]: value
-    }));
-  }
-  async function handleSave() {
-    const result = orderUpdateSchema.safeParse({
-      ...order, // datos actuales
-      ...pendingChanges // cambios locales
-    });
 
-    if (!result.success) {
-      console.error('Errores:', result.error.format());
-      return; // no mandes nada
+  async function handleSave(data: OrderUpdate) {
+    if (!order) return;
+    // Actualiza solo el status, o toda la orden según tu lógica
+    if (data.status && data.status !== order.status) {
+      updateOrderStatus(order._id, data.status);
     }
-
-    console.log('Cambios guardados!', result.data);
-    setPendingChanges({}); // limpiás cambios pendientes
+    // Si quieres actualizar más campos:
+    // updateOrder(order._id, data);
   }
+
   return (
     <Card className='mx-auto w-full'>
       <CardHeader>
         <CardTitle className='text-left text-2xl font-bold'>
           {pageTitle}
         </CardTitle>
-        <Button
-          disabled={Object.keys(pendingChanges).length === 0}
-          onClick={handleSave}
-        >
-          Guardar Cambios
-        </Button>
       </CardHeader>
       <CardContent>
-        <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
-          <div className='space-y-6 md:col-span-2'>
-            <OrderStatusCard
-              order={order}
-              totalDefectiveValue={0}
-              // onUpdate={handleUpdate}
-            />
-            {/* Products */}
-            <Card>
-              <CardHeader>
-                <CardTitle className='flex items-center gap-2'>
-                  <Package className='h-5 w-5' />
-                  Productos ({order.items.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='space-y-4'>
-                  {order.items.map((product, index) => (
-                    <div key={product._id}>
-                      {/* <ProductEditCard
-                        product={product}
-                        index={index}
-                        control={control}
-                        register={register}
-                        errors={errors}
-                        setValue={setValue}
-                      /> */}
-                      {index < order.items.length - 1 && (
-                        <Separator className='my-4' />
-                      )}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSave)} className='space-y-8'>
+            <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
+              <div className='space-y-6 md:col-span-2'>
+                <OrderStatusCard
+                  order={order}
+                  totalDefectiveValue={0}
+                  control={form.control}
+                  statusValue={form.watch('status')}
+                />
+                {/* Products */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className='flex items-center gap-2'>
+                      <Package className='h-5 w-5' />
+                      Productos ({order.items.length})
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className='space-y-4'>
+                      {order.items.map((product, index) => (
+                        <div key={product._id}>
+                          <ProductEditCard
+                            product={product}
+                            index={index}
+                            status={order.status}
+                          />
+                          {index < order.items.length - 1 && (
+                            <Separator className='my-4' />
+                          )}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          {/* Sidebar */}
-          <div className='space-y-6 md:col-span-1'>
-            {/* Customer Info */}
-            <CustomerInfo
-              order={order.customer}
-              status={order.status}
-              onUpdate={(update) => handleUpdate(update.path, update.value)}
-            />
+                  </CardContent>
+                </Card>
+              </div>
+              {/* Sidebar */}
+              <div className='space-y-6 md:col-span-1'>
+                {/* Customer Info */}
+                <CustomerInfo
+                  control={form.control}
+                  order={order.customer}
+                  status={order.status}
+                />
 
-            {/* Shipping Address */}
-            <ShippingAddress
-              data={order.shipping_information}
-              status={order.status}
-              // onUpdate={handleUpdate}
-            />
+                {/* Shipping Address */}
+                <ShippingAddress
+                  data={order.shipping_information}
+                  status={order.status}
+                  control={form.control}
+                />
 
-            {/* Payment Info */}
-            <PaymentInfo
-              paymentMethod={order.payment_method}
-              status={order.status}
-              // onUpdate={handleUpdate}
-            />
-          </div>
-        </div>
+                {/* Payment Info */}
+                <PaymentInfo
+                  paymentMethod={order.payment_method}
+                  status={order.status}
+                  control={form.control}
+                />
+              </div>
+            </div>
+            <Button type='submit'>Guardar Cambios</Button>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );

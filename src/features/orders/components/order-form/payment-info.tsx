@@ -1,41 +1,28 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { NewOrder, OrderStatus } from '@/types/order-new';
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
 
 import { Badge } from '@/components/ui/badge';
+import { Control } from 'react-hook-form';
 import { CreditCard } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { OrderStatus } from '@/types/order-new';
+import { OrderUpdate } from '@/schemas/order-schema';
 import { STATUS } from '@/constants/mocks/orders';
 
 interface PaymentInfoProps {
-  paymentMethod: NewOrder['payment_method'];
+  paymentMethod: string;
   status: OrderStatus;
-  onUpdate?: (update: { path: string; value: string }) => void;
+  control: Control<OrderUpdate>;
 }
 
-export const PaymentInfo = ({
-  paymentMethod,
-  status,
-  onUpdate
-}: PaymentInfoProps) => {
+export const PaymentInfo = ({ status, control }: PaymentInfoProps) => {
   const isEditable = status === 'pending';
-
-  const renderField = (label: string, value: string, path: string) => (
-    <div className='space-y-1'>
-      <p className='text-sm text-gray-600'>{label}</p>
-      <div className='flex items-center gap-2 font-medium'>
-        {isEditable ? (
-          <Input
-            defaultValue={value}
-            onChange={(e) => onUpdate?.({ path, value: e.target.value })}
-            className='h-8 w-full'
-          />
-        ) : (
-          <span>{value}</span>
-        )}
-      </div>
-    </div>
-  );
-
   const currentStatus = STATUS.find((s) => s.value === status);
 
   return (
@@ -47,10 +34,24 @@ export const PaymentInfo = ({
         </CardTitle>
       </CardHeader>
       <CardContent className='space-y-2 text-sm'>
-        <div className='flex items-center justify-between'>
-          {renderField('Método', paymentMethod, 'payment_method')}
-        </div>
-        <div className='flex items-center justify-between'>
+        <FormField
+          control={control}
+          name='payment_method'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Método</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  disabled={!isEditable}
+                  placeholder='Método de pago'
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className='mt-2 flex items-center justify-between'>
           <span>Estado:</span>
           {currentStatus ? (
             <Badge

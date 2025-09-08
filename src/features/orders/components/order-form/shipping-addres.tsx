@@ -1,48 +1,31 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
 import { OrderStatus, ShippingInformation } from '@/types/order-new';
 
+import { Control } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { MapPin } from 'lucide-react';
-import React from 'react';
+import { OrderUpdate } from '@/schemas/order-schema';
 
 interface ShippingAddressProps {
   data: ShippingInformation;
   status: OrderStatus;
-  onUpdate?: (update: { path: string; value: string }) => void;
+  control: Control<OrderUpdate>;
 }
 
 export const ShippingAddress = ({
   data,
   status,
-  onUpdate
+  control
 }: ShippingAddressProps) => {
   const isEditable =
     status === 'pending' && data.delivery_option === 'delivery';
-
-  const renderField = (
-    label: string,
-    value: string | undefined,
-    path: string,
-    icon?: React.ReactNode
-  ) => {
-    return (
-      <div className='space-y-1'>
-        <p className='text-sm text-gray-600'>{label}</p>
-        <div className='flex items-center gap-2 font-medium'>
-          {icon}
-          {isEditable ? (
-            <Input
-              defaultValue={value}
-              onChange={(e) => onUpdate?.({ path, value: e.target.value })}
-              className='h-8 w-full'
-            />
-          ) : (
-            <span>{value || '-'}</span>
-          )}
-        </div>
-      </div>
-    );
-  };
 
   return (
     <Card>
@@ -55,9 +38,57 @@ export const ShippingAddress = ({
       <CardContent className='space-y-2 text-sm'>
         {data.delivery_option === 'delivery' ? (
           <>
-            {renderField('Dirección', data.adress, 'adress')}
-            {renderField('Localidad', data.locality, 'locality')}
-            {renderField('Tipo de envío', data.shipping_type, 'shipping_type')}
+            <FormField
+              control={control}
+              name='shipping_information.adress'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Dirección</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={!isEditable}
+                      placeholder='Dirección'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name='shipping_information.locality'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Localidad</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={!isEditable}
+                      placeholder='Localidad'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name='shipping_information.shipping_type'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tipo de envío</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={!isEditable}
+                      placeholder='Tipo de envío'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </>
         ) : (
           <p className='text-gray-600 italic'>Pickup en local</p>

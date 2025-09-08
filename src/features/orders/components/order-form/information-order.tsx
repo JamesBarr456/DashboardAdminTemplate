@@ -1,27 +1,40 @@
 'use client';
 
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Control, FieldErrors } from 'react-hook-form';
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
 import {
   Select,
-  SelectTrigger,
   SelectContent,
   SelectItem,
+  SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+
 import { NewOrder as Order } from '@/types/order-new';
+import { OrderUpdate } from '@/schemas/order-schema';
 import { STATUS } from '@/constants/mocks/orders';
 
 interface OrderStatusCardProps {
   order: Order;
   totalDefectiveValue: number;
-  onUpdate?: (field: 'status', value: string) => void;
+  control: Control<OrderUpdate>;
+
+  statusValue: string | undefined;
 }
 
 export function OrderStatusCard({
   order,
   totalDefectiveValue,
-  onUpdate
+  control,
+
+  statusValue
 }: OrderStatusCardProps) {
   return (
     <Card>
@@ -29,21 +42,34 @@ export function OrderStatusCard({
         <CardTitle className='flex items-center justify-between'>
           <span>Estado de la Orden</span>
           <div className='flex items-center gap-2'>
-            <Select
-              value={order.status}
-              onValueChange={(value) => onUpdate?.('status', value)}
-            >
-              <SelectTrigger className='w-[150px]'>
-                <SelectValue placeholder='Actualizar estado' />
-              </SelectTrigger>
-              <SelectContent>
-                {STATUS.map((s) => (
-                  <SelectItem key={s.value} value={s.value}>
-                    {s.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <FormField
+              control={control}
+              name='status'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className='sr-only'>Estado</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      disabled={order.status !== 'pending'}
+                    >
+                      <SelectTrigger className='w-[150px]'>
+                        <SelectValue placeholder='Actualizar estado' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {STATUS.map((s) => (
+                          <SelectItem key={s.value} value={s.value}>
+                            {s.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </CardTitle>
       </CardHeader>

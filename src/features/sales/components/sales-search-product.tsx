@@ -129,7 +129,7 @@ export function ProductSearchDropdown({
                         <Image
                           width={16}
                           height={16}
-                          src={product.photo_url}
+                          src={product.images[0]}
                           alt={product.name}
                           className='h-16 w-16 rounded-md object-cover'
                         />
