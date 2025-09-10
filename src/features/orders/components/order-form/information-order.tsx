@@ -1,7 +1,6 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Control, FieldErrors } from 'react-hook-form';
 import {
   FormControl,
   FormField,
@@ -17,6 +16,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 
+import { Control } from 'react-hook-form';
 import { NewOrder as Order } from '@/types/order-new';
 import { OrderUpdate } from '@/schemas/order-schema';
 import { STATUS } from '@/constants/mocks/orders';
@@ -29,40 +29,13 @@ interface OrderStatusCardProps {
 
 export function OrderStatusCard({
   order,
-  totalDefectiveValue,
-  control
+  totalDefectiveValue
 }: OrderStatusCardProps) {
   return (
     <Card>
       <CardHeader>
         <CardTitle className='flex items-center justify-between'>
           <span>Estado de la Orden</span>
-          <div className='flex items-center gap-2'>
-            <FormField
-              control={control}
-              name='status'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className='sr-only'>Estado</FormLabel>
-                  <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className='w-[150px]'>
-                        <SelectValue placeholder='Actualizar estado' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {STATUS.map((s) => (
-                          <SelectItem key={s.value} value={s.value}>
-                            {s.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
         </CardTitle>
       </CardHeader>
       <CardContent>

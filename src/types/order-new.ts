@@ -45,7 +45,12 @@ export interface Summary {
   grand_total: number;
 }
 
-export type OrderStatus = 'pending' | 'confirmed' | 'delivered' | 'canceled';
+export type OrderStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'delivered'
+  | 'canceled'
+  | 'sending';
 
 export interface NewOrder {
   _id: string;

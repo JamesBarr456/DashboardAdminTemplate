@@ -432,24 +432,9 @@ export const newOrderMock: NewOrder[] = [
 ];
 
 export const STATUS = [
-  {
-    label: 'confirmado',
-    value: 'confirmed',
-    color: 'bg-green-100 text-green-800 border-green-200'
-  },
-  {
-    label: 'en proceso',
-    value: 'pending',
-    color: 'bg-blue-100 text-blue-800 border-blue-200'
-  },
-  {
-    label: 'enviandose',
-    value: 'delivered',
-    color: 'bg-purple-100 text-purple-800 border-purple-200'
-  },
-  {
-    label: 'cancelado',
-    value: 'cancelled',
-    color: 'bg-red-100 text-red-800 border-red-200'
-  }
+  { label: 'Pendiente', value: 'pending', number: 1 },
+  { label: 'Confirmado', value: 'confirmed', number: 2 },
+  { label: 'Enviando', value: 'sending', number: 3 },
+  { label: 'Entregado', value: 'delivered', number: 4 },
+  { label: 'Cancelado', value: 'canceled', number: 5 }
 ];

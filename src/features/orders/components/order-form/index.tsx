@@ -13,6 +13,7 @@ import { PaymentInfo } from './payment-info';
 import { ProductEditCard } from './products';
 import { Separator } from '@/components/ui/separator';
 import { ShippingAddress } from './shipping-addres';
+import { StatusCircles } from './status-steps-circles';
 import { useForm } from 'react-hook-form';
 import { useOrderStore } from '@/store/order-state';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -106,6 +107,12 @@ export default function OrderForm({
           <CardContent>
             <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
               <div className='space-y-6 md:col-span-2'>
+                {/* Order Status */}
+                <StatusCircles
+                  control={form.control}
+                  name='status'
+                  label='Progreso del proceso'
+                />
                 <OrderStatusCard
                   order={order}
                   totalDefectiveValue={0}

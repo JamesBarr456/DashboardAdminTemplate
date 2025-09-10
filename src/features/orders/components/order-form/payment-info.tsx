@@ -14,12 +14,10 @@ import {
   SelectValue
 } from '@/components/ui/select';
 
-import { Badge } from '@/components/ui/badge';
 import { Control } from 'react-hook-form';
 import { CreditCard } from 'lucide-react';
 import { OrderStatus } from '@/types/order-new';
 import { OrderUpdate } from '@/schemas/order-schema';
-import { STATUS } from '@/constants/mocks/orders';
 
 interface PaymentInfoProps {
   paymentMethod: string;
@@ -29,7 +27,6 @@ interface PaymentInfoProps {
 
 export const PaymentInfo = ({ status, control }: PaymentInfoProps) => {
   const isEditable = status === 'pending';
-  const currentStatus = STATUS.find((s) => s.value === status);
 
   return (
     <Card>
@@ -72,19 +69,6 @@ export const PaymentInfo = ({ status, control }: PaymentInfoProps) => {
             </FormItem>
           )}
         />
-        <div className='mt-2 flex items-center justify-between'>
-          <span>Estado:</span>
-          {currentStatus ? (
-            <Badge
-              className={`${currentStatus.color} border`}
-              variant='outline'
-            >
-              {currentStatus.label}
-            </Badge>
-          ) : (
-            <span>-</span>
-          )}
-        </div>
       </CardContent>
     </Card>
   );

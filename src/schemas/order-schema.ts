@@ -50,7 +50,8 @@ export const statusSchema = z.enum([
   'pending',
   'confirmed',
   'delivered',
-  'canceled'
+  'canceled',
+  'sending'
 ]);
 // Lo que efectivamente podés mandar en el PATCH
 export const orderUpdateSchema = z.object({
