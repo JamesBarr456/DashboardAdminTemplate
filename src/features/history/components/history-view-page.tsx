@@ -1,6 +1,5 @@
 'use client';
 
-import HistoryModalNew from './history-modal-new';
 import { HistoryTable } from './sales-product-table/index';
 import { columnsHistory } from './sales-product-table/columns';
 import { usePOSStore } from '@/store/pos-state';
@@ -14,16 +13,15 @@ interface Props {
   };
 }
 export default function HistoryViewPage({ filters }: Props) {
-  const { movements, addMovement, cashRegister } = usePOSStore();
+  const { movements } = usePOSStore();
   const totalMovements = movements.length;
 
-  console.log(filters);
   return (
     <>
-      <HistoryModalNew
+      {/* <HistoryModalNew
         addMovement={addMovement}
         cashier={cashRegister.cashier}
-      />
+      /> */}
       <HistoryTable
         data={movements}
         totalItems={totalMovements}

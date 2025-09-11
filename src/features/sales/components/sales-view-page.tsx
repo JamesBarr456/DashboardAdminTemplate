@@ -1,14 +1,19 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Clock, DollarSign, Package, User } from 'lucide-react';
-import { useEffect } from 'react';
+import {
+  Clock,
+  DollarSign,
+  PackageCheck,
+  PackageMinus,
+  User
+} from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
-
-import { usePOSStore } from '@/store/pos-state';
 import CashRegisterView from './prueba/cash-register-view';
 import StatCard from './prueba/stat-card';
+import { useEffect } from 'react';
+import { usePOSStore } from '@/store/pos-state';
 
 export default function SalesViewPage() {
   const {
@@ -46,7 +51,7 @@ export default function SalesViewPage() {
         </CardHeader>
         <CardContent>
           <CardContent>
-            <div className='flex items-center justify-evenly gap-4'>
+            <div className='grid grid-cols-2 items-center justify-evenly gap-4 md:grid-cols-4'>
               <StatCard
                 title='Monto Inicial'
                 value={`${cashRegister.initialAmount.toLocaleString()}`}
@@ -54,14 +59,14 @@ export default function SalesViewPage() {
               />
               <StatCard
                 title='Ventas del turno'
-                value={`${cashRegister.currentAmount.toLocaleString()}`}
-                icon={DollarSign}
+                value={4}
+                icon={PackageCheck}
               />
 
               <StatCard
                 title='Pedidos retirados'
                 value={8} //cashierStats.pedidosRetirados}
-                icon={Package}
+                icon={PackageMinus}
               />
               <StatCard
                 title='Apertura de caja'
