@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
-import { Minus, Package, Plus, ShoppingBag, Tag } from 'lucide-react';
+import { Package, ShoppingBag, Tag } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -21,10 +21,14 @@ import { Separator } from '@/components/ui/separator';
 interface Props {
   isModalOpen: boolean;
   product: Product | null;
-  onSelect: (product: Product, quantity: number, size: string) => void;
+  onSelect: (
+    selections: { product: Product; size: string; quantity: number }[]
+  ) => void;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setProductSelect: React.Dispatch<React.SetStateAction<Product | null>>;
 }
+
+type SizeSelection = { size: string; quantity: number };
 
 function SalesModalProduct({
   isModalOpen,
@@ -32,12 +36,10 @@ function SalesModalProduct({
   setIsModalOpen,
   onSelect
 }: Props) {
-  const [selectedSize, setSelectedSize] = useState<string>('');
-  const [quantity, setQuantity] = useState<number>(1);
+  const [selections, setSelections] = useState<SizeSelection[]>([]);
 
   const sizeOptions = useMemo(() => {
     if (!product?.stock) return [];
-
     return Object.entries(product.stock).map(([size, stock]) => ({
       size,
       stock: stock as number,
@@ -45,39 +47,53 @@ function SalesModalProduct({
     }));
   }, [product]);
 
-  const maxQuantity = useMemo(() => {
-    if (!product?.stock || !selectedSize) return 1;
-    return product.stock[selectedSize] || 1;
-  }, [product, selectedSize]);
-
-  const handleQuantityChange = (change: number) => {
-    const newQuantity = quantity + change;
-    if (newQuantity >= 1 && newQuantity <= maxQuantity) {
-      setQuantity(newQuantity);
-    }
-  };
-
-  const handleQuantityInput = (value: string) => {
-    const numValue = Number.parseInt(value) || 1;
-    const clampedValue = Math.max(1, Math.min(numValue, maxQuantity));
-    setQuantity(clampedValue);
+  // Maneja el cambio de cantidad para cada talle
+  const handleSizeQuantityChange = (
+    size: string,
+    quantity: number,
+    max: number
+  ) => {
+    const clamped = Math.max(0, Math.min(quantity, max));
+    setSelections((prev) => {
+      if (clamped === 0) {
+        return prev.filter((sel) => sel.size !== size);
+      }
+      const exists = prev.find((sel) => sel.size === size);
+      if (exists) {
+        return prev.map((sel) =>
+          sel.size === size ? { ...sel, quantity: clamped } : sel
+        );
+      }
+      return [...prev, { size, quantity: clamped }];
+    });
   };
 
   const handleModalClose = () => {
     setIsModalOpen(false);
-    setSelectedSize('');
-    setQuantity(1);
+    setSelections([]);
   };
 
   const handleAddToSale = () => {
-    if (product && selectedSize && quantity > 0) {
-      onSelect?.(product, quantity, selectedSize);
-      handleModalClose();
+    if (product) {
+      const validSelections = selections.filter((sel) => sel.quantity > 0);
+      if (validSelections.length > 0) {
+        onSelect(
+          validSelections.map((sel) => ({
+            product,
+            size: sel.size,
+            quantity: sel.quantity
+          }))
+        );
+        handleModalClose();
+      }
     }
   };
 
+  // Calcular el total general
   const totalPrice = product
-    ? (product.sale_price * quantity).toFixed(2)
+    ? selections
+        .reduce((acc, sel) => acc + product.sale_price * sel.quantity, 0)
+        .toFixed(2)
     : '0.00';
 
   return (
@@ -132,112 +148,101 @@ function SalesModalProduct({
 
             <Separator />
 
-            {/* Size Selection */}
+            {/* Selección de talles y cantidades */}
             <div className='space-y-3'>
               <Label className='text-base font-semibold'>
-                Seleccionar talle
+                Seleccionar talles y cantidades
               </Label>
-              <div className='grid grid-cols-3 gap-2 sm:grid-cols-4'>
-                {sizeOptions.map(({ size, stock, disabled }) => (
-                  <button
-                    key={size}
-                    type='button'
-                    onClick={() => !disabled && setSelectedSize(size)}
-                    disabled={disabled}
-                    className={`relative rounded-lg border-2 p-3 transition-all duration-200 ${
-                      selectedSize === size
-                        ? 'border-primary bg-primary text-primary-foreground shadow-md'
-                        : disabled
-                          ? 'cursor-not-allowed text-slate-400'
-                          : 'hover:border-primary hover:shadow-sm'
-                    } `}
-                  >
-                    <div className='text-sm font-semibold'>
-                      {size.toUpperCase()}
-                    </div>
+              <div className='grid grid-cols-2 gap-2 md:grid-cols-4'>
+                {sizeOptions.map(({ size, stock, disabled }) => {
+                  const selected = selections.find((sel) => sel.size === size);
+                  return (
                     <div
-                      className={`text-xs ${disabled ? 'text-slate-400' : 'text-muted-foreground'}`}
+                      key={size}
+                      className='flex flex-col items-center gap-3'
                     >
-                      {disabled ? 'Sin stock' : `${stock} unidades`}
-                    </div>
-
-                    {/* Stock indicator */}
-                    <div className='absolute top-1 right-1'>
-                      <div
-                        className={`h-2 w-2 rounded-full ${
+                      <button
+                        type='button'
+                        disabled={disabled}
+                        className={`relative w-20 rounded-lg border-2 p-3 text-center transition-all duration-200 ${
                           disabled
-                            ? 'bg-red-400'
-                            : stock > 10
-                              ? 'bg-green-400'
-                              : stock > 5
-                                ? 'bg-yellow-400'
-                                : 'bg-orange-400'
+                            ? 'cursor-not-allowed text-slate-400'
+                            : 'hover:border-primary hover:shadow-sm'
                         }`}
+                      >
+                        <div className='text-sm font-semibold'>
+                          {size.toUpperCase()}
+                        </div>
+                        <div
+                          className={`text-xs ${disabled ? 'text-slate-400' : 'text-muted-foreground'}`}
+                        >
+                          {disabled ? 'Sin stock' : `${stock} unidades`}
+                        </div>
+                        {/* Stock indicator */}
+                        <div className='absolute top-1 right-1'>
+                          <div
+                            className={`h-2 w-2 rounded-full ${
+                              disabled
+                                ? 'bg-red-400'
+                                : stock > 10
+                                  ? 'bg-green-400'
+                                  : stock > 5
+                                    ? 'bg-yellow-400'
+                                    : 'bg-orange-400'
+                            }`}
+                          />
+                        </div>
+                      </button>
+                      <Input
+                        type='number'
+                        min={0}
+                        max={stock}
+                        value={selected?.quantity ?? 0}
+                        disabled={disabled}
+                        onChange={(e) =>
+                          handleSizeQuantityChange(
+                            size,
+                            Number(e.target.value),
+                            stock
+                          )
+                        }
+                        className='w-20 text-center'
                       />
+                      <span className='text-muted-foreground text-xs'>
+                        Máx: {stock}
+                      </span>
                     </div>
-                  </button>
-                ))}
+                  );
+                })}
               </div>
-
-              {selectedSize && (
+              {/* Mostrar stock total seleccionado */}
+              {selections.some((sel) => sel.quantity > 0) && (
                 <div className='text-muted-foreground flex items-center gap-2 text-sm'>
                   <Package className='h-4 w-4' />
-                  <span>Stock disponible: {maxQuantity} unidades</span>
+                  <span>
+                    Total unidades seleccionadas:{' '}
+                    {selections.reduce((acc, sel) => acc + sel.quantity, 0)}
+                  </span>
                 </div>
               )}
             </div>
 
-            {/* Quantity Selection */}
-            <div className='space-y-3'>
-              <Label className='text-base font-semibold'>Cantidad</Label>
-              <div className='flex items-center justify-center gap-3'>
-                <Button
-                  type='button'
-                  variant='outline'
-                  size='icon'
-                  onClick={() => handleQuantityChange(-1)}
-                  disabled={!selectedSize || quantity <= 1}
-                  className='h-10 w-10 cursor-pointer'
-                >
-                  <Minus className='h-4 w-4' />
-                </Button>
-
-                <div className='w-20'>
-                  <Input
-                    type='number'
-                    min={1}
-                    max={maxQuantity}
-                    value={quantity}
-                    onChange={(e) => handleQuantityInput(e.target.value)}
-                    disabled={!selectedSize}
-                    className='text-center text-lg font-semibold'
-                  />
-                </div>
-
-                <Button
-                  type='button'
-                  variant='outline'
-                  size='icon'
-                  onClick={() => handleQuantityChange(1)}
-                  disabled={!selectedSize || quantity >= maxQuantity}
-                  className='h-10 w-10 cursor-pointer'
-                >
-                  <Plus className='h-4 w-4' />
-                </Button>
-              </div>
-            </div>
-
-            {/* Price Summary */}
-            {selectedSize && quantity > 0 && (
+            {/* Resumen de precio */}
+            {selections.some((sel) => sel.quantity > 0) && (
               <>
                 <Separator />
                 <div className='bg-primary/5 rounded-lg p-4'>
                   <div className='flex items-center justify-between'>
                     <div className='space-y-1'>
                       <p className='text-muted-foreground text-sm'>Total</p>
-                      <p className='text-sm'>
-                        {quantity} × ${product.sale_price}
-                      </p>
+                      {selections
+                        .filter((sel) => sel.quantity > 0)
+                        .map((sel) => (
+                          <p className='text-sm' key={sel.size}>
+                            {sel.quantity} × {sel.size.toUpperCase()} × $
+                            {product.sale_price}
+                          </p>
+                        ))}
                     </div>
                     <div className='text-right'>
                       <p className='text-primary text-2xl font-bold'>
@@ -261,7 +266,7 @@ function SalesModalProduct({
           </Button>
           <Button
             onClick={handleAddToSale}
-            disabled={!selectedSize || quantity < 1 || quantity > maxQuantity}
+            disabled={selections.filter((sel) => sel.quantity > 0).length === 0}
             className='bg-primary hover:bg-primary/90 flex-1 cursor-pointer sm:flex-none'
           >
             <ShoppingBag className='mr-2 h-4 w-4' />

@@ -19,7 +19,9 @@ import { cn } from '@/lib/utils';
 interface ProductSearchDropdownProps {
   products: Product[];
   placeholder?: string;
-  onSelect: (product: Product, quantity: number, size: string) => void;
+  onSelect: (
+    selections: { product: Product; size: string; quantity: number }[]
+  ) => void;
   className?: string;
 }
 
@@ -118,51 +120,46 @@ export function ProductSearchDropdown({
             {filteredProducts.length > 0 && (
               <CommandGroup>
                 {filteredProducts.map((product) => (
-                  <>
-                    <CommandItem
-                      key={product.name}
-                      value={product.id.toString()}
-                      onSelect={handleSelect}
-                      className='flex items-center gap-3 p-3'
-                    >
-                      <div className='flex-shrink-0'>
-                        <Image
-                          width={16}
-                          height={16}
-                          src={product.images[0]}
-                          alt={product.name}
-                          className='h-16 w-16 rounded-md object-cover'
-                        />
+                  <CommandItem
+                    key={product.name}
+                    value={product.id.toString()}
+                    onSelect={handleSelect}
+                    className='flex items-center gap-3 p-3'
+                  >
+                    <div className='flex-shrink-0'>
+                      <Image
+                        width={16}
+                        height={16}
+                        src={product.images[0]}
+                        alt={product.name}
+                        className='h-16 w-16 rounded-md object-cover'
+                      />
+                    </div>
+                    <div className='min-w-0 flex-1'>
+                      <h3 className='text-foreground truncate text-sm font-medium'>
+                        {highlightMatch(product.name, query)}
+                      </h3>
+                      <p className='text-muted-foreground text-xs'>
+                        SKU: {product.sku}
+                      </p>
+                      <div className='mt-1 flex items-center gap-2'>
+                        <span className='text-foreground font-semibold'>
+                          ${product.sale_price}
+                        </span>
+                        {product.has_discount &&
+                          product.discount_percentage && (
+                            <>
+                              <span className='text-muted-foreground text-sm line-through'>
+                                ${product.cost_price}
+                              </span>
+                              <Badge variant='destructive' className='text-xs'>
+                                -{product.discount_percentage}%
+                              </Badge>
+                            </>
+                          )}
                       </div>
-                      <div className='min-w-0 flex-1'>
-                        <h3 className='text-foreground truncate text-sm font-medium'>
-                          {highlightMatch(product.name, query)}
-                        </h3>
-                        <p className='text-muted-foreground text-xs'>
-                          SKU: {product.sku}
-                        </p>
-                        <div className='mt-1 flex items-center gap-2'>
-                          <span className='text-foreground font-semibold'>
-                            ${product.sale_price}
-                          </span>
-                          {product.has_discount &&
-                            product.discount_percentage && (
-                              <>
-                                <span className='text-muted-foreground text-sm line-through'>
-                                  ${product.cost_price}
-                                </span>
-                                <Badge
-                                  variant='destructive'
-                                  className='text-xs'
-                                >
-                                  -{product.discount_percentage}%
-                                </Badge>
-                              </>
-                            )}
-                        </div>
-                      </div>
-                    </CommandItem>
-                  </>
+                    </div>
+                  </CommandItem>
                 ))}
               </CommandGroup>
             )}

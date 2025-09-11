@@ -13,10 +13,10 @@ export const navItems: NavItem[] = [
 
   {
     title: 'Ventas',
-    url: '/dashboard/sells',
+    url: '/dashboard/sales',
     icon: 'shoppingCart',
     isActive: false,
-    shortcut: ['v', 'v'],
+    shortcut: ['s', 's'],
     items: []
   },
   {

@@ -51,7 +51,9 @@ interface POSState {
 
   openRegister: (initialAmount: number, cashier: string) => void;
   closeRegister: () => void;
-  addToSale: (product: Product, quantity: number, selectedSize: string) => void;
+  addToSale: (
+    items: { product: Product; size: string; quantity: number }[]
+  ) => void;
   removeFromSale: (productId: string, size: string) => void;
   updateSaleQuantity: (
     productId: string,
@@ -119,40 +121,31 @@ export const usePOSStore = create<POSState>((set) => ({
       }
     })),
 
-  addToSale: (product, quantity, selectedSize: string) =>
+  addToSale: (items) =>
     set((state) => {
-      const existingItem = state.currentSale.find(
-        (item) => item.product.id === product.id && item.size === selectedSize
-      );
+      let updatedSale = [...state.currentSale];
 
-      if (existingItem) {
-        const updatedItem = {
-          ...existingItem,
-          quantity: existingItem.quantity + quantity,
-          subtotal: (existingItem.quantity + quantity) * existingItem.unit_price
-        };
+      items.forEach(({ product, size, quantity }) => {
+        const existingItem = updatedSale.find(
+          (item) => item.product.id === product.id && item.size === size
+        );
 
-        return {
-          currentSale: state.currentSale.map((item) =>
-            item.product.id === product.id && item.size === selectedSize
-              ? updatedItem
-              : item
-          )
-        };
-      }
-
-      return {
-        currentSale: [
-          ...state.currentSale,
-          {
+        if (existingItem) {
+          existingItem.quantity += quantity;
+          existingItem.subtotal =
+            existingItem.quantity * existingItem.unit_price;
+        } else {
+          updatedSale.push({
             product,
-            size: selectedSize,
+            size,
             quantity,
             unit_price: product.sale_price,
             subtotal: product.sale_price * quantity
-          }
-        ]
-      };
+          });
+        }
+      });
+
+      return { currentSale: updatedSale };
     }),
 
   removeFromSale: (productId, size) =>
