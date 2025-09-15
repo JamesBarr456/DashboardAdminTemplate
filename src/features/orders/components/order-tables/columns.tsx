@@ -63,7 +63,8 @@ export const columns: ColumnDef<Order>[] = [
         canceled: 'destructive',
         pending: 'outline',
         delivered: 'default',
-        confirmed: 'secondary'
+        confirmed: 'secondary',
+        sending: 'secondary'
       } as const;
 
       return (
