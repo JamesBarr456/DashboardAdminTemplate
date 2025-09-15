@@ -1,22 +1,13 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Clock,
-  DollarSign,
-  PackageCheck,
-  PackageMinus,
-  User
-} from 'lucide-react';
-
-import { Badge } from '@/components/ui/badge';
-import CashRegisterView from './prueba/cash-register-view';
-import StatCard from './prueba/stat-card';
+import CashRegisterStats from './view-page/cash-register-stats';
+import OrdersTableView from './view-page/cash-register-view';
+import QuickActions from './view-page/quick-actions';
 import { useEffect } from 'react';
 import { usePOSStore } from '@/store/pos-state';
 
 export default function SalesViewPage() {
-  const { cashRegister, fetchProducts } = usePOSStore();
+  const { fetchProducts } = usePOSStore();
 
   useEffect(() => {
     fetchProducts();
@@ -24,67 +15,15 @@ export default function SalesViewPage() {
 
   return (
     <div className='space-y-6'>
-      {/* Estado de la Caja */}
-      <Card>
-        <CardHeader className='flex items-center justify-between'>
-          <div className='flex items-center gap-4'>
-            <div className='bg-muted rounded-2xl p-3'>
-              <User className='h-5 w-5' />
-            </div>
-            <div>
-              <CardTitle className='text-lg font-bold'>
-                Cajera: {cashRegister.cashier}
-              </CardTitle>
-              <p className='text-muted-foreground text-xs'>
-                Sistema de Ventas • Turno Activo
-              </p>
-            </div>
+      <CashRegisterStats />
+      <div className='bg-background min-h-screen p-4 lg:p-6'>
+        <div className='mx-auto space-y-5'>
+          <div className='grid grid-cols-1 gap-6 xl:grid-cols-4'>
+            <OrdersTableView />
+            <QuickActions />
           </div>
-
-          <Badge variant={cashRegister.isOpen ? 'default' : 'destructive'}>
-            {cashRegister.isOpen ? 'Caja Abierta' : 'Caja Cerrada'}
-          </Badge>
-        </CardHeader>
-        <CardContent>
-          <CardContent>
-            <div className='grid grid-cols-2 items-center justify-evenly gap-4 xl:grid-cols-6'>
-              <StatCard
-                title='Monto Inicial'
-                value={`${cashRegister.initialAmount.toLocaleString()}`}
-                icon={DollarSign}
-              />
-              <StatCard
-                title='Ventas de Efectivo'
-                value={`${cashRegister.initialAmount.toLocaleString()}`}
-                icon={DollarSign}
-              />
-              <StatCard
-                title='Total en Caja'
-                value={`${cashRegister.initialAmount.toLocaleString()}`}
-                icon={DollarSign}
-              />
-              <StatCard
-                title='Ventas del turno'
-                value={4}
-                icon={PackageCheck}
-              />
-
-              <StatCard
-                title='Pedidos retirados'
-                value={8} //cashierStats.pedidosRetirados}
-                icon={PackageMinus}
-              />
-              <StatCard
-                title='Apertura de caja'
-                value={cashRegister.openedAt?.toLocaleString() || '-'}
-                icon={Clock}
-              />
-            </div>
-          </CardContent>
-        </CardContent>
-      </Card>
-
-      <CashRegisterView />
+        </div>
+      </div>
     </div>
   );
 }

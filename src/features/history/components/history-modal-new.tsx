@@ -1,5 +1,6 @@
 'use client';
 
+import { CashRegister, Movement } from '@/store/pos-state';
 import {
   Dialog,
   DialogContent,
@@ -20,13 +21,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { usePOSStore } from '@/store/pos-state';
 import { useState } from 'react';
 
 type MovementType = 'income' | 'expense';
 
 interface HistoryModalNewProps {
   type: MovementType;
+  addMovement: (movement: Omit<Movement, 'id' | 'timestamp'>) => void;
+  cashRegister: CashRegister;
 }
 const conceptsByType: Record<MovementType, string[]> = {
   income: [
@@ -45,9 +47,11 @@ const conceptsByType: Record<MovementType, string[]> = {
     'Otros'
   ]
 };
-function HistoryModalNew({ type }: HistoryModalNewProps) {
-  const { addMovement, cashRegister } = usePOSStore();
-
+function HistoryModalNew({
+  type,
+  addMovement,
+  cashRegister
+}: HistoryModalNewProps) {
   const [newMovement, setNewMovement] = useState({
     concept: '',
     amount: '',
@@ -79,6 +83,7 @@ function HistoryModalNew({ type }: HistoryModalNewProps) {
       <DialogTrigger asChild>
         <Button
           className='flex w-full cursor-pointer items-center gap-2'
+          disabled={!cashRegister.isOpen}
           variant={type === 'income' ? 'default' : 'destructive'}
         >
           {type === 'income' ? (

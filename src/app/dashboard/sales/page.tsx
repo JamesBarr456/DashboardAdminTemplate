@@ -1,9 +1,9 @@
+import { CashRegisterModal } from '@/features/sales/components/view-page/button-open-cash';
 import { Heading } from '@/components/ui/heading';
 import PageContainer from '@/components/layout/page-container';
 import SalesViewPage from '@/features/sales/components/sales-view-page';
 import { Separator } from '@/components/ui/separator';
 import { Suspense } from 'react';
-import { CashRegisterModal } from '@/features/sales/components/prueba/button-open-cash';
 
 export default function SalesPage() {
   return (
