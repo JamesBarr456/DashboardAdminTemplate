@@ -1,31 +1,32 @@
 'use client';
 
-import { parseAsInteger, useQueryState } from 'nuqs';
-
-import { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/components/ui/table/data-table';
 import { DataTableToolbar } from '@/components/ui/table/data-table-toolbar';
+
 import { useDataTable } from '@/hooks/use-data-table';
 
-interface OrderTableParams<TData, TValue> {
+import { ColumnDef } from '@tanstack/react-table';
+import { parseAsInteger, useQueryState } from 'nuqs';
+
+interface TableCustomParams<TData, TValue> {
   data: TData[];
   totalItems: number;
   columns: ColumnDef<TData, TValue>[];
 }
-export function OrderTable<TData, TValue>({
+export function TableCustom<TData, TValue>({
   data,
   totalItems,
   columns
-}: OrderTableParams<TData, TValue>) {
+}: TableCustomParams<TData, TValue>) {
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
 
   const pageCount = Math.ceil(totalItems / pageSize);
 
   const { table } = useDataTable({
-    data, // order data
-    columns, // order columns
+    data,
+    columns,
     pageCount: pageCount,
-    shallow: false, //Setting to false triggers a network request with the updated querystring.
+    shallow: false,
     debounceMs: 500
   });
 

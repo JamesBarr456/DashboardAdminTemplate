@@ -8,8 +8,8 @@ import { JSX } from 'react';
 
 export function IconTooltipButton(
   icon: JSX.Element,
-  onClick: () => void,
   label: string,
+  onClick?: () => void,
   variant: 'outline' | 'destructive' = 'outline'
 ) {
   return (

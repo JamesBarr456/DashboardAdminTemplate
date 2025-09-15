@@ -1,10 +1,11 @@
 'use client';
 
 import PageContainer from '@/components/layout/page-container';
+import { TableCustom } from '@/components/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-import { SalesProductTable } from '@/features/sales/components/sales-product-table';
+
 import { columnsSale } from '@/features/sales/components/sales-product-table/columns';
 import { ProductSearchDropdown } from '@/features/sales/components/sales-search-product';
 import SalesSummary from '@/features/sales/components/sales-summary';
@@ -63,7 +64,7 @@ function StartPostPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className='flex h-[500px] flex-col'>
-                    <SalesProductTable
+                    <TableCustom
                       columns={columnsSale}
                       data={currentSale}
                       totalItems={currentSale.length}

@@ -33,6 +33,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onClose={() => setOpen(false)}
         onConfirm={onConfirm}
         loading={loading}
+        title='¿Estás seguro de que deseas eliminar este producto?'
+        description='Esta acción no se puede deshacer.'
       />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>

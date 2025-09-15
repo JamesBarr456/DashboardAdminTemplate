@@ -16,11 +16,7 @@ import { useEffect } from 'react';
 import { usePOSStore } from '@/store/pos-state';
 
 export default function SalesViewPage() {
-  const {
-    cashRegister,
-
-    fetchProducts
-  } = usePOSStore();
+  const { cashRegister, fetchProducts } = usePOSStore();
 
   useEffect(() => {
     fetchProducts();

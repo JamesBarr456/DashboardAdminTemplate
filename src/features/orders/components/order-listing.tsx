@@ -1,8 +1,8 @@
-import { OrderTable } from './order-tables';
 import { columns } from './order-tables/columns';
 import { fakeOrders } from '@/services/order-mock-api';
 import { searchParamsOrderCache } from '@/lib/search-params-order';
 import { NewOrder } from '@/types/order-new';
+import { TableCustom } from '@/components/table';
 
 type OrderListingPage = {};
 
@@ -28,6 +28,6 @@ export default async function OrderListingPage({}: OrderListingPage) {
 
   // console.log('Orders fetched:', orders);
   return (
-    <OrderTable data={orders} totalItems={totalOrders} columns={columns} />
+    <TableCustom data={orders} totalItems={totalOrders} columns={columns} />
   );
 }
