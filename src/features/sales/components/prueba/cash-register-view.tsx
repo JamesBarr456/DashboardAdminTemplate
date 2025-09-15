@@ -1,14 +1,10 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { Clock, Package } from 'lucide-react';
 
 import { cashierStats } from '@/constants/mock-sell';
 import { Button } from '@/components/ui/button';
-
-import OrdersTable from './orders-table';
 import CashSummaryCard from './cash-summary-card';
-
+import HistoryModalNew from '@/features/history/components/history-modal-new';
 import Link from 'next/link';
 import { useOrderStore } from '@/store/order-state';
 import { columns as ordersPendingColumn } from '../sales-orders-pending/columns';
@@ -23,7 +19,7 @@ function CashRegisterView() {
   );
   return (
     <div className='bg-background min-h-screen p-4 lg:p-6'>
-      <div className='mx-auto max-w-7xl space-y-5'>
+      <div className='mx-auto space-y-5'>
         {/* Main Content Grid */}
         <div className='grid grid-cols-1 gap-6 xl:grid-cols-4'>
           {/* Orders Section */}
@@ -62,21 +58,8 @@ function CashRegisterView() {
 
                 <Separator className='my-4' />
 
-                <Button
-                  //   icon={ArrowUpCircle}
-                  variant='default'
-                  className='w-full'
-                >
-                  Ingreso de Efectivo
-                </Button>
-
-                <Button
-                  //   icon={ArrowDownCircle}
-                  variant='destructive'
-                  className='w-full'
-                >
-                  Egreso de Efectivo
-                </Button>
+                <HistoryModalNew type='income' />
+                <HistoryModalNew type='expense' />
               </CardContent>
             </Card>
 

@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
-import { Minus, Plus } from 'lucide-react';
+import { MinusCircle, PlusCircle } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -18,119 +18,142 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Movement } from '@/store/pos-state';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { usePOSStore } from '@/store/pos-state';
 import { useState } from 'react';
 
-interface Props {
-  addMovement: (movement: Omit<Movement, 'id' | 'timestamp'>) => void;
-  cashier: string;
-}
+type MovementType = 'income' | 'expense';
 
-function HistoryModalNew({ addMovement, cashier }: Props) {
+interface HistoryModalNewProps {
+  type: MovementType;
+}
+const conceptsByType: Record<MovementType, string[]> = {
+  income: [
+    'Venta mostrador',
+    'Transferencia',
+    'MercadoPago',
+    'Devolución cliente',
+    'Otros'
+  ],
+  expense: [
+    'Proveedor',
+    'Proveedor Hugo',
+    'Ale',
+    'Sueldos',
+    'Pago de servicios',
+    'Otros'
+  ]
+};
+function HistoryModalNew({ type }: HistoryModalNewProps) {
+  const { addMovement, cashRegister } = usePOSStore();
+
   const [newMovement, setNewMovement] = useState({
-    type: 'income' as 'income' | 'expense',
-    amount: 0,
+    concept: '',
+    amount: '',
     description: ''
   });
-
+  const cashier = cashRegister.cashier;
   const handleAddMovement = () => {
-    if (!newMovement.amount || newMovement.amount <= 0) return;
+    const amountNumber = Number(newMovement.amount);
+    if (!amountNumber || amountNumber <= 0) return;
 
     addMovement({
-      type: newMovement.type,
-      amount: newMovement.amount,
+      type,
+      amount: amountNumber,
       description: newMovement.description,
+      concept: newMovement.concept,
       cashier
     });
 
     // reset form
     setNewMovement({
-      type: 'income',
-      amount: 0,
-      description: ''
+      amount: '',
+      description: '',
+      concept: ''
     });
   };
 
   return (
-    <div className='flex justify-end'>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button>Nuevo Movimiento</Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Registrar Movimiento</DialogTitle>
-          </DialogHeader>
-          <div className='space-y-4'>
-            <div className='flex justify-between gap-6'>
-              <div>
-                <label className='text-sm font-medium'>
-                  Tipo de Movimiento
-                </label>
-                <Select
-                  value={newMovement.type}
-                  onValueChange={(value: 'income' | 'expense') =>
-                    setNewMovement((prev) => ({ ...prev, type: value }))
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder='Selecciona un tipo' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='income'>
-                      <div className='flex items-center gap-2'>
-                        <Plus className='h-4 w-4 text-green-500' />
-                        Ingreso
-                      </div>
-                    </SelectItem>
-                    <SelectItem value='expense'>
-                      <div className='flex items-center gap-2'>
-                        <Minus className='h-4 w-4 text-red-500' />
-                        Egreso
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label className='text-sm font-medium'>Monto</label>
-                <Input
-                  type='number'
-                  placeholder='0.00'
-                  value={newMovement.amount}
-                  onChange={(e) =>
-                    setNewMovement((prev) => ({
-                      ...prev,
-                      amount: Number(e.target.value)
-                    }))
-                  }
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className='text-sm font-medium'>Descripción</label>
-              <Textarea
-                placeholder='Descripción del movimiento...'
-                value={newMovement.description}
-                onChange={(e) =>
-                  setNewMovement((prev) => ({
-                    ...prev,
-                    description: e.target.value
-                  }))
-                }
-              />
-            </div>
-
-            <Button onClick={handleAddMovement} className='w-full'>
-              Registrar Movimiento
-            </Button>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          className='flex w-full cursor-pointer items-center gap-2'
+          variant={type === 'income' ? 'default' : 'destructive'}
+        >
+          {type === 'income' ? (
+            <>
+              <PlusCircle className='h-5 w-5' />
+              Ingreso de Dinero
+            </>
+          ) : (
+            <>
+              <MinusCircle className='h-5 w-5' />
+              Egreso de Dinero
+            </>
+          )}
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            {type === 'income' ? 'Registrar Ingreso' : 'Registrar Egreso'}
+          </DialogTitle>
+        </DialogHeader>
+        <div className='space-y-4'>
+          <div>
+            <label className='text-sm font-medium'>Concepto</label>
+            <Select
+              value={newMovement.concept}
+              onValueChange={(value) =>
+                setNewMovement((prev) => ({ ...prev, concept: value }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder='Selecciona un concepto' />
+              </SelectTrigger>
+              <SelectContent>
+                {conceptsByType[type].map((concept) => (
+                  <SelectItem key={concept} value={concept}>
+                    {concept}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        </DialogContent>
-      </Dialog>
-    </div>
+          <div>
+            <Label className='text-sm font-medium'>Monto</Label>
+            <Input
+              type='number'
+              placeholder='0.00'
+              value={newMovement.amount}
+              onChange={(e) =>
+                setNewMovement((prev) => ({
+                  ...prev,
+                  amount: e.target.value
+                }))
+              }
+            />
+          </div>
+          <div>
+            <label className='text-sm font-medium'>Descripción</label>
+            <Textarea
+              placeholder='Descripción del movimiento...'
+              value={newMovement.description}
+              onChange={(e) =>
+                setNewMovement((prev) => ({
+                  ...prev,
+                  description: e.target.value
+                }))
+              }
+            />
+          </div>
+          <Button onClick={handleAddMovement} className='w-full'>
+            {type === 'income' ? 'Registrar Ingreso' : 'Registrar Egreso'}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

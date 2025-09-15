@@ -25,7 +25,8 @@ export interface Movement {
   id: string;
   type: 'sale' | 'return' | 'expense' | 'income';
   amount: number;
-  description: string;
+  concept: string;
+  description?: string;
   cashier: string;
   timestamp: Date;
 }
@@ -104,6 +105,7 @@ export const usePOSStore = create<POSState>((set) => ({
           id: Date.now().toString(),
           type: 'income',
           amount: initialAmount,
+          concept: 'Apertura de caja', // <-- agregado
           description: 'Apertura de caja',
           cashier,
           timestamp: new Date()
@@ -180,7 +182,6 @@ export const usePOSStore = create<POSState>((set) => ({
       const sale: Sale = {
         id: Date.now().toString(),
         items,
-
         total: finalTotal,
         paymentMethod,
         cashier: state.cashRegister.cashier,
@@ -191,6 +192,7 @@ export const usePOSStore = create<POSState>((set) => ({
         id: (Date.now() + 1).toString(),
         type: 'sale',
         amount: finalTotal,
+        concept: 'Venta', // <-- agregado
         description: `Venta #${sale.id}`,
         cashier: state.cashRegister.cashier,
         timestamp: new Date()

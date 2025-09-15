@@ -64,7 +64,7 @@ export const columns: ColumnDef<Order>[] = [
         pending: 'outline',
         delivered: 'default',
         confirmed: 'secondary',
-        sending: 'secondary'
+        sending: 'default'
       } as const;
 
       return (
