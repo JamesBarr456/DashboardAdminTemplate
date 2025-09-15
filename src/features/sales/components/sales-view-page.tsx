@@ -11,11 +11,7 @@ import CashRegisterView from './prueba/cash-register-view';
 import StatCard from './prueba/stat-card';
 
 export default function SalesViewPage() {
-  const {
-    cashRegister,
-
-    fetchProducts
-  } = usePOSStore();
+  const { cashRegister, fetchProducts } = usePOSStore();
 
   useEffect(() => {
     fetchProducts();

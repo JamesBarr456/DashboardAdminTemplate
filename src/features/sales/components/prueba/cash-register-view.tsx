@@ -3,19 +3,24 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Clock, Package } from 'lucide-react';
 
-import {
-  cashierStats,
-  completedOrders,
-  pendingOrders
-} from '@/constants/mock-sell';
+import { cashierStats } from '@/constants/mock-sell';
 import { Button } from '@/components/ui/button';
 
 import OrdersTable from './orders-table';
 import CashSummaryCard from './cash-summary-card';
 
 import Link from 'next/link';
+import { useOrderStore } from '@/store/order-state';
+import { columns as ordersPendingColumn } from '../sales-orders-pending/columns';
 
 function CashRegisterView() {
+  const { orders } = useOrderStore();
+  const totalItemsPending = orders.filter(
+    (order) => order.status === 'pending'
+  );
+  const totalItemsDelivered = orders.filter(
+    (order) => order.status === 'delivered'
+  );
   return (
     <div className='bg-background min-h-screen p-4 lg:p-6'>
       <div className='mx-auto max-w-7xl space-y-5'>
@@ -25,13 +30,17 @@ function CashRegisterView() {
           <div className='space-y-6 xl:col-span-3'>
             <OrdersTable
               title='Pedidos Pendientes'
-              orders={pendingOrders}
+              orders={totalItemsPending}
+              columns={ordersPendingColumn}
+              totalItems={totalItemsPending.length}
               icon={Clock}
             />
 
             <OrdersTable
               title='Pedidos Retirados'
-              orders={completedOrders}
+              orders={totalItemsDelivered}
+              columns={ordersPendingColumn}
+              totalItems={totalItemsDelivered.length}
               icon={Package}
             />
           </div>
@@ -49,14 +58,6 @@ function CashRegisterView() {
                   <Link href='/dashboard/sales/start-pos' className='w-full'>
                     Iniciar Venta
                   </Link>
-                </Button>
-
-                <Button
-                  //   icon={Package}
-                  variant='secondary'
-                  className='w-full'
-                >
-                  Retiro de Pedido
                 </Button>
 
                 <Separator className='my-4' />

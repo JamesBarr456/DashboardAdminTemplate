@@ -27,8 +27,8 @@ export default async function Page(props: pageProps) {
     <PageContainer scrollable={false}>
       <div className='flex flex-1 flex-col space-y-4'>
         <Heading
-          title='Orders'
-          description='Manage orders (Server side table functionalities.)'
+          title='Historial de Ordenes'
+          description='Administra todas las órdenes de tu tienda aquí.'
         />
 
         <Separator />
