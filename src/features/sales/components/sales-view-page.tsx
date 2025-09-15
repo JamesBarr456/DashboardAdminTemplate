@@ -51,9 +51,19 @@ export default function SalesViewPage() {
         </CardHeader>
         <CardContent>
           <CardContent>
-            <div className='grid grid-cols-2 items-center justify-evenly gap-4 md:grid-cols-4'>
+            <div className='grid grid-cols-2 items-center justify-evenly gap-4 xl:grid-cols-6'>
               <StatCard
                 title='Monto Inicial'
+                value={`${cashRegister.initialAmount.toLocaleString()}`}
+                icon={DollarSign}
+              />
+              <StatCard
+                title='Ventas de Efectivo'
+                value={`${cashRegister.initialAmount.toLocaleString()}`}
+                icon={DollarSign}
+              />
+              <StatCard
+                title='Total en Caja'
                 value={`${cashRegister.initialAmount.toLocaleString()}`}
                 icon={DollarSign}
               />

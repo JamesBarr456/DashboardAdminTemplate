@@ -1,13 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Clock, Package } from 'lucide-react';
-import {
-  cashierStats,
-  completedOrders,
-  pendingOrders
-} from '@/constants/mock-sell';
+import { completedOrders, pendingOrders } from '@/constants/mock-sell';
 
 import { Button } from '@/components/ui/button';
-import CashSummaryCard from './cash-summary-card';
 import HistoryModalNew from '@/features/history/components/history-modal-new';
 import Link from 'next/link';
 import OrdersTable from './orders-table';
@@ -64,8 +59,6 @@ function CashRegisterView() {
                 <HistoryModalNew type='expense' />
               </CardContent>
             </Card>
-
-            <CashSummaryCard stats={cashierStats} />
           </div>
         </div>
       </div>
