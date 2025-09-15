@@ -8,6 +8,8 @@ import HistoryModalNew from '@/features/history/components/history-modal-new';
 import Link from 'next/link';
 import { useOrderStore } from '@/store/order-state';
 import { columns as ordersPendingColumn } from '../sales-orders-pending/columns';
+import OrdersTable from './orders-table';
+import { Separator } from '@/components/ui/separator';
 
 function CashRegisterView() {
   const { orders } = useOrderStore();
