@@ -57,20 +57,11 @@ export default function CashRegisterStats() {
       <CardContent>
         <div className='grid grid-cols-2 items-center gap-4 xl:grid-cols-6'>
           <StatCard
-            title='Monto Inicial'
-            value={formatCurrency(cashRegister.initialAmount)}
-            icon={DollarSign}
-          />
-          <StatCard
             title='Ventas de Efectivo'
             value={formatCurrency(cashRegister.initialAmount)} // TODO: cambiar lógica real
             icon={DollarSign}
           />
-          <StatCard
-            title='Total en Caja'
-            value={formatCurrency(cashRegister.initialAmount)} // TODO: cambiar lógica real
-            icon={DollarSign}
-          />
+
           <StatCard
             title='Ventas del turno'
             value={stats.ventasTurno}
