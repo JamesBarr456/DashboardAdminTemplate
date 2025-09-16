@@ -1,4 +1,3 @@
-import { CashRegisterModal } from '@/features/sales/components/view-page/button-open-cash';
 import { Heading } from '@/components/ui/heading';
 import PageContainer from '@/components/layout/page-container';
 import SalesViewPage from '@/features/sales/components/sales-view-page';
@@ -14,7 +13,6 @@ export default function SalesPage() {
             title='Ventas'
             description='Apertura de caja - Ventas de salon '
           />
-          <CashRegisterModal />
         </div>
 
         <Separator />

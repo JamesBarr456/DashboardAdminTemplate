@@ -59,7 +59,7 @@ export const columns: ColumnDef<Order>[] = [
 
   {
     id: 'actions',
-    header: 'Acciones',
+
     cell: ({ row }) => {
       // 👇 Si está entregada, no mostrar nada
       if (row.original.status === 'delivered') return null;

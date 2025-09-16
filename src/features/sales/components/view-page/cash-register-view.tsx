@@ -4,30 +4,24 @@ import OrdersTable from './orders-table';
 import { columns as ordersPendingColumn } from '../sales-orders-pending/columns';
 import { useOrderStore } from '@/store/order-state';
 
-function OrdersTableView() {
-  const { orders } = useOrderStore();
-  const totalItemsPending = orders.filter(
-    (order) => order.status === 'pending'
-  );
-  const totalItemsDelivered = orders.filter(
-    (order) => order.status === 'delivered'
-  );
-  return (
-    <div className='space-y-6 xl:col-span-3'>
-      <OrdersTable
-        title='Pedidos Pendientes'
-        orders={totalItemsPending}
-        columns={ordersPendingColumn}
-        totalItems={totalItemsPending.length}
-        icon={Clock}
-      />
+interface OrdersTableViewProps {
+  activeTab: 'pending' | 'delivered';
+}
 
+function OrdersTableView({ activeTab }: OrdersTableViewProps) {
+  const { orders } = useOrderStore();
+  const filteredOrders = orders.filter((order) => order.status === activeTab);
+
+  return (
+    <div className='xl:col-span-3'>
       <OrdersTable
-        title='Pedidos Retirados'
-        orders={totalItemsDelivered}
+        title={
+          activeTab === 'pending' ? 'Pedidos Pendientes' : 'Pedidos Retirados'
+        }
+        orders={filteredOrders}
         columns={ordersPendingColumn}
-        totalItems={totalItemsDelivered.length}
-        icon={Package}
+        totalItems={filteredOrders.length}
+        icon={activeTab === 'pending' ? Clock : Package}
       />
     </div>
   );

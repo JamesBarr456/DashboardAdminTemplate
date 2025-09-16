@@ -53,7 +53,11 @@ export function CashRegisterModal() {
 
   if (cashRegister.isOpen) {
     return (
-      <Button variant='destructive' onClick={handleCloseRegister}>
+      <Button
+        variant='destructive'
+        className='cursor-pointer'
+        onClick={handleCloseRegister}
+      >
         Cerrar Caja
       </Button>
     );
@@ -63,11 +67,10 @@ export function CashRegisterModal() {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant='outline' className='cursor-pointer'>
-          <DollarSign className='mr-2 h-4 w-4' />
           Abrir Caja
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[480px]'>
+      <DialogContent>
         <DialogHeader className='text-center'>
           <div className='mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-black'>
             <DollarSign className='h-6 w-6 text-white' />

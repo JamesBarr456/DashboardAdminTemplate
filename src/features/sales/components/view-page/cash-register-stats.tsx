@@ -1,17 +1,10 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Clock,
-  DollarSign,
-  PackageCheck,
-  PackageMinus,
-  User
-} from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 import { Badge } from '@/components/ui/badge';
 import StatCard from './stat-card';
-import { formatCurrency } from '../../utils/formatters';
+
 import { formatDate } from '@/lib/format';
 import { useMemo } from 'react';
 import { useOrderStore } from '@/store/order-state';
@@ -35,20 +28,6 @@ export default function CashRegisterStats() {
   return (
     <Card>
       <CardHeader className='flex items-center justify-between'>
-        <div className='flex items-center gap-4'>
-          <div className='bg-muted rounded-2xl p-3'>
-            <User className='h-5 w-5' />
-          </div>
-          <div>
-            <CardTitle className='text-lg font-bold'>
-              Cajera: {cashRegister.cashier}
-            </CardTitle>
-            <p className='text-muted-foreground text-xs'>
-              Sistema de Ventas • Turno Activo
-            </p>
-          </div>
-        </div>
-
         <Badge variant={cashRegister.isOpen ? 'default' : 'destructive'}>
           {cashRegister.isOpen ? 'Caja Abierta' : 'Caja Cerrada'}
         </Badge>
@@ -56,26 +35,13 @@ export default function CashRegisterStats() {
 
       <CardContent>
         <div className='grid grid-cols-2 items-center gap-4 xl:grid-cols-6'>
-          <StatCard
-            title='Ventas de Efectivo'
-            value={formatCurrency(cashRegister.initialAmount)} // TODO: cambiar lógica real
-            icon={DollarSign}
-          />
+          <StatCard title='Cajera' value={cashRegister.cashier} />
 
-          <StatCard
-            title='Ventas del turno'
-            value={stats.ventasTurno}
-            icon={PackageCheck}
-          />
-          <StatCard
-            title='Pedidos retirados'
-            value={stats.pedidosRetirados}
-            icon={PackageMinus}
-          />
+          <StatCard title='Ventas del turno' value={stats.ventasTurno} />
+          <StatCard title='Pedidos retirados' value={stats.pedidosRetirados} />
           <StatCard
             title='Apertura de caja'
             value={formatDate(cashRegister.openedAt)}
-            icon={Clock}
           />
         </div>
       </CardContent>
