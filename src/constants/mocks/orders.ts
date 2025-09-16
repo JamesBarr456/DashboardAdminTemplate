@@ -159,9 +159,9 @@ export const newOrderMock: NewOrder[] = [
 ];
 
 export const STATUS = [
-  { label: 'Pendiente', value: 'pending', number: 1 },
-  { label: 'Confirmado', value: 'confirmed', number: 2 },
-  { label: 'Enviando', value: 'sending', number: 3 },
-  { label: 'Entregado', value: 'delivered', number: 4 },
-  { label: 'Cancelado', value: 'canceled', number: 5 }
+  { label: 'Pendiente', value: 'pending', number: 1, variant: 'outline' },
+  { label: 'Confirmado', value: 'confirmed', number: 2, variant: 'default' },
+  { label: 'Enviando', value: 'sending', number: 3, variant: 'secondary' },
+  { label: 'Entregado', value: 'delivered', number: 4, variant: 'default' },
+  { label: 'Cancelado', value: 'canceled', number: 5, variant: 'destructive' }
 ];

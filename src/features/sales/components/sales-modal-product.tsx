@@ -8,6 +8,15 @@ import {
   DialogTitle
 } from '@/components/ui/dialog';
 import { Package, ShoppingBag, Tag } from 'lucide-react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
 import { useMemo, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +25,7 @@ import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Product } from '@/types/product';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 
 interface Props {
@@ -98,7 +108,7 @@ function SalesModalProduct({
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
-      <DialogContent className='max-h-[90vh] overflow-y-auto sm:max-w-lg'>
+      <DialogContent className='max-h-[90vh] overflow-y-auto md:max-w-3xl'>
         <DialogHeader className='space-y-3'>
           <DialogTitle className='flex items-center gap-2 text-xl'>
             <ShoppingBag className='h-5 w-5' />
@@ -107,13 +117,13 @@ function SalesModalProduct({
         </DialogHeader>
 
         {product && (
-          <div className='space-y-6'>
+          <div className='space-y-4'>
             {/* Product Card */}
-            <div className='space-y-4 rounded-lg p-4'>
-              <div className='flex flex-col gap-4 sm:flex-row'>
+            <div className='space-y-4 rounded-lg'>
+              <div className='flex items-center gap-2'>
                 {/* Product Image */}
-                <div className='mx-auto flex-shrink-0 sm:mx-0'>
-                  <div className='relative h-32 w-32 overflow-hidden rounded-lg border-2 sm:h-24 sm:w-24'>
+                <div className='flex-shrink-0'>
+                  <div className='relative h-20 w-20 overflow-hidden rounded-lg border-2 sm:h-24 sm:w-24'>
                     <Image
                       src={product.images[0] || '/placeholder.svg'}
                       alt={product.name}
@@ -124,22 +134,17 @@ function SalesModalProduct({
                 </div>
 
                 {/* Product Info */}
-                <div className='flex-1 space-y-2 text-center sm:text-left'>
+                <div className='flex-1 space-y-2 text-left'>
                   <h3 className='text-lg leading-tight font-semibold'>
                     {product.name}
                   </h3>
 
-                  <div className='flex flex-col gap-2 sm:flex-row sm:items-center'>
-                    <Badge
-                      variant='secondary'
-                      className='mx-auto w-fit sm:mx-0'
-                    >
-                      <Tag className='mr-1 h-3 w-3' />
-                      {product.sku}
-                    </Badge>
-                  </div>
+                  <Badge variant='secondary' className='mx-auto w-fit sm:mx-0'>
+                    <Tag className='mr-1 h-3 w-3' />
+                    {product.sku}
+                  </Badge>
 
-                  <div className='text-2xl font-bold text-green-600'>
+                  <div className='text-lg font-bold text-green-600'>
                     ${product.sale_price}
                   </div>
                 </div>
@@ -148,115 +153,165 @@ function SalesModalProduct({
 
             <Separator />
 
-            {/* Selección de talles y cantidades */}
-            <div className='space-y-3'>
-              <Label className='text-base font-semibold'>
-                Seleccionar talles y cantidades
-              </Label>
-              <div className='grid grid-cols-2 gap-2 md:grid-cols-4'>
-                {sizeOptions.map(({ size, stock, disabled }) => {
-                  const selected = selections.find((sel) => sel.size === size);
-                  return (
-                    <div
-                      key={size}
-                      className='flex flex-col items-center gap-3'
-                    >
-                      <button
-                        type='button'
-                        disabled={disabled}
-                        className={`relative w-20 rounded-lg border-2 p-3 text-center transition-all duration-200 ${
-                          disabled
-                            ? 'cursor-not-allowed text-slate-400'
-                            : 'hover:border-primary hover:shadow-sm'
-                        }`}
+            {/* Container para la selección de talles y resumen */}
+            <div className='flex flex-col md:flex-row md:gap-3'>
+              {/* Selección de talles y cantidades */}
+              <div className='flex-1 space-y-2'>
+                <Label className='text-base font-semibold'>
+                  Seleccionar talles y cantidades
+                </Label>
+                <div className='grid grid-cols-4 gap-2 md:grid-cols-3'>
+                  {sizeOptions.map(({ size, stock, disabled }) => {
+                    const selected = selections.find(
+                      (sel) => sel.size === size
+                    );
+                    return (
+                      <div
+                        key={size}
+                        className='flex flex-col items-center gap-1'
                       >
-                        <div className='text-sm font-semibold'>
-                          {size.toUpperCase()}
-                        </div>
-                        <div
-                          className={`text-xs ${disabled ? 'text-slate-400' : 'text-muted-foreground'}`}
+                        <button
+                          type='button'
+                          disabled={disabled}
+                          className={`relative w-20 rounded-lg border-2 p-3 text-center transition-all duration-200 ${
+                            disabled
+                              ? 'cursor-not-allowed text-slate-400'
+                              : 'hover:border-primary hover:shadow-sm'
+                          }`}
                         >
-                          {disabled ? 'Sin stock' : `${stock} unidades`}
-                        </div>
-                        {/* Stock indicator */}
-                        <div className='absolute top-1 right-1'>
+                          <div className='text-sm font-semibold'>
+                            {size.toUpperCase()}
+                          </div>
                           <div
-                            className={`h-2 w-2 rounded-full ${
-                              disabled
-                                ? 'bg-red-400'
-                                : stock > 10
-                                  ? 'bg-green-400'
-                                  : stock > 5
-                                    ? 'bg-yellow-400'
-                                    : 'bg-orange-400'
-                            }`}
-                          />
-                        </div>
-                      </button>
-                      <Input
-                        type='number'
-                        min={0}
-                        max={stock}
-                        value={selected?.quantity ?? 0}
-                        disabled={disabled}
-                        onChange={(e) =>
-                          handleSizeQuantityChange(
-                            size,
-                            Number(e.target.value),
-                            stock
-                          )
-                        }
-                        className='w-20 text-center'
-                      />
-                      <span className='text-muted-foreground text-xs'>
-                        Máx: {stock}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-              {/* Mostrar stock total seleccionado */}
-              {selections.some((sel) => sel.quantity > 0) && (
-                <div className='text-muted-foreground flex items-center gap-2 text-sm'>
-                  <Package className='h-4 w-4' />
-                  <span>
-                    Total unidades seleccionadas:{' '}
-                    {selections.reduce((acc, sel) => acc + sel.quantity, 0)}
-                  </span>
+                            className={`text-xs ${disabled ? 'text-slate-400' : 'text-muted-foreground'}`}
+                          >
+                            {disabled ? 'Sin stock' : `${stock} unidades`}
+                          </div>
+                          {/* Stock indicator */}
+                          <div className='absolute top-1 right-1'>
+                            <div
+                              className={`h-2 w-2 rounded-full ${
+                                disabled
+                                  ? 'bg-red-400'
+                                  : stock > 10
+                                    ? 'bg-green-400'
+                                    : stock > 5
+                                      ? 'bg-yellow-400'
+                                      : 'bg-orange-400'
+                              }`}
+                            />
+                          </div>
+                        </button>
+                        <Input
+                          type='number'
+                          min={0}
+                          max={stock}
+                          value={selected?.quantity ?? 0}
+                          disabled={disabled}
+                          onChange={(e) =>
+                            handleSizeQuantityChange(
+                              size,
+                              Number(e.target.value),
+                              stock
+                            )
+                          }
+                          className='w-20 text-center'
+                        />
+                        <span className='text-muted-foreground text-xs'>
+                          Máx: {stock}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
-              )}
-            </div>
+                {/* Mostrar stock total seleccionado */}
+                {selections.some((sel) => sel.quantity > 0) && (
+                  <div className='text-muted-foreground flex items-center gap-2 text-sm'>
+                    <Package className='h-4 w-4' />
+                    <span>
+                      Total unidades seleccionadas:{' '}
+                      {selections.reduce((acc, sel) => acc + sel.quantity, 0)}
+                    </span>
+                  </div>
+                )}
+              </div>
 
-            {/* Resumen de precio */}
-            {selections.some((sel) => sel.quantity > 0) && (
-              <>
-                <Separator />
-                <div className='bg-primary/5 rounded-lg p-4'>
-                  <div className='flex items-center justify-between'>
-                    <div className='space-y-1'>
-                      <p className='text-muted-foreground text-sm'>Total</p>
-                      {selections
-                        .filter((sel) => sel.quantity > 0)
-                        .map((sel) => (
-                          <p className='text-sm' key={sel.size}>
-                            {sel.quantity} × {sel.size.toUpperCase()} × $
-                            {product.sale_price}
-                          </p>
-                        ))}
-                    </div>
-                    <div className='text-right'>
-                      <p className='text-primary text-2xl font-bold'>
-                        ${totalPrice}
-                      </p>
+              {/* Resumen de precio */}
+              <div className='md:w-80'>
+                {selections.some((sel) => sel.quantity > 0) && (
+                  <div className='mt-6 md:mt-0'>
+                    <div className='bg-primary/5 sticky top-0 rounded-lg p-4'>
+                      <div className='rounded-md'>
+                        <div className='w-full'>
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead style={{ width: '33%' }}>
+                                  Cantidad
+                                </TableHead>
+                                <TableHead style={{ width: '33%' }}>
+                                  Talle
+                                </TableHead>
+                                <TableHead
+                                  style={{ width: '33%' }}
+                                  className='text-right'
+                                >
+                                  Precio
+                                </TableHead>
+                              </TableRow>
+                            </TableHeader>
+                          </Table>
+                          <ScrollArea className='h-[120px] md:h-[200px]'>
+                            <Table>
+                              <TableBody>
+                                {selections
+                                  .filter((sel) => sel.quantity > 0)
+                                  .map((sel) => (
+                                    <TableRow key={sel.size}>
+                                      <TableCell
+                                        style={{ width: '33%' }}
+                                        className='font-medium'
+                                      >
+                                        {sel.quantity}
+                                      </TableCell>
+                                      <TableCell style={{ width: '33%' }}>
+                                        {sel.size.toUpperCase()}
+                                      </TableCell>
+                                      <TableCell
+                                        style={{ width: '33%' }}
+                                        className='text-right'
+                                      >
+                                        $
+                                        {(
+                                          sel.quantity * product.sale_price
+                                        ).toFixed(2)}
+                                      </TableCell>
+                                    </TableRow>
+                                  ))}
+                              </TableBody>
+                            </Table>
+                          </ScrollArea>
+                          <Table>
+                            <TableFooter>
+                              <TableRow>
+                                <TableCell colSpan={2}>Total</TableCell>
+                                <TableCell className='text-right font-bold'>
+                                  ${totalPrice}
+                                </TableCell>
+                              </TableRow>
+                            </TableFooter>
+                          </Table>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </>
-            )}
+                )}
+              </div>
+            </div>
           </div>
         )}
 
-        <DialogFooter className='gap-3 pt-4'>
+        <DialogFooter className='flex-row gap-3 pt-4'>
           <Button
             variant='outline'
             onClick={handleModalClose}

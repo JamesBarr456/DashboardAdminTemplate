@@ -1,14 +1,6 @@
 'use client';
 
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { Eye, RefreshCcw } from 'lucide-react';
-import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -17,15 +9,22 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
-import { useState } from 'react';
-
-import { useOrderStore } from '@/store/order-state';
-import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import { Eye, RefreshCcw } from 'lucide-react';
+import { IconDotsVertical, IconTrash } from '@tabler/icons-react';
 
 import { Button } from '@/components/ui/button';
-import { IconDotsVertical, IconTrash } from '@tabler/icons-react';
-import { OrderStatus } from '@/types/order-new';
 import { OrderDetails } from './sales-order-view-details';
+import { OrderStatus } from '@/types/order-new';
+import { toast } from 'sonner';
+import { useOrderStore } from '@/store/order-state';
+import { useState } from 'react';
 
 interface CellActionProps {
   id: string;
@@ -123,10 +122,9 @@ export default function CellTableOrderPendingsAction({ id }: CellActionProps) {
           <DialogFooter>
             <DialogClose asChild>
               <Button variant='outline' onClick={handleCloseDialog}>
-                Cancel
+                Salir
               </Button>
             </DialogClose>
-            <Button type='submit'>Save changes</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
