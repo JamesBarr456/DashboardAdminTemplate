@@ -12,8 +12,9 @@ import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import StatCard from './stat-card';
 import { CashRegisterModal } from './button-open-cash';
-import { formatDateTime } from '../../utils/formatters';
+
 import { cn } from '@/lib/utils';
+import { formatDateTime } from '@/lib/format';
 
 export default function QuickActions() {
   const router = useRouter();
@@ -63,8 +64,6 @@ export default function QuickActions() {
           <h3 className='text-sm font-semibold'>Acciones Rápidas</h3>
 
           <div className='grid gap-2'>
-            <CashRegisterModal />
-
             <Button
               variant='default'
               className={cn(
@@ -80,6 +79,7 @@ export default function QuickActions() {
             >
               Iniciar Venta
             </Button>
+            <CashRegisterModal />
             <HistoryModalNew
               type='income'
               addMovement={addMovement}

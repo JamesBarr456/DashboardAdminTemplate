@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import Image from 'next/image';
 import { SaleItem } from '@/store/pos-state';
 import { Text } from 'lucide-react';
+import { formatPrice } from '@/lib/format';
 
 export const columnsSale: ColumnDef<SaleItem>[] = [
   {
@@ -52,12 +53,12 @@ export const columnsSale: ColumnDef<SaleItem>[] = [
   {
     accessorKey: 'unit_price',
     header: 'Precio Unit.',
-    cell: ({ row }) => <span>${row.original.unit_price}</span>
+    cell: ({ row }) => <span>{formatPrice(row.original.unit_price)}</span>
   },
   {
     accessorKey: 'subtotal',
     header: 'Subtotal',
-    cell: ({ row }) => <span>${row.original.subtotal}</span>
+    cell: ({ row }) => <span>{formatPrice(row.original.subtotal)}</span>
   },
 
   {

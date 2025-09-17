@@ -15,6 +15,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { DollarSign } from 'lucide-react';
 import { usePOSStore } from '@/store/pos-state';
+import { toast } from 'sonner';
+import { AlertModal } from '@/components/modal/alert-modal';
 
 export function CashRegisterModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,21 +47,39 @@ export function CashRegisterModal() {
 
     openRegister(Number(initialAmount), cashRegister.cashier);
     resetForm();
+    toast.success('Caja abierta con éxito');
   };
 
   const handleCloseRegister = () => {
     closeRegister();
   };
 
+  const [showCloseModal, setShowCloseModal] = useState(false);
+
   if (cashRegister.isOpen) {
     return (
-      <Button
-        variant='destructive'
-        className='cursor-pointer'
-        onClick={handleCloseRegister}
-      >
-        Cerrar Caja
-      </Button>
+      <>
+        <AlertModal
+          isOpen={showCloseModal}
+          onClose={() => setShowCloseModal(false)}
+          onConfirm={() => {
+            handleCloseRegister();
+            setShowCloseModal(false);
+            toast.success('La caja fue cerrada con éxito');
+          }}
+          title='Cerrar Caja'
+          description='¿Estás seguro de que deseas cerrar la caja?'
+          confirmText='Sí, cerrar'
+          cancelText='Cancelar'
+        />
+        <Button
+          variant='destructive'
+          className='cursor-pointer'
+          onClick={() => setShowCloseModal(true)}
+        >
+          Cerrar Caja
+        </Button>
+      </>
     );
   }
 

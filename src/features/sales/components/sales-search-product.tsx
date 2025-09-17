@@ -10,11 +10,11 @@ import {
 } from '@/components/ui/command';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { Product } from '@/types/product';
 import SalesModalProduct from './sales-modal-product';
 import { cn } from '@/lib/utils';
+import { formatPrice } from '@/lib/format';
 
 interface ProductSearchDropdownProps {
   products: Product[];
@@ -128,11 +128,11 @@ export function ProductSearchDropdown({
                   >
                     <div className='flex-shrink-0'>
                       <Image
-                        width={16}
-                        height={16}
+                        width={64}
+                        height={64}
                         src={product.images[0]}
                         alt={product.name}
-                        className='h-16 w-16 rounded-md object-cover'
+                        className='h-16 w-16 rounded-md object-fill'
                       />
                     </div>
                     <div className='min-w-0 flex-1'>
@@ -144,19 +144,8 @@ export function ProductSearchDropdown({
                       </p>
                       <div className='mt-1 flex items-center gap-2'>
                         <span className='text-foreground font-semibold'>
-                          ${product.sale_price}
+                          {formatPrice(product.sale_price)}
                         </span>
-                        {product.has_discount &&
-                          product.discount_percentage && (
-                            <>
-                              <span className='text-muted-foreground text-sm line-through'>
-                                ${product.cost_price}
-                              </span>
-                              <Badge variant='destructive' className='text-xs'>
-                                -{product.discount_percentage}%
-                              </Badge>
-                            </>
-                          )}
                       </div>
                     </div>
                   </CommandItem>

@@ -15,13 +15,13 @@ interface OrdersTableProps {
   icon: LucideIcon;
 }
 
-const OrdersTable: React.FC<OrdersTableProps> = ({
+function OrdersTable({
   title,
   orders,
   columns,
   totalItems,
   icon: Icon
-}) => {
+}: OrdersTableProps) {
   return (
     <Card>
       <CardHeader>
@@ -38,6 +38,6 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
       </CardContent>
     </Card>
   );
-};
+}
 
 export default OrdersTable;

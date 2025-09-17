@@ -13,17 +13,15 @@ function OrdersTableView({ activeTab }: OrdersTableViewProps) {
   const filteredOrders = orders.filter((order) => order.status === activeTab);
 
   return (
-    <div className='xl:col-span-3'>
-      <OrdersTable
-        title={
-          activeTab === 'pending' ? 'Pedidos Pendientes' : 'Pedidos Retirados'
-        }
-        orders={filteredOrders}
-        columns={ordersPendingColumn}
-        totalItems={filteredOrders.length}
-        icon={activeTab === 'pending' ? Clock : Package}
-      />
-    </div>
+    <OrdersTable
+      title={
+        activeTab === 'pending' ? 'Pedidos Pendientes' : 'Pedidos Retirados'
+      }
+      orders={filteredOrders}
+      columns={ordersPendingColumn}
+      totalItems={filteredOrders.length}
+      icon={activeTab === 'pending' ? Clock : Package}
+    />
   );
 }
 

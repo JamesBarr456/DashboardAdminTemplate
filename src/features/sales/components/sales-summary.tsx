@@ -7,6 +7,8 @@ import { Separator } from '@/components/ui/separator';
 import { CreditCard, DollarSign } from 'lucide-react';
 import { SaleItem } from '@/store/pos-state';
 import { toast } from 'sonner';
+import { formatPrice } from '@/lib/format';
+import { translatePaymentMethod } from '@/lib/translation';
 
 interface Props {
   currentSale: SaleItem[];
@@ -33,7 +35,7 @@ export default function SalesSummary({ currentSale, completeSale }: Props) {
     setSelectedPaymentMethod('cash');
 
     toast('¡Venta realizada!', {
-      description: `La venta se ha completado correctamente con pago en ${selectedPaymentMethod === 'cash' ? 'efectivo' : 'transferencia'}.`
+      description: `La venta se ha completado correctamente con pago en ${translatePaymentMethod(selectedPaymentMethod)}.`
     });
   };
 
@@ -46,13 +48,13 @@ export default function SalesSummary({ currentSale, completeSale }: Props) {
         <div className='space-y-2'>
           <div className='flex justify-between'>
             <span>Subtotal:</span>
-            <span>${subtotal.toLocaleString()}</span>
+            <span>{formatPrice(subtotal)}</span>
           </div>
 
           {selectedPaymentMethod === 'transfer' && (
             <div className='flex justify-between font-medium text-red-600'>
               <span>Recargo (5% por transferencia):</span>
-              <span>${(baseTotal * 0.05).toLocaleString()}</span>
+              <span>{formatPrice(baseTotal * 0.05)}</span>
             </div>
           )}
 
@@ -60,7 +62,7 @@ export default function SalesSummary({ currentSale, completeSale }: Props) {
 
           <div className='flex justify-between text-lg font-bold'>
             <span>Total:</span>
-            <span>${finalTotal.toLocaleString()}</span>
+            <span>{formatPrice(finalTotal)}</span>
           </div>
         </div>
 

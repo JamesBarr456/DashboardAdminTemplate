@@ -7,18 +7,22 @@ interface AlertModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  loading: boolean;
+  loading?: boolean;
   title: string;
   description: string;
+  confirmText?: string;
+  cancelText?: string;
 }
 
 export const AlertModal: React.FC<AlertModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
-  loading,
+  loading = false,
   title,
-  description
+  description,
+  confirmText = 'Continue',
+  cancelText = 'Cancel'
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -39,10 +43,10 @@ export const AlertModal: React.FC<AlertModalProps> = ({
     >
       <div className='flex w-full items-center justify-end space-x-2 pt-6'>
         <Button disabled={loading} variant='outline' onClick={onClose}>
-          Cancel
+          {cancelText}
         </Button>
         <Button disabled={loading} variant='destructive' onClick={onConfirm}>
-          Continue
+          {confirmText}
         </Button>
       </div>
     </Modal>

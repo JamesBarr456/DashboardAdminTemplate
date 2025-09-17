@@ -12,7 +12,11 @@ import { Badge } from '@/components/ui/badge';
 import { NewOrder as Order } from '@/types/order-new';
 import { STATUS } from '@/constants/mocks/orders';
 import { Separator } from '@/components/ui/separator';
-import { formatCurrency } from '../../utils/formatters';
+import { formatPrice } from '@/lib/format';
+import {
+  translateDeliveryOption,
+  translatePaymentMethod
+} from '@/lib/translation';
 
 interface OrderDetailsProps {
   order: Order;
@@ -32,33 +36,39 @@ export function OrderDetails({ order }: OrderDetailsProps) {
         </Badge>
       </div>
 
-      {/* Customer Information */}
+      {/* Customer Information (Optimized) */}
       <Card>
         <CardHeader>
           <CardTitle className='text-lg'>Información del Cliente</CardTitle>
         </CardHeader>
-        <CardContent className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-          <div>
-            <p className='text-muted-foreground text-sm'>Nombre completo</p>
-            <p className='font-medium'>
-              {order.customer.snapshot.firstName}{' '}
-              {order.customer.snapshot.lastName}
-            </p>
-          </div>
-          <div>
-            <p className='text-muted-foreground text-sm'>DNI</p>
-            <p className='font-medium'>{order.customer.snapshot.dni}</p>
-          </div>
-          <div>
-            <p className='text-muted-foreground text-sm'>Email</p>
-            <p className='font-medium'>{order.customer.snapshot.email}</p>
-          </div>
-          <div>
-            <p className='text-muted-foreground text-sm'>Teléfono</p>
-            <p className='font-medium'>
-              ({order.customer.snapshot.phone.areaCode}){' '}
-              {order.customer.snapshot.phone.number}
-            </p>
+        <CardContent>
+          <div className='grid grid-cols-2 gap-2'>
+            <div>
+              <p className='text-muted-foreground text-xs'>Nombre</p>
+              <p className='text-sm font-medium'>
+                {order.customer.snapshot.firstName}{' '}
+                {order.customer.snapshot.lastName}
+              </p>
+            </div>
+            <div>
+              <p className='text-muted-foreground text-xs'>DNI</p>
+              <p className='text-sm font-medium'>
+                {order.customer.snapshot.dni}
+              </p>
+            </div>
+            <div>
+              <p className='text-muted-foreground text-xs'>Email</p>
+              <p className='text-sm font-medium'>
+                {order.customer.snapshot.email}
+              </p>
+            </div>
+            <div>
+              <p className='text-muted-foreground text-xs'>Teléfono</p>
+              <p className='text-sm font-medium'>
+                ({order.customer.snapshot.phone.areaCode}){' '}
+                {order.customer.snapshot.phone.number}
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -73,9 +83,9 @@ export function OrderDetails({ order }: OrderDetailsProps) {
             <div>
               <p className='text-muted-foreground text-sm'>Tipo de envío</p>
               <Badge variant='secondary' className='mt-1'>
-                {order.shipping_information.delivery_option === 'delivery'
-                  ? 'Envío a domicilio'
-                  : 'Retiro en tienda'}
+                {translateDeliveryOption(
+                  order.shipping_information.delivery_option
+                )}
               </Badge>
             </div>
             {order.shipping_information.delivery_option === 'delivery' && (
@@ -97,7 +107,7 @@ export function OrderDetails({ order }: OrderDetailsProps) {
           </CardHeader>
           <CardContent>
             <Badge variant='outline' className='text-sm'>
-              {order.payment_method}
+              {translatePaymentMethod(order.payment_method)}
             </Badge>
           </CardContent>
         </Card>
@@ -134,10 +144,10 @@ export function OrderDetails({ order }: OrderDetailsProps) {
                     )}
                   </TableCell>
                   <TableCell className='text-right'>
-                    {formatCurrency(item.price)}
+                    {formatPrice(item.price)}
                   </TableCell>
                   <TableCell className='text-right font-medium'>
-                    {formatCurrency(item.total_mount)}
+                    {formatPrice(item.total_mount)}
                   </TableCell>
                 </TableRow>
               ))}
@@ -154,16 +164,16 @@ export function OrderDetails({ order }: OrderDetailsProps) {
         <CardContent className='space-y-3'>
           <div className='flex justify-between'>
             <span className='text-muted-foreground'>Subtotal productos:</span>
-            <span>{formatCurrency(order.summary.items_total)}</span>
+            <span>{formatPrice(order.summary.items_total)}</span>
           </div>
           <div className='flex justify-between'>
             <span className='text-muted-foreground'>Costo de envío:</span>
-            <span>{formatCurrency(order.summary.shipping_cost)}</span>
+            <span>{formatPrice(order.summary.shipping_cost)}</span>
           </div>
           <Separator />
           <div className='flex justify-between text-lg font-semibold'>
             <span>Total:</span>
-            <span>{formatCurrency(order.summary.grand_total)}</span>
+            <span>{formatPrice(order.summary.grand_total)}</span>
           </div>
         </CardContent>
       </Card>

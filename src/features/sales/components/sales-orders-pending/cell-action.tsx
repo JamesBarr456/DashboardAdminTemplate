@@ -1,6 +1,14 @@
 'use client';
 
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import { Eye, RefreshCcw } from 'lucide-react';
+import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -9,22 +17,15 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { Eye, RefreshCcw } from 'lucide-react';
-import { IconDotsVertical, IconTrash } from '@tabler/icons-react';
+import { useState } from 'react';
+
+import { useOrderStore } from '@/store/order-state';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { OrderDetails } from './sales-order-view-details';
+import { IconDotsVertical, IconTrash } from '@tabler/icons-react';
 import { OrderStatus } from '@/types/order-new';
-import { toast } from 'sonner';
-import { useOrderStore } from '@/store/order-state';
-import { useState } from 'react';
+import { OrderDetails } from './sales-order-view-details';
 
 interface CellActionProps {
   id: string;
@@ -110,19 +111,15 @@ export default function CellTableOrderPendingsAction({ id }: CellActionProps) {
       </DropdownMenu>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className='max-h-[95vh] overflow-y-auto sm:max-w-4xl'>
+        <DialogContent className='max-h-[95vh] overflow-y-auto sm:max-w-2xl'>
           <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
-            <DialogDescription>
-              Make changes to your profile here. Click save when you&apos;re
-              done.
-            </DialogDescription>
+            <DialogTitle>Información de Orden</DialogTitle>
           </DialogHeader>
           <OrderDetails order={order} />
           <DialogFooter>
             <DialogClose asChild>
               <Button variant='outline' onClick={handleCloseDialog}>
-                Salir
+                Cerrar
               </Button>
             </DialogClose>
           </DialogFooter>

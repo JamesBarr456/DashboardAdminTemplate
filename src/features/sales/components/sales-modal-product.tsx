@@ -27,6 +27,7 @@ import { Label } from '@/components/ui/label';
 import { Product } from '@/types/product';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { formatPrice } from '@/lib/format';
 
 interface Props {
   isModalOpen: boolean;
@@ -100,11 +101,14 @@ function SalesModalProduct({
   };
 
   // Calcular el total general
-  const totalPrice = product
-    ? selections
-        .reduce((acc, sel) => acc + product.sale_price * sel.quantity, 0)
-        .toFixed(2)
-    : '0.00';
+  const totalPrice = formatPrice(
+    product
+      ? selections.reduce(
+          (acc, sel) => acc + product.sale_price * sel.quantity,
+          0
+        )
+      : 0
+  );
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
@@ -145,7 +149,7 @@ function SalesModalProduct({
                   </Badge>
 
                   <div className='text-lg font-bold text-green-600'>
-                    ${product.sale_price}
+                    {formatPrice(product.sale_price)}
                   </div>
                 </div>
               </div>
@@ -281,10 +285,9 @@ function SalesModalProduct({
                                         style={{ width: '33%' }}
                                         className='text-right'
                                       >
-                                        $
-                                        {(
+                                        {formatPrice(
                                           sel.quantity * product.sale_price
-                                        ).toFixed(2)}
+                                        )}
                                       </TableCell>
                                     </TableRow>
                                   ))}
@@ -296,7 +299,7 @@ function SalesModalProduct({
                               <TableRow>
                                 <TableCell colSpan={2}>Total</TableCell>
                                 <TableCell className='text-right font-bold'>
-                                  ${totalPrice}
+                                  {totalPrice}
                                 </TableCell>
                               </TableRow>
                             </TableFooter>

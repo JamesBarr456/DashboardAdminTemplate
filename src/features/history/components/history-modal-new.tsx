@@ -16,11 +16,21 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { toast } from 'sonner';
 import { useState } from 'react';
 
 type MovementType = 'income' | 'expense';
@@ -30,6 +40,7 @@ interface HistoryModalNewProps {
   addMovement: (movement: Omit<Movement, 'id' | 'timestamp'>) => void;
   cashRegister: CashRegister;
 }
+
 const conceptsByType: Record<MovementType, string[]> = {
   income: [
     'Venta mostrador',
@@ -47,39 +58,81 @@ const conceptsByType: Record<MovementType, string[]> = {
     'Otros'
   ]
 };
+
+// Schema de validación con Zod
+const movementSchema = z.object({
+  concept: z.string().min(1, 'El concepto es requerido'),
+  amount: z
+    .number({
+      required_error: 'El monto es requerido',
+      invalid_type_error: 'El monto debe ser un número'
+    })
+    .positive('El monto debe ser mayor a 0')
+    .min(0.01, 'El monto debe ser mayor a 0'),
+  description: z
+    .string()
+    .max(200, 'La descripción no puede exceder 200 caracteres')
+    .optional()
+    .or(z.literal(''))
+});
+
+type MovementFormData = z.infer<typeof movementSchema>;
+
 function HistoryModalNew({
   type,
   addMovement,
   cashRegister
 }: HistoryModalNewProps) {
-  const [newMovement, setNewMovement] = useState({
-    concept: '',
-    amount: '',
-    description: ''
-  });
+  const [isOpen, setIsOpen] = useState(false);
   const cashier = cashRegister.cashier;
-  const handleAddMovement = () => {
-    const amountNumber = Number(newMovement.amount);
-    if (!amountNumber || amountNumber <= 0) return;
 
-    addMovement({
-      type,
-      amount: amountNumber,
-      description: newMovement.description,
-      concept: newMovement.concept,
-      cashier
-    });
+  const form = useForm<MovementFormData>({
+    resolver: zodResolver(movementSchema),
+    defaultValues: {
+      concept: '',
+      amount: undefined,
+      description: ''
+    }
+  });
 
-    // reset form
-    setNewMovement({
-      amount: '',
-      description: '',
-      concept: ''
-    });
+  const handleSubmit = (data: MovementFormData) => {
+    try {
+      addMovement({
+        type,
+        amount: data.amount,
+        description: data.description || '',
+        concept: data.concept,
+        cashier
+      });
+
+      // Reset form
+      form.reset();
+      setIsOpen(false);
+
+      toast.success(
+        type === 'income'
+          ? 'Ingreso registrado con éxito'
+          : 'Egreso registrado con éxito'
+      );
+    } catch (error) {
+      toast.error('Error al registrar el movimiento');
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const concept = form.getValues('concept');
+      if (concept) {
+        form.handleSubmit(handleSubmit)();
+      } else {
+        toast.error('Selecciona un concepto antes de registrar el movimiento');
+      }
+    }
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button
           className='flex w-full cursor-pointer items-center gap-2'
@@ -105,58 +158,86 @@ function HistoryModalNew({
             {type === 'income' ? 'Registrar Ingreso' : 'Registrar Egreso'}
           </DialogTitle>
         </DialogHeader>
-        <div className='space-y-4'>
-          <div>
-            <label className='text-sm font-medium'>Concepto</label>
-            <Select
-              value={newMovement.concept}
-              onValueChange={(value) =>
-                setNewMovement((prev) => ({ ...prev, concept: value }))
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder='Selecciona un concepto' />
-              </SelectTrigger>
-              <SelectContent>
-                {conceptsByType[type].map((concept) => (
-                  <SelectItem key={concept} value={concept}>
-                    {concept}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label className='text-sm font-medium'>Monto</Label>
-            <Input
-              type='number'
-              placeholder='0.00'
-              value={newMovement.amount}
-              onChange={(e) =>
-                setNewMovement((prev) => ({
-                  ...prev,
-                  amount: e.target.value
-                }))
-              }
+
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className='space-y-4'
+          >
+            <FormField
+              control={form.control}
+              name='concept'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Concepto</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Selecciona un concepto' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {conceptsByType[type].map((concept) => (
+                        <SelectItem key={concept} value={concept}>
+                          {concept}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div>
-            <label className='text-sm font-medium'>Descripción</label>
-            <Textarea
-              placeholder='Descripción del movimiento...'
-              value={newMovement.description}
-              onChange={(e) =>
-                setNewMovement((prev) => ({
-                  ...prev,
-                  description: e.target.value
-                }))
-              }
+
+            <FormField
+              control={form.control}
+              name='amount'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Monto</FormLabel>
+                  <FormControl>
+                    <Input
+                      type='number'
+                      step='0.01'
+                      placeholder='0.00'
+                      {...field}
+                      value={field.value || ''}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        field.onChange(
+                          value === '' ? undefined : parseFloat(value)
+                        );
+                      }}
+                      onKeyDown={handleKeyDown}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <Button onClick={handleAddMovement} className='w-full'>
-            {type === 'income' ? 'Registrar Ingreso' : 'Registrar Egreso'}
-          </Button>
-        </div>
+
+            <FormField
+              control={form.control}
+              name='description'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Descripción</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder='Descripción del movimiento...'
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button type='submit' className='w-full'>
+              {type === 'income' ? 'Registrar Ingreso' : 'Registrar Egreso'}
+            </Button>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

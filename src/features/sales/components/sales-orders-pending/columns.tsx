@@ -6,7 +6,12 @@ import { Text } from 'lucide-react';
 
 import CellTableOrderPendingsAction from './cell-action';
 import { NewOrder as Order } from '@/types/order-new';
-import { formatDateTime } from '../../utils/formatters';
+
+import { formatDateTime, formatPrice } from '@/lib/format';
+import {
+  translatePaymentMethod,
+  translateDeliveryOption
+} from '@/lib/translation';
 
 export const columns: ColumnDef<Order>[] = [
   {
@@ -29,23 +34,29 @@ export const columns: ColumnDef<Order>[] = [
   },
   {
     accessorKey: 'modoEntrega',
-    header: 'Entrega',
+    header: 'Tipo de Entrega',
     cell: ({ row }) => (
-      <span>{row.original.shipping_information.delivery_option}</span>
+      <Badge variant='outline' className='capitalize'>
+        {translateDeliveryOption(
+          row.original.shipping_information.delivery_option
+        )}
+      </Badge>
     )
   },
   {
     accessorKey: 'monto',
     header: 'Monto',
-    cell: ({ row }) => <span>${row.original.summary.grand_total}</span>
+    cell: ({ row }) => (
+      <span>{formatPrice(row.original.summary.grand_total)}</span>
+    )
   },
 
   {
     accessorKey: 'formaPago',
     header: 'Forma de Pago',
     cell: ({ row }) => (
-      <Badge variant='outline' className='uppercase'>
-        {row.original.payment_method}
+      <Badge variant='outline' className='capitalize'>
+        {translatePaymentMethod(row.original.payment_method)}
       </Badge>
     )
   },
