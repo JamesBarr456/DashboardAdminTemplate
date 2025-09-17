@@ -18,20 +18,20 @@ import { formatBytes } from '@/lib/format';
 
 interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
-   * Value of the uploader.
-   * @type File[]
+   * Value of the uploader. Can be either File objects or image URLs
+   * @type (File | string)[]
    * @default undefined
    * @example value={files}
    */
-  value?: File[];
+  value?: (File | string)[];
 
   /**
    * Function to be called when the value changes.
-   * @type React.Dispatch<React.SetStateAction<File[]>>
+   * @type React.Dispatch<React.SetStateAction<(File | string)[]>>
    * @default undefined
    * @example onValueChange={(files) => setFiles(files)}
    */
-  onValueChange?: React.Dispatch<React.SetStateAction<File[]>>;
+  onValueChange?: React.Dispatch<React.SetStateAction<(File | string)[]>>;
 
   /**
    * Function to be called when files are uploaded.
@@ -120,7 +120,9 @@ export function FileUploader(props: FileUploaderProps) {
         return;
       }
 
-      if ((files?.length ?? 0) + acceptedFiles.length > maxFiles) {
+      const currentFileCount =
+        files?.filter((f) => typeof f !== 'string').length ?? 0;
+      if (currentFileCount + acceptedFiles.length > maxFiles) {
         toast.error(`Cannot upload more than ${maxFiles} files`);
         return;
       }
@@ -144,15 +146,18 @@ export function FileUploader(props: FileUploaderProps) {
       if (
         onUpload &&
         updatedFiles.length > 0 &&
-        updatedFiles.length <= maxFiles
+        updatedFiles.filter((f) => f instanceof File).length <= maxFiles
       ) {
+        const fileOnlyArray = updatedFiles.filter(
+          (f): f is File => f instanceof File
+        );
         const target =
-          updatedFiles.length > 0 ? `${updatedFiles.length} files` : `file`;
+          fileOnlyArray.length > 0 ? `${fileOnlyArray.length} files` : `file`;
 
-        toast.promise(onUpload(updatedFiles), {
+        toast.promise(onUpload(fileOnlyArray), {
           loading: `Uploading ${target}...`,
           success: () => {
-            setFiles([]);
+            setFiles(updatedFiles.filter((f) => typeof f === 'string'));
             return `${target} uploaded`;
           },
           error: `Failed to upload ${target}`
@@ -175,7 +180,7 @@ export function FileUploader(props: FileUploaderProps) {
     return () => {
       if (!files) return;
       files.forEach((file) => {
-        if (isFileWithPreview(file)) {
+        if (file instanceof File && isFileWithPreview(file)) {
           URL.revokeObjectURL(file.preview);
         }
       });
@@ -254,7 +259,9 @@ export function FileUploader(props: FileUploaderProps) {
                 key={index}
                 file={file}
                 onRemove={() => onRemove(index)}
-                progress={progresses?.[file.name]}
+                progress={
+                  typeof file !== 'string' ? progresses?.[file.name] : undefined
+                }
               />
             ))}
           </div>
@@ -265,7 +272,7 @@ export function FileUploader(props: FileUploaderProps) {
 }
 
 interface FileCardProps {
-  file: File;
+  file: File | string;
   onRemove: () => void;
   progress?: number;
 }
@@ -274,26 +281,38 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
   return (
     <div className='relative flex items-center space-x-4'>
       <div className='flex flex-1 space-x-4'>
-        {isFileWithPreview(file) ? (
+        {typeof file === 'string' ? (
+          <Image
+            src={file}
+            alt='Uploaded image'
+            width={200} // resolución real
+            height={200}
+            className='h-12 w-12 rounded-md object-cover' // tamaño visual = 48px (12 * 4)
+          />
+        ) : isFileWithPreview(file) ? (
           <Image
             src={file.preview}
             alt={file.name}
-            width={48}
-            height={48}
+            width={200}
+            height={200}
             loading='lazy'
-            className='aspect-square shrink-0 rounded-md object-cover'
+            className='h-12 w-12 rounded-md object-cover'
           />
         ) : null}
         <div className='flex w-full flex-col gap-2'>
           <div className='space-y-px'>
             <p className='text-foreground/80 line-clamp-1 text-sm font-medium'>
-              {file.name}
+              {typeof file === 'string' ? 'Imagen previa' : file.name}
             </p>
             <p className='text-muted-foreground text-xs'>
-              {formatBytes(file.size)}
+              {typeof file === 'string'
+                ? 'URL de imagen'
+                : formatBytes(file.size)}
             </p>
           </div>
-          {progress ? <Progress value={progress} /> : null}
+          {progress && typeof file !== 'string' ? (
+            <Progress value={progress} />
+          ) : null}
         </div>
       </div>
       <div className='flex items-center gap-2'>
@@ -302,7 +321,9 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
           variant='ghost'
           size='icon'
           onClick={onRemove}
-          disabled={progress !== undefined && progress < 100}
+          disabled={
+            progress !== undefined && progress < 100 && typeof file !== 'string'
+          }
           className='size-8 rounded-full'
         >
           <IconX className='text-muted-foreground' />

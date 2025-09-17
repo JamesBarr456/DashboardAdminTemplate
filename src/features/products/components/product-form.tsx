@@ -81,7 +81,8 @@ export default function ProductFormImproved({
     season: initialData?.season || 'seasonal',
     provider: initialData?.provider || '',
     pack_size: initialData?.pack_size || '1',
-    purchase_date: initialData?.purchase_date || ''
+    purchase_date: initialData?.purchase_date || '',
+    image: initialData?.images || []
   };
 
   const form = useForm<ProductType>({
@@ -422,10 +423,12 @@ export default function ProductFormImproved({
                           </span>
                           <Input
                             type='number'
-                            step='0.01'
                             placeholder='0.00'
-                            className='pl-8'
                             {...field}
+                            className='h-12 pl-10 text-lg'
+                            min='0'
+                            step='0.01'
+                            autoFocus
                           />
                         </div>
                       </FormControl>
@@ -447,10 +450,12 @@ export default function ProductFormImproved({
                           </span>
                           <Input
                             type='number'
-                            step='0.01'
                             placeholder='0.00'
-                            className='pl-8'
                             {...field}
+                            className='h-12 pl-10 text-lg'
+                            min='0'
+                            step='0.01'
+                            autoFocus
                           />
                         </div>
                       </FormControl>

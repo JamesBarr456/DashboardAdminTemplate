@@ -35,30 +35,33 @@ export const productSchema = z.object({
     .refine(
       (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
       'Se aceptan archivos .jpg, .jpeg, .png y .webp.'
-    ),
+    )
+    .optional(),
   sku: z.string().min(1, 'El SKU es obligatorio.'),
   segment: segmentSchema, // 👈 nuevo
-  name: z.string().min(2, {
-    message: 'El nombre del producto debe tener al menos 2 caracteres.'
-  }),
+  name: z.string().min(2, ''),
   brand: z.string().optional(),
-  description: z.string().min(10, {
-    message: 'La descripción debe tener al menos 10 caracteres.'
+  description: z.string().min(1, {
+    message: ''
   }),
   gender: z.enum(['male', 'female', 'unisex']),
-  sizes: z.string().min(1, 'El rango de talles es obligatorio.'),
+  sizes: z.string().min(1, ''),
   colors: z.array(z.string()).optional(), // 👈 nuevo
   season: z.enum(['winter', 'summer', 'seasonal']).optional(), // 👈 nuevo
   provider: z.string().optional(),
   stock: z.record(z.string(), z.number()),
-  cost_price: z.number().min(0, 'El precio de costo debe ser mayor a 0'),
-  sale_price: z.number().min(0, 'El precio de venta debe ser mayor a 0'),
+  cost_price: z.coerce
+    .number()
+    .min(0, 'El precio de costo no puede ser negativo'),
+  sale_price: z.coerce
+    .number()
+    .min(0, 'El precio de venta no puede ser negativo'),
+
   is_active: z.boolean(),
   purchase_date: z.string().optional(),
   pack_size: z.enum(['1', '6', '12']).default('1'), // 👈 nuevo
   has_discount: z.boolean().optional(),
-  discount_percentage: z.number().min(0).max(100).optional(),
-  images: z.array(z.string()).optional()
+  discount_percentage: z.number().min(0).max(100).optional()
 });
 
 export type ProductType = z.infer<typeof productSchema>;

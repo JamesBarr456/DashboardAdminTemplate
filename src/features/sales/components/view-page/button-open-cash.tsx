@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import {
+  CashRegisterOpening,
+  cashRegisterOpeningSchema
+} from '@/schemas/sales-schema';
 import {
   Dialog,
   DialogContent,
@@ -11,50 +13,45 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { DollarSign } from 'lucide-react';
-import { usePOSStore } from '@/store/pos-state';
-import { toast } from 'sonner';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+
 import { AlertModal } from '@/components/modal/alert-modal';
+import { Button } from '@/components/ui/button';
+import { DollarSign } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
+import { useForm } from 'react-hook-form';
+import { usePOSStore } from '@/store/pos-state';
+import { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export function CashRegisterModal() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [initialAmount, setInitialAmount] = useState('');
-  const [error, setError] = useState('');
   const { cashRegister, openRegister, closeRegister } = usePOSStore();
-
-  const validateAmount = (value: string): string => {
-    if (!value.trim()) return 'El monto inicial es requerido';
-    const amount = Number.parseFloat(value);
-    if (isNaN(amount)) return 'Ingresa un monto válido';
-    if (amount < 0) return 'El monto no puede ser negativo';
-    return '';
-  };
-
-  const resetForm = () => {
-    setInitialAmount('');
-    setError('');
-    setIsOpen(false);
-  };
-
-  const handleOpenRegister = () => {
-    const validationError = validateAmount(initialAmount);
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-
-    openRegister(Number(initialAmount), cashRegister.cashier);
-    resetForm();
-    toast.success('Caja abierta con éxito');
-  };
-
-  const handleCloseRegister = () => {
-    closeRegister();
-  };
-
   const [showCloseModal, setShowCloseModal] = useState(false);
+
+  const form = useForm<CashRegisterOpening>({
+    resolver: zodResolver(cashRegisterOpeningSchema),
+    defaultValues: { initialAmount: 0 }
+  });
+
+  const handleSubmit = (values: CashRegisterOpening) => {
+    openRegister(values.initialAmount, cashRegister.cashier);
+    toast.success('Caja abierta con éxito');
+    form.reset();
+  };
+
+  const confirmCloseRegister = () => {
+    closeRegister();
+    setShowCloseModal(false);
+    toast.success('La caja fue cerrada con éxito');
+  };
 
   if (cashRegister.isOpen) {
     return (
@@ -62,21 +59,13 @@ export function CashRegisterModal() {
         <AlertModal
           isOpen={showCloseModal}
           onClose={() => setShowCloseModal(false)}
-          onConfirm={() => {
-            handleCloseRegister();
-            setShowCloseModal(false);
-            toast.success('La caja fue cerrada con éxito');
-          }}
+          onConfirm={confirmCloseRegister}
           title='Cerrar Caja'
           description='¿Estás seguro de que deseas cerrar la caja?'
           confirmText='Sí, cerrar'
           cancelText='Cancelar'
         />
-        <Button
-          variant='destructive'
-          className='cursor-pointer'
-          onClick={() => setShowCloseModal(true)}
-        >
+        <Button variant='destructive' onClick={() => setShowCloseModal(true)}>
           Cerrar Caja
         </Button>
       </>
@@ -84,11 +73,13 @@ export function CashRegisterModal() {
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      onOpenChange={(open) => {
+        if (!open) form.reset();
+      }}
+    >
       <DialogTrigger asChild>
-        <Button variant='outline' className='cursor-pointer'>
-          Abrir Caja
-        </Button>
+        <Button variant='outline'>Abrir Caja</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className='text-center'>
@@ -104,60 +95,60 @@ export function CashRegisterModal() {
           </DialogDescription>
         </DialogHeader>
 
-        <div className='space-y-6 py-4'>
-          <div className='space-y-3'>
-            <Label htmlFor='amount' className='text-base font-medium'>
-              Monto Inicial de Caja
-            </Label>
-            <div className='relative'>
-              <DollarSign className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
-              <Input
-                id='amount'
-                type='number'
-                placeholder='0.00'
-                value={initialAmount}
-                onChange={(e) => {
-                  setInitialAmount(e.target.value);
-                  if (error) setError('');
-                }}
-                className={`h-12 pl-10 text-lg ${error ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-                min='0'
-                step='0.01'
-                autoFocus
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className='space-y-6'
+          >
+            <div className='space-y-6 py-4'>
+              <FormField
+                control={form.control}
+                name='initialAmount'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className='text-base font-medium'>
+                      Monto Inicial de Caja
+                    </FormLabel>
+                    <div className='relative'>
+                      <DollarSign className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
+                      <FormControl>
+                        <Input
+                          type='number'
+                          placeholder='0.00'
+                          {...field}
+                          className='h-12 pl-10 text-lg'
+                          min='0'
+                          step='0.01'
+                          autoFocus
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                    <p className='text-muted-foreground text-xs'>
+                      Ingresa el monto en efectivo que tendrás disponible al
+                      inicio del día
+                    </p>
+                  </FormItem>
+                )}
               />
             </div>
-            {error && (
-              <p className='flex items-center gap-1 text-sm text-red-600 dark:text-red-400'>
-                <span className='h-1 w-1 rounded-full bg-red-500'></span>
-                {error}
-              </p>
-            )}
-            <p className='text-muted-foreground text-xs'>
-              Ingresa el monto en efectivo que tendrás disponible al inicio del
-              día
-            </p>
-          </div>
-        </div>
 
-        <DialogFooter className='gap-2'>
-          <Button
-            type='button'
-            variant='outline'
-            onClick={resetForm}
-            className='flex-1 cursor-pointer'
-          >
-            Cancelar
-          </Button>
-          <Button
-            type='submit'
-            onClick={handleOpenRegister}
-            disabled={!initialAmount.trim() || !!error}
-            className='flex-1 cursor-pointer'
-          >
-            <DollarSign className='mr-2 h-4 w-4' />
-            Abrir Caja
-          </Button>
-        </DialogFooter>
+            <DialogFooter className='gap-2'>
+              <Button
+                type='button'
+                variant='outline'
+                onClick={() => form.reset()}
+                className='flex-1'
+              >
+                Cancelar
+              </Button>
+              <Button type='submit' className='flex-1'>
+                <DollarSign className='mr-2 h-4 w-4' />
+                Abrir Caja
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

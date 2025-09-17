@@ -13,8 +13,8 @@ export const CATEGORY_OPTIONS = [
 ];
 
 export const GENRE_OPTIONS = [
-  { value: 'men', label: 'Hombre' },
-  { value: 'famale', label: 'Mujer' },
+  { value: 'male', label: 'Hombre' },
+  { value: 'female', label: 'Mujer' },
   { value: 'unisex', label: 'Unisex' } // agregado
 ];
 

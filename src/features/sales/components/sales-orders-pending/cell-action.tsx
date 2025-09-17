@@ -1,6 +1,14 @@
 'use client';
 
 import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -8,24 +16,14 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Eye, RefreshCcw } from 'lucide-react';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
-import { useState } from 'react';
-
-import { useOrderStore } from '@/store/order-state';
-import { toast } from 'sonner';
+import { IconDotsVertical, IconTrash } from '@tabler/icons-react';
 
 import { Button } from '@/components/ui/button';
-import { IconDotsVertical, IconTrash } from '@tabler/icons-react';
-import { OrderStatus } from '@/types/order-new';
 import { OrderDetails } from './sales-order-view-details';
+import { OrderStatus } from '@/types/order-new';
+import { toast } from 'sonner';
+import { useOrderStore } from '@/store/order-state';
+import { useState } from 'react';
 
 interface CellActionProps {
   id: string;
@@ -111,7 +109,7 @@ export default function CellTableOrderPendingsAction({ id }: CellActionProps) {
       </DropdownMenu>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className='max-h-[95vh] overflow-y-auto sm:max-w-2xl'>
+        <DialogContent className='max-h-[80vh] overflow-y-auto sm:max-w-2xl'>
           <DialogHeader>
             <DialogTitle>Información de Orden</DialogTitle>
           </DialogHeader>

@@ -9,6 +9,7 @@ import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-h
 import Image from 'next/image';
 import { Product } from '@/types/product';
 import { Text } from 'lucide-react';
+import { formatPrice } from '../../../../lib/format';
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -106,12 +107,16 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: 'cost_price',
     header: 'Precio de Costo',
-    cell: ({ cell }) => <p>${cell.getValue<Product['cost_price']>()}</p>
+    cell: ({ cell }) => (
+      <p>{formatPrice(cell.getValue<Product['cost_price']>())}</p>
+    )
   },
   {
     accessorKey: 'sale_price',
     header: 'Precio de Venta',
-    cell: ({ cell }) => <p>${cell.getValue<Product['sale_price']>()}</p>
+    cell: ({ cell }) => (
+      <p>{formatPrice(cell.getValue<Product['sale_price']>())}</p>
+    )
   },
 
   {
