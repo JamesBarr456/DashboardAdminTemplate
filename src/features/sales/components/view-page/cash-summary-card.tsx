@@ -2,8 +2,8 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Wallet } from 'lucide-react';
+import { formatPrice } from '@/lib/format';
 
-import { formatCurrency } from '../../utils/formatters';
 export interface CashierStats {
   nombre: string;
   ventasTurno: number;
@@ -34,7 +34,7 @@ const CashSummaryCard: React.FC<CashSummaryCardProps> = ({ stats }) => {
               Efectivo inicial:
             </span>
             <span className='font-bold'>
-              {formatCurrency(stats.efectivoInicial)}
+              {formatPrice(stats.efectivoInicial)}
             </span>
           </div>
           <div className='flex items-center justify-between'>
@@ -42,14 +42,14 @@ const CashSummaryCard: React.FC<CashSummaryCardProps> = ({ stats }) => {
               Ventas efectivo:
             </span>
             <span className='font-bold'>
-              +{formatCurrency(stats.ventasEfectivo)}
+              +{formatPrice(stats.ventasEfectivo)}
             </span>
           </div>
           <Separator />
           <div className='flex items-center justify-between pt-1'>
             <span className='text-base font-semibold'>Total en caja:</span>
             <span className='text-lg font-bold'>
-              {formatCurrency(stats.totalEnCaja)}
+              {formatPrice(stats.totalEnCaja)}
             </span>
           </div>
         </div>
