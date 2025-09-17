@@ -54,6 +54,7 @@ import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 export default function ProductFormImproved({
   initialData,
@@ -92,7 +93,9 @@ export default function ProductFormImproved({
 
   function onSubmit(values: ProductType) {
     console.log('✅ Producto enviado:', values);
+    toast.success('Producto guardado con éxito');
   }
+
   const handleColorToggle = (color: string, currentColors: string[]) => {
     const isSelected = currentColors.includes(color);
     if (isSelected) {
@@ -101,6 +104,7 @@ export default function ProductFormImproved({
       return [...currentColors, color];
     }
   };
+
   const getAvailableSizes = (sizeRange: string) => {
     const selectedRange = SIZE_RANGE_OPTIONS.find(
       (option) => option.value === sizeRange
@@ -128,7 +132,13 @@ export default function ProductFormImproved({
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+        <form
+          onSubmit={form.handleSubmit(onSubmit, (errors) => {
+            console.log('❌ Errores de validación:', errors);
+            toast.error('Hay campos inválidos. Revisa la consola.');
+          })}
+          className='space-y-8'
+        >
           {/* Section 1: Imágenes */}
           <Card>
             <CardHeader className='pb-4'>

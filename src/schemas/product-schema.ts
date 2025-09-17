@@ -27,7 +27,6 @@ export const segmentSchema = z.object({
 export const productSchema = z.object({
   image: z
     .any()
-    .refine((files) => files?.length == 1, 'La imagen es obligatoria.')
     .refine(
       (files) => files?.[0]?.size <= MAX_FILE_SIZE,
       `El tamaño máximo del archivo es 5MB.`
@@ -35,9 +34,7 @@ export const productSchema = z.object({
     .refine(
       (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
       'Se aceptan archivos .jpg, .jpeg, .png y .webp.'
-    )
-    .optional(),
-  sku: z.string().min(1, 'El SKU es obligatorio.'),
+    ), // 👈 nuevo
   segment: segmentSchema, // 👈 nuevo
   name: z.string().min(2, ''),
   brand: z.string().optional(),
@@ -49,7 +46,7 @@ export const productSchema = z.object({
   colors: z.array(z.string()).optional(), // 👈 nuevo
   season: z.enum(['winter', 'summer', 'seasonal']).optional(), // 👈 nuevo
   provider: z.string().optional(),
-  stock: z.record(z.string(), z.number()),
+
   cost_price: z.coerce
     .number()
     .min(0, 'El precio de costo no puede ser negativo'),
@@ -59,9 +56,7 @@ export const productSchema = z.object({
 
   is_active: z.boolean(),
   purchase_date: z.string().optional(),
-  pack_size: z.enum(['1', '6', '12']).default('1'), // 👈 nuevo
-  has_discount: z.boolean().optional(),
-  discount_percentage: z.number().min(0).max(100).optional()
+  pack_size: z.enum(['1', '6', '12']).default('1') // 👈 nuevo
 });
 
 export type ProductType = z.infer<typeof productSchema>;
