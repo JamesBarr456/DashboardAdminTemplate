@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Package } from 'lucide-react';
 import { CategorySale } from '../utils/report-calculations';
+import { formatPrice } from '@/lib/format';
 
 interface CategorySalesChartProps {
   categorySales: CategorySale[];
@@ -42,7 +43,7 @@ export function CategorySalesChart({
                 </div>
               </div>
               <div className='w-24 text-right text-sm font-medium'>
-                ${category.amount.toLocaleString()}
+                {formatPrice(category.amount)}
               </div>
             </div>
           ))}

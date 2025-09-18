@@ -1,4 +1,5 @@
 import { Movement, Sale } from '@/store/pos-state';
+import { Product } from '@/types/product';
 
 export interface SalesMetrics {
   totalSales: number;
@@ -8,6 +9,7 @@ export interface SalesMetrics {
   totalExpenses: number;
   netBalance: number;
   transactionCount: number;
+  totalIncomes: number;
 }
 
 export interface DailySale {
@@ -17,7 +19,7 @@ export interface DailySale {
 }
 
 export interface TopProduct {
-  product: any;
+  product: Product;
   totalSold: number;
   revenue: number;
 }
@@ -44,17 +46,24 @@ export class ReportCalculator {
       .filter((movement) => movement.type === 'return')
       .reduce((sum, movement) => sum + movement.amount, 0);
 
+    const totalIncomes = movements
+      .filter((movement) => movement.type === 'income')
+      .reduce((sum, movement) => sum + movement.amount, 0);
+    // Note: totalIncomes is calculated but not used in the returned object.
+    // It can be included if needed in the SalesMetrics interface.
+
     const totalExpenses = movements
       .filter((movement) => movement.type === 'expense')
       .reduce((sum, movement) => sum + movement.amount, 0);
 
     return {
+      totalIncomes,
       totalSales,
       totalCash,
       totalTransfer,
       totalReturns,
       totalExpenses,
-      netBalance: totalSales - totalReturns - totalExpenses,
+      netBalance: totalSales - totalReturns - totalExpenses + totalIncomes,
       transactionCount: sales.length
     };
   }

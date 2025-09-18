@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3 } from 'lucide-react';
 import { DailySale } from '../utils/report-calculations';
+import { formatPrice } from '@/lib/format';
 
 interface DailySalesChartProps {
   dailySales: DailySale[];
@@ -43,7 +44,7 @@ export function DailySalesChart({
                 </div>
               </div>
               <div className='w-24 text-right text-sm font-medium'>
-                ${day.amount.toLocaleString()}
+                {formatPrice(day.amount)}
               </div>
             </div>
           ))}

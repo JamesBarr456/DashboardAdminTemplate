@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { SalesMetrics } from '../utils/report-calculations';
+import { formatPrice } from '@/lib/format';
 
 interface FinancialSummaryProps {
   metrics: SalesMetrics;
@@ -34,7 +35,7 @@ export function FinancialSummary({
                 <span className='font-medium'>Total Ingresos</span>
               </div>
               <span className='font-bold text-green-600'>
-                ${metrics.totalSales.toLocaleString()}
+                {formatPrice(metrics.totalSales + metrics.totalIncomes)}
               </span>
             </div>
 
@@ -44,7 +45,7 @@ export function FinancialSummary({
                 <span className='font-medium'>Egresos</span>
               </div>
               <span className='font-bold text-red-600'>
-                ${metrics.totalExpenses.toLocaleString()}
+                {formatPrice(metrics.totalExpenses)}
               </span>
             </div>
 
@@ -52,7 +53,7 @@ export function FinancialSummary({
               <div className='flex items-center justify-between'>
                 <span className='text-lg font-bold'>Balance Neto</span>
                 <span className='text-primary text-xl font-bold'>
-                  ${metrics.netBalance.toLocaleString()}
+                  {formatPrice(metrics.netBalance)}
                 </span>
               </div>
             </div>
@@ -65,7 +66,7 @@ export function FinancialSummary({
                 <span>Efectivo:</span>
                 <div className='text-right'>
                   <span className='font-medium'>
-                    ${metrics.totalCash.toLocaleString()}
+                    {formatPrice(metrics.totalCash)}
                   </span>
                   <span className='text-muted-foreground ml-2 text-xs'>
                     ({getPaymentMethodPercentage(metrics.totalCash)}%)
@@ -76,7 +77,7 @@ export function FinancialSummary({
                 <span>Tarjetas:</span>
                 <div className='text-right'>
                   <span className='font-medium'>
-                    ${metrics.totalTransfer.toLocaleString()}
+                    {formatPrice(metrics.totalTransfer)}
                   </span>
                   <span className='text-muted-foreground ml-2 text-xs'>
                     ({getPaymentMethodPercentage(metrics.totalTransfer)}%)

@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TopProduct } from '../utils/report-calculations';
 import Image from 'next/image';
+import { formatPrice } from '@/lib/format';
 
 interface TopProductsListProps {
   topProducts: TopProduct[];
@@ -28,7 +29,7 @@ export function TopProductsList({
                   {index + 1}
                 </div>
                 <Image
-                  src={item.product.photo_url}
+                  src={item.product.images[0]}
                   alt={item.product.name}
                   width={20}
                   height={20}
@@ -44,7 +45,7 @@ export function TopProductsList({
               <div className='text-right'>
                 <p className='font-bold'>{item.totalSold} vendidos</p>
                 <p className='text-muted-foreground text-sm'>
-                  ${item.revenue.toLocaleString()}
+                  {formatPrice(item.revenue)}
                 </p>
               </div>
             </div>

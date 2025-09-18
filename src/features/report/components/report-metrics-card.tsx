@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Receipt, DollarSign, CreditCard } from 'lucide-react';
 import { SalesMetrics } from '../utils/report-calculations';
+import { formatPrice } from '@/lib/format';
 
 interface MetricsCardsProps {
   metrics: SalesMetrics;
@@ -20,7 +21,7 @@ export function MetricsCards({ metrics }: MetricsCardsProps) {
         </CardHeader>
         <CardContent>
           <div className='text-2xl font-bold'>
-            ${metrics.totalSales.toLocaleString()}
+            {formatPrice(metrics.totalSales)}
           </div>
           <p className='text-muted-foreground text-xs'>
             {metrics.transactionCount} transacciones
@@ -35,7 +36,7 @@ export function MetricsCards({ metrics }: MetricsCardsProps) {
         </CardHeader>
         <CardContent>
           <div className='text-2xl font-bold'>
-            ${metrics.totalCash.toLocaleString()}
+            {formatPrice(metrics.totalCash)}
           </div>
           <p className='text-muted-foreground text-xs'>
             {getPercentage(metrics.totalCash, metrics.totalSales)}% del total
@@ -50,7 +51,7 @@ export function MetricsCards({ metrics }: MetricsCardsProps) {
         </CardHeader>
         <CardContent>
           <div className='text-2xl font-bold'>
-            ${metrics.totalTransfer.toLocaleString()}
+            {formatPrice(metrics.totalTransfer)}
           </div>
           <p className='text-muted-foreground text-xs'>
             {getPercentage(metrics.totalTransfer, metrics.totalSales)}% del

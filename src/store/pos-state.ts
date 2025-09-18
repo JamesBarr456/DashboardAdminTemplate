@@ -23,7 +23,7 @@ export interface Sale {
 
 export interface Movement {
   id: string;
-  type: 'sale' | 'return' | 'expense' | 'income';
+  type: 'sale' | 'return' | 'expense' | 'income' | 'opening';
   amount: number;
   concept: string;
   description?: string;
@@ -103,9 +103,9 @@ export const usePOSStore = create<POSState>((set) => ({
         ...state.movements,
         {
           id: Date.now().toString(),
-          type: 'income',
+          type: 'opening',
           amount: initialAmount,
-          concept: 'Apertura de caja', // <-- agregado
+          concept: 'Apertura de caja',
           description: 'Apertura de caja',
           cashier,
           timestamp: new Date()
