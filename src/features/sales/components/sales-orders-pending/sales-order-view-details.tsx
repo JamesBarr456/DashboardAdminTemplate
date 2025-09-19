@@ -11,7 +11,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { NewOrder as Order } from '@/types/order-new';
 import { STATUS } from '@/constants/mocks/orders';
-import { Separator } from '@/components/ui/separator';
+
 import { formatPrice } from '@/lib/format';
 import {
   translateDeliveryOption,
@@ -163,17 +163,12 @@ export function OrderDetails({ order }: OrderDetailsProps) {
         </CardHeader>
         <CardContent className='space-y-3'>
           <div className='flex justify-between'>
-            <span className='text-muted-foreground'>Subtotal productos:</span>
+            <span className='text-muted-foreground'>Total de productos:</span>
             <span>{formatPrice(order.summary.items_total)}</span>
           </div>
           <div className='flex justify-between'>
             <span className='text-muted-foreground'>Costo de envío:</span>
             <span>{formatPrice(order.summary.shipping_cost)}</span>
-          </div>
-          <Separator />
-          <div className='flex justify-between text-lg font-semibold'>
-            <span>Total:</span>
-            <span>{formatPrice(order.summary.grand_total)}</span>
           </div>
         </CardContent>
       </Card>

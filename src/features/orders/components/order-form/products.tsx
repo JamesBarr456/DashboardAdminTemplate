@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
+import { formatPrice } from '@/lib/format';
 
 interface ProductEditCardProps {
   product: Item;
@@ -71,7 +72,7 @@ export const ProductEditCard = ({
                     Cantidad: <strong>{product.quantity}</strong>
                   </span>
                   <span>
-                    Precio: <strong>${product.price.toFixed(2)}</strong>
+                    Precio: <strong>{formatPrice(product.price)}</strong>
                   </span>
                 </div>
               </div>
@@ -120,7 +121,7 @@ export const ProductEditCard = ({
                   (isDefective || isUnavailable) && 'text-gray-500 line-through'
                 )}
               >
-                ${product.total_mount.toFixed(2)}
+                {formatPrice(product.total_mount)}
               </div>
             </div>
             {!isUnavailable && (

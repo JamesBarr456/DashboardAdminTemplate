@@ -72,9 +72,6 @@ export const columns: ColumnDef<Order>[] = [
     id: 'actions',
 
     cell: ({ row }) => {
-      // 👇 Si está entregada, no mostrar nada
-      if (row.original.status === 'delivered') return null;
-
       return <CellTableOrderPendingsAction id={row.original._id} />;
     }
   }

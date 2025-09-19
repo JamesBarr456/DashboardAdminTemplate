@@ -23,6 +23,7 @@ import { OrderDetails } from './sales-order-view-details';
 import { OrderStatus } from '@/types/order-new';
 import { toast } from 'sonner';
 import { useOrderStore } from '@/store/order-state';
+import { usePOSStore } from '@/store/pos-state';
 import { useState } from 'react';
 
 interface CellActionProps {
@@ -31,6 +32,7 @@ interface CellActionProps {
 
 export default function CellTableOrderPendingsAction({ id }: CellActionProps) {
   const { updateOrderStatus, getOrderById } = useOrderStore();
+  const { addMovement, cashRegister } = usePOSStore();
   const [open, setOpen] = useState(false);
   const order = getOrderById(id);
 
@@ -38,6 +40,7 @@ export default function CellTableOrderPendingsAction({ id }: CellActionProps) {
     return null; // Manejar el caso donde la orden no existe
   }
   const delivery_option = order.shipping_information.delivery_option;
+  const isDelivered = order.status === 'delivered' || !cashRegister.isOpen;
   const statusMap: Record<string, { next: OrderStatus; message: string }> = {
     pickup: {
       next: 'delivered',
@@ -60,6 +63,16 @@ export default function CellTableOrderPendingsAction({ id }: CellActionProps) {
       return;
     }
     updateOrderStatus(id, current.next);
+    // Registrar movimiento en caja
+    if (order && order.payment_method === 'cash' && order.summary.items_total) {
+      addMovement({
+        type: 'income',
+        amount: order.summary.items_total,
+        concept: 'Ingreso por venta',
+        description: `Orden #${order._id} marcada como ${current.message}`,
+        cashier: cashRegister.cashier
+      });
+    }
     toast.success(
       `Estado de la orden ${id} actualizado a "${current.message}"`
     );
@@ -84,27 +97,37 @@ export default function CellTableOrderPendingsAction({ id }: CellActionProps) {
         <DropdownMenuContent align='end'>
           <DropdownMenuLabel>Acciones</DropdownMenuLabel>
 
-          <DropdownMenuItem onClick={handleAdd}>
-            {delivery_option === 'pickup' ? (
-              <>
-                <RefreshCcw className='h-4 w-4 text-green-600' />
-                <span>Finalizar</span>
-              </>
-            ) : (
-              <>
-                <RefreshCcw className='h-4 w-4 text-red-600' />
-                <span>Retirado</span>
-              </>
-            )}
-          </DropdownMenuItem>
+          {isDelivered ? (
+            // 👉 Si está entregado, solo muestro Detalles
+            <DropdownMenuItem onClick={handleOpenDialog}>
+              <Eye className='mr-2 h-4 w-4' /> Detalles
+            </DropdownMenuItem>
+          ) : (
+            // 👉 Si NO está entregado, muestro las otras opciones
+            <>
+              <DropdownMenuItem onClick={handleAdd}>
+                {delivery_option === 'pickup' ? (
+                  <>
+                    <RefreshCcw className='h-4 w-4 text-green-600' />
+                    <span>Finalizar</span>
+                  </>
+                ) : (
+                  <>
+                    <RefreshCcw className='h-4 w-4 text-red-600' />
+                    <span>Retirado</span>
+                  </>
+                )}
+              </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={handleOpenDialog}>
-            <Eye className='mr-2 h-4 w-4' /> Detalles
-          </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleOpenDialog}>
+                <Eye className='mr-2 h-4 w-4' /> Detalles
+              </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={handleAdd}>
-            <IconTrash className='mr-2 h-4 w-4' /> Cancelar
-          </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleAdd}>
+                <IconTrash className='mr-2 h-4 w-4' /> Cancelar
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 

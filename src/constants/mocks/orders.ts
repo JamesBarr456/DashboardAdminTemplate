@@ -155,6 +155,239 @@ export const newOrderMock: NewOrder[] = [
     status: 'delivered',
     createdAt: '2025-09-06T09:15:00.000Z',
     updatedAt: '2025-09-07T08:45:00.000Z'
+  },
+  // ORDEN 4
+  {
+    _id: '66d7c72a3a2c9f5e9a1b1111',
+    customer: {
+      customerId: '4',
+      snapshot: {
+        firstName: 'Lucía',
+        lastName: 'Gómez',
+        dni: '40123456',
+        email: 'lucia.gomez@example.com',
+        phone: {
+          areaCode: '379',
+          number: '1234567'
+        }
+      },
+      stats: {
+        cancelledOrders: 0,
+        rejectedOrders: 0
+      }
+    },
+    payment_method: 'cash',
+    items: [
+      {
+        _id: 'a1b2c3d4-1111-2222-3333-444455556666',
+        product_sku: '1001',
+        name: 'Blusa casual',
+        quantity: 1,
+        size: 'L',
+        price: 22000,
+        total_mount: 22000
+      },
+      {
+        _id: 'a1b2c3d4-7777-8888-9999-000011112222',
+        product_sku: '2003',
+        name: 'Sandalias negras',
+        quantity: 2,
+        price: 18000,
+        total_mount: 36000
+      }
+    ],
+    shipping_information: {
+      delivery_option: 'pickup'
+    },
+    summary: {
+      items_total: 58000,
+      shipping_cost: 0,
+      grand_total: 58000
+    },
+    status: 'pending',
+    createdAt: '2025-09-08T10:00:00.000Z',
+    updatedAt: '2025-09-08T10:00:00.000Z'
+  },
+  // ORDEN 5
+  {
+    _id: '66d7c72a3a2c9f5e9a1b2222',
+    customer: {
+      customerId: '5',
+      snapshot: {
+        firstName: 'Carlos',
+        lastName: 'Pérez',
+        dni: '38999111',
+        email: 'carlos.perez@example.com',
+        phone: {
+          areaCode: '3783',
+          number: '998877'
+        }
+      },
+      stats: {
+        cancelledOrders: 2,
+        rejectedOrders: 1
+      }
+    },
+    payment_method: 'transfer',
+    items: [
+      {
+        _id: 'b2c3d4e5-3333-4444-5555-666677778888',
+        product_sku: '3005',
+        name: 'Campera de jean',
+        quantity: 1,
+        size: 'M',
+        price: 42000,
+        total_mount: 42000
+      }
+    ],
+    shipping_information: {
+      delivery_option: 'delivery',
+      adress: 'Belgrano 123',
+      locality: 'Corrientes',
+      shipping_type: 'express'
+    },
+    summary: {
+      items_total: 42000,
+      shipping_cost: 2500,
+      grand_total: 44500
+    },
+    status: 'sending',
+    createdAt: '2025-09-09T14:20:00.000Z',
+    updatedAt: '2025-09-09T14:30:00.000Z'
+  },
+  // ORDEN 6
+  {
+    _id: '66d7c72a3a2c9f5e9a1b3333',
+    customer: {
+      customerId: '6',
+      snapshot: {
+        firstName: 'Valeria',
+        lastName: 'Martínez',
+        dni: '41222333',
+        email: 'valeria.martinez@example.com',
+        phone: {
+          areaCode: '3718',
+          number: '334455'
+        }
+      },
+      stats: {
+        cancelledOrders: 0,
+        rejectedOrders: 0
+      }
+    },
+    payment_method: 'cash',
+    items: [
+      {
+        _id: 'c3d4e5f6-5555-6666-7777-888899990000',
+        product_sku: '2002',
+        name: 'Vestido de verano',
+        quantity: 2,
+        size: 'S',
+        price: 35000,
+        total_mount: 70000
+      }
+    ],
+    shipping_information: {
+      delivery_option: 'pickup'
+    },
+    summary: {
+      items_total: 70000,
+      shipping_cost: 0,
+      grand_total: 70000
+    },
+    status: 'confirmed',
+    createdAt: '2025-09-10T16:00:00.000Z',
+    updatedAt: '2025-09-10T16:10:00.000Z'
+  },
+  // ORDEN 7
+  {
+    _id: '66d7c72a3a2c9f5e9a1b4444',
+    customer: {
+      customerId: '7',
+      snapshot: {
+        firstName: 'Sofía',
+        lastName: 'Ramírez',
+        dni: '40001111',
+        email: 'sofia.ramirez@example.com',
+        phone: {
+          areaCode: '379',
+          number: '1122334'
+        }
+      },
+      stats: {
+        cancelledOrders: 1,
+        rejectedOrders: 0
+      }
+    },
+    payment_method: 'transfer',
+    items: [
+      {
+        _id: 'd4e5f6g7-7777-8888-9999-000011112222',
+        product_sku: '1001',
+        name: 'Blusa casual',
+        quantity: 3,
+        size: 'M',
+        price: 22000,
+        total_mount: 66000
+      }
+    ],
+    shipping_information: {
+      delivery_option: 'delivery',
+      adress: 'Av. Libertad 789',
+      locality: 'Itaibate',
+      shipping_type: 'standard'
+    },
+    summary: {
+      items_total: 66000,
+      shipping_cost: 3000,
+      grand_total: 69000
+    },
+    status: 'canceled',
+    createdAt: '2025-09-11T11:00:00.000Z',
+    updatedAt: '2025-09-11T11:05:00.000Z'
+  },
+  // ORDEN 8
+  {
+    _id: '66d7c72a3a2c9f5e9a1b5555',
+    customer: {
+      customerId: '8',
+      snapshot: {
+        firstName: 'Martín',
+        lastName: 'Sosa',
+        dni: '39998888',
+        email: 'martin.sosa@example.com',
+        phone: {
+          areaCode: '3783',
+          number: '556677'
+        }
+      },
+      stats: {
+        cancelledOrders: 0,
+        rejectedOrders: 2
+      }
+    },
+    payment_method: 'cash',
+    items: [
+      {
+        _id: 'e5f6g7h8-9999-0000-1111-222233334444',
+        product_sku: '3006',
+        name: 'Zapatillas urbanas',
+        quantity: 1,
+        price: 28000,
+        total_mount: 28000
+      }
+    ],
+    shipping_information: {
+      delivery_option: 'pickup'
+    },
+    summary: {
+      items_total: 28000,
+      shipping_cost: 0,
+      grand_total: 28000
+    },
+    status: 'pending',
+    createdAt: '2025-09-12T09:30:00.000Z',
+    updatedAt: '2025-09-12T09:30:00.000Z'
   }
 ];
 

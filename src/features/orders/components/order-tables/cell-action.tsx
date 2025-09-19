@@ -50,10 +50,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuItem
             onClick={() => router.push(`/dashboard/order/${data._id}`)}
           >
-            <View className='mr-2 h-4 w-4' /> View
+            <View className='mr-2 h-4 w-4' /> Más información
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
-            <IconTrash className='mr-2 h-4 w-4' /> Delete
+            <IconTrash className='mr-2 h-4 w-4' /> Eliminar
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

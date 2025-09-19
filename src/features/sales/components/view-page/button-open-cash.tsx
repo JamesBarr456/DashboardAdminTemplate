@@ -144,7 +144,7 @@ export function CashRegisterModal() {
               </Button>
               <Button type='submit' className='flex-1'>
                 <DollarSign className='mr-2 h-4 w-4' />
-                Abrir Caja
+                Inicio de Turno
               </Button>
             </DialogFooter>
           </form>

@@ -7,6 +7,7 @@ import { CellAction } from './cell-action';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
 import { NewOrder as Order } from '@/types/order-new';
 import { format } from 'date-fns';
+import { translatePaymentMethod } from '@/lib/translation';
 
 export const columns: ColumnDef<Order>[] = [
   {
@@ -81,7 +82,8 @@ export const columns: ColumnDef<Order>[] = [
         { value: 'confirmed', label: 'Confirmado' },
         { value: 'pending', label: 'En proceso' },
         { value: 'delivered', label: 'Enviandose' },
-        { value: 'canceled', label: 'Cancelado' }
+        { value: 'canceled', label: 'Cancelado' },
+        { value: 'sending', label: 'Entregado' }
       ]
     }
   },
@@ -101,7 +103,7 @@ export const columns: ColumnDef<Order>[] = [
 
       return (
         <Badge variant='outline' className='capitalize'>
-          {method}
+          {translatePaymentMethod(method)}
         </Badge>
       );
     }
