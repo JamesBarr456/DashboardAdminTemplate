@@ -2,6 +2,10 @@ import { Badge } from '@/components/ui/badge';
 import { ColumnDef } from '@tanstack/react-table';
 import { HISTORY_TYPES } from './options';
 import { Movement } from '@/store/pos-state';
+import MovementDetailsView from './movement-details-view';
+import { formatDateTime } from '@/lib/format';
+import { formatPrice } from '../../../../lib/format';
+import { translateMovementType } from '../../../../lib/translation';
 
 export const columnsHistory: ColumnDef<Movement>[] = [
   {
@@ -9,7 +13,7 @@ export const columnsHistory: ColumnDef<Movement>[] = [
     header: 'Fecha y Hora',
     cell: ({ row }) => {
       const value = row.getValue('timestamp') as string;
-      return <span>{new Date(value).toLocaleString()}</span>;
+      return <span>{formatDateTime(value)}</span>;
     },
     enableColumnFilter: true,
     meta: {
@@ -22,7 +26,7 @@ export const columnsHistory: ColumnDef<Movement>[] = [
     header: 'Tipo',
     cell: ({ row }) => (
       <Badge variant='outline' className='capitalize'>
-        {row.original.type}
+        {translateMovementType(row.original.type)}
       </Badge>
     ),
     enableColumnFilter: true,
@@ -35,7 +39,7 @@ export const columnsHistory: ColumnDef<Movement>[] = [
   {
     accessorKey: 'amount',
     header: 'Monto',
-    cell: ({ row }) => <span>${row.original.amount}</span>
+    cell: ({ row }) => <span>{formatPrice(row.original.amount)}</span>
   },
   {
     accessorKey: 'description',
@@ -50,5 +54,16 @@ export const columnsHistory: ColumnDef<Movement>[] = [
         {row.original.cashier}
       </Badge>
     )
+  },
+  {
+    id: 'actions',
+    header: 'Detalles',
+    cell: ({ row }) => {
+      const movement = row.original;
+      if (movement.type === 'sale' && movement.saleDetails) {
+        return <MovementDetailsView id={movement.saleId!} />;
+      }
+      return null;
+    }
   }
 ];

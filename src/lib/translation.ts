@@ -22,3 +22,20 @@ export function translateDeliveryOption(option: string): string {
       return option;
   }
 }
+
+export function translateMovementType(type: string): string {
+  switch (type) {
+    case 'sale':
+      return 'Venta';
+    case 'return':
+      return 'Devolución';
+    case 'expense':
+      return 'Egreso';
+    case 'income':
+      return 'Ingreso';
+    case 'opening':
+      return 'Apertura';
+    default:
+      return type;
+  }
+}

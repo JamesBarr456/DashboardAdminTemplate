@@ -29,6 +29,8 @@ export interface Movement {
   description?: string;
   cashier: string;
   timestamp: Date;
+  saleId?: string; // ID de la venta relacionada (solo para movimientos tipo 'sale')
+  saleDetails?: SaleItem[]; // Detalles de la venta (solo para movimientos tipo 'sale')
 }
 
 export interface CashRegister {
@@ -192,10 +194,12 @@ export const usePOSStore = create<POSState>((set) => ({
         id: (Date.now() + 1).toString(),
         type: 'sale',
         amount: finalTotal,
-        concept: 'Venta', // <-- agregado
+        concept: 'Venta',
         description: `Venta #${sale.id}`,
         cashier: state.cashRegister.cashier,
-        timestamp: new Date()
+        timestamp: new Date(),
+        saleId: sale.id,
+        saleDetails: items
       };
 
       const updatedProducts = state.products.map((product) => {

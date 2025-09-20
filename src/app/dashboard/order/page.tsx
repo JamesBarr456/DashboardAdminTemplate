@@ -27,7 +27,7 @@ export default async function Page(props: pageProps) {
     <PageContainer scrollable={false}>
       <div className='flex flex-1 flex-col space-y-4'>
         <Heading
-          title='Historial de Ordenes'
+          title='Historial de Pedidos'
           description='Administra todas las órdenes de tu tienda aquí.'
         />
 

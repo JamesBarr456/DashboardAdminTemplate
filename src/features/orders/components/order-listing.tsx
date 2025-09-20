@@ -1,8 +1,8 @@
+import { NewOrder } from '@/types/order-new';
+import { TableCustom } from '@/components/table';
 import { columns } from './order-tables/columns';
 import { fakeOrders } from '@/services/order-mock-api';
 import { searchParamsOrderCache } from '@/lib/search-params-order';
-import { NewOrder } from '@/types/order-new';
-import { TableCustom } from '@/components/table';
 
 type OrderListingPage = {};
 
@@ -26,7 +26,6 @@ export default async function OrderListingPage({}: OrderListingPage) {
   const totalOrders = data.total_orders;
   const orders: NewOrder[] = data.orders;
 
-  // console.log('Orders fetched:', orders);
   return (
     <TableCustom data={orders} totalItems={totalOrders} columns={columns} />
   );

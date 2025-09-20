@@ -1,12 +1,12 @@
 'use client';
 
 import { Column, ColumnDef } from '@tanstack/react-table';
+import { formatDate, formatPrice } from '../../../../lib/format';
 
 import { Badge } from '@/components/ui/badge';
 import { CellAction } from './cell-action';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
 import { NewOrder as Order } from '@/types/order-new';
-import { format } from 'date-fns';
 import { translatePaymentMethod } from '@/lib/translation';
 
 export const columns: ColumnDef<Order>[] = [
@@ -92,7 +92,7 @@ export const columns: ColumnDef<Order>[] = [
     header: 'Total',
     cell: ({ cell }) => {
       const value = cell.row.original.summary.grand_total;
-      return <span>${value.toFixed(2)}</span>;
+      return <span>{formatPrice(value)}</span>;
     }
   },
   {
@@ -113,7 +113,7 @@ export const columns: ColumnDef<Order>[] = [
     header: 'Creado',
     cell: ({ cell }) => {
       const date = new Date(cell.row.original.createdAt);
-      return <span>{format(date, 'dd/MM/yyyy')}</span>;
+      return <span>{formatDate(String(date))}</span>;
     }
   },
   {

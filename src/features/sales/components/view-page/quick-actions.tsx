@@ -1,36 +1,40 @@
 'use client';
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { CashRegisterModal } from './button-open-cash';
 import HistoryModalNew from '@/features/history/components/history-modal-new';
 import { Separator } from '@/components/ui/separator';
-import { usePOSStore } from '@/store/pos-state';
-import { useOrderStore } from '@/store/order-state';
-import { useRouter } from 'next/navigation';
-
-import { useMemo } from 'react';
 import StatCard from './stat-card';
-import { CashRegisterModal } from './button-open-cash';
-
 import { cn } from '@/lib/utils';
 import { formatDateTime } from '@/lib/format';
+import { useMemo } from 'react';
+import { useOrderStore } from '@/store/order-state';
+import { usePOSStore } from '@/store/pos-state';
+import { useRouter } from 'next/navigation';
 
 export default function QuickActions() {
   const router = useRouter();
-  const { cashRegister, addMovement } = usePOSStore();
+  const { cashRegister, addMovement, sales } = usePOSStore();
   const { orders } = useOrderStore();
 
   const stats = useMemo(() => {
     const pending = orders.filter((o) => o.status === 'pending').length;
     const delivered = orders.filter((o) => o.status === 'delivered').length;
+    const ventasHoy = sales.filter(
+      (sale) =>
+        sale.cashier === cashRegister.cashier &&
+        sale.timestamp.toDateString() === new Date().toDateString()
+    ).length;
 
     return {
-      ventasTurno: orders.length,
+      ventasTurno: ventasHoy || 0,
       pedidosRetirados: delivered,
       pendientes: pending
     };
-  }, [orders]);
+  }, [orders, sales, cashRegister.cashier]);
 
   return (
     <Card>
