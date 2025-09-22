@@ -34,17 +34,17 @@ export const productSchema = z.object({
     .refine(
       (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
       'Se aceptan archivos .jpg, .jpeg, .png y .webp.'
-    ), // 👈 nuevo
-  segment: segmentSchema, // 👈 nuevo
+    ),
+  segment: segmentSchema,
   name: z.string().min(2, ''),
   brand: z.string().optional(),
   description: z.string().min(1, {
     message: ''
   }),
-  gender: z.enum(['male', 'female', 'unisex']),
+
   sizes: z.string().min(1, ''),
-  colors: z.array(z.string()).optional(), // 👈 nuevo
-  season: z.enum(['winter', 'summer', 'seasonal']).optional(), // 👈 nuevo
+  colors: z.array(z.string()).optional(),
+  season: z.enum(['winter', 'summer', 'seasonal']).optional(),
   provider: z.string().optional(),
 
   cost_price: z.coerce
@@ -56,7 +56,7 @@ export const productSchema = z.object({
 
   is_active: z.boolean(),
   purchase_date: z.string().optional(),
-  pack_size: z.enum(['1', '6', '12']).default('1') // 👈 nuevo
+  pack_size: z.enum(['1', '6', '12']).default('1')
 });
 
 export type ProductType = z.infer<typeof productSchema>;

@@ -17,7 +17,7 @@ export type Product = {
   name: string;
   sku: string;
   brand?: string;
-  gender: 'male' | 'female' | 'unisex';
+
   segment: Segment;
   sizes: string;
   cost_price: number;

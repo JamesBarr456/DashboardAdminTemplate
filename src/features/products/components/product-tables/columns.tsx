@@ -1,9 +1,9 @@
 'use client';
 
-import { CATEGORY_OPTIONS, GENRE_OPTIONS } from './options';
 import { Column, ColumnDef } from '@tanstack/react-table';
 
 import { Badge } from '@/components/ui/badge';
+import { CATEGORY_OPTIONS } from './options';
 import { CellAction } from './cell-action';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
 import Image from 'next/image';
@@ -80,30 +80,7 @@ export const columns: ColumnDef<Product>[] = [
       options: CATEGORY_OPTIONS
     }
   },
-  {
-    id: 'gender',
-    accessorKey: 'gender',
-    header: ({ column }: { column: Column<Product, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Género' />
-    ),
-    cell: ({ cell, column }) => {
-      const value = cell.getValue<Product['gender']>();
-      const options = column.columnDef.meta?.options || [];
-      const option = options.find((opt: any) => opt.value === value);
 
-      return (
-        <Badge variant='outline' className='capitalize'>
-          {option ? option.label : value}
-        </Badge>
-      );
-    },
-    enableColumnFilter: true,
-    meta: {
-      label: 'género',
-      variant: 'multiSelect',
-      options: GENRE_OPTIONS
-    }
-  },
   {
     accessorKey: 'cost_price',
     header: 'Precio de Costo',

@@ -1,6 +1,6 @@
 'use client';
 
-import { GENRE_OPTIONS, SIZE_RANGE_OPTIONS } from './product-tables/options';
+import { SIZE_RANGE_OPTIONS } from './product-tables/options';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
@@ -47,10 +47,12 @@ import {
   Palette,
   Ruler,
   ImageIcon,
-  Check
+  Check,
+  Loader2
 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -67,7 +69,8 @@ export default function ProductFormImproved({
     Record<string, number>
   >(initialData?.stock || {});
   const [purchaseDate, setPurchaseDate] = useState<Date>();
-
+  const [productCode, setProductCode] = useState<string>('');
+  const [loadingCode, setLoadingCode] = useState<boolean>(false);
   const defaultValues: Partial<ProductType> = {
     name: initialData?.name || '',
     segment: initialData?.segment || { code: 1, name: 'hombre' },
@@ -77,7 +80,7 @@ export default function ProductFormImproved({
     sale_price: initialData?.sale_price || 0,
     brand: initialData?.brand || '',
     sizes: initialData?.sizes || '',
-    gender: initialData?.gender || 'unisex',
+
     colors: initialData?.colors || [],
     season: initialData?.season || 'seasonal',
     provider: initialData?.provider || '',
@@ -90,6 +93,22 @@ export default function ProductFormImproved({
     resolver: zodResolver(productSchema),
     defaultValues
   });
+
+  useEffect(() => {
+    const segment = form.watch('segment');
+    if (segment && segment.code) {
+      setLoadingCode(true);
+      // Simula delay de backend
+      const timeout = setTimeout(() => {
+        const random = Math.floor(100 + Math.random() * 900);
+        setProductCode(`${segment.code}${random}`);
+        setLoadingCode(false);
+      }, 1200);
+      return () => clearTimeout(timeout);
+    } else {
+      setProductCode('');
+    }
+  }, [form.watch('segment')]);
 
   function onSubmit(values: ProductType) {
     console.log('✅ Producto enviado:', values);
@@ -130,7 +149,6 @@ export default function ProductFormImproved({
           </p>
         </div>
       </div>
-
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit, (errors) => {
@@ -233,64 +251,60 @@ export default function ProductFormImproved({
                   </FormItem>
                 )}
               />
-              <div className='grid grid-cols-2 gap-6 md:grid-cols-2 lg:grid-cols-4'>
+              <div className='grid grid-cols-2 items-end gap-6 md:grid-cols-2 lg:grid-cols-4'>
                 {/* Segmento */}
-                <FormField
-                  control={form.control}
-                  name='segment'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Rubro *</FormLabel>
-                      <Select
-                        onValueChange={(val) => field.onChange(JSON.parse(val))}
-                        value={field.value ? JSON.stringify(field.value) : ''}
-                      >
-                        <FormControl>
-                          <SelectTrigger className='w-full'>
-                            <SelectValue placeholder='Seleccione un segmento' />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {SEGMENT_OPTIONS.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>
-                              {opt.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Género */}
-                <FormField
-                  control={form.control}
-                  name='gender'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Género *</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className='w-full'>
-                            <SelectValue placeholder='Seleccione género' />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {GENRE_OPTIONS.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>
-                              {opt.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className='flex flex-col gap-2'>
+                  <FormField
+                    control={form.control}
+                    name='segment'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Rubro *</FormLabel>
+                        <Select
+                          onValueChange={(val) =>
+                            field.onChange(JSON.parse(val))
+                          }
+                          value={field.value ? JSON.stringify(field.value) : ''}
+                        >
+                          <FormControl>
+                            <SelectTrigger className='w-full'>
+                              <SelectValue placeholder='Seleccione un segmento' />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {SEGMENT_OPTIONS.map((opt) => (
+                              <SelectItem key={opt.value} value={opt.value}>
+                                {opt.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                {/* Código generado */}
+                <div className='flex flex-col gap-2'>
+                  <FormLabel>Código generado</FormLabel>
+                  <div>
+                    <Badge
+                      variant='outline'
+                      className='flex h-10 min-w-[70px] items-center justify-center px-4 py-2 text-lg'
+                    >
+                      {loadingCode ? (
+                        <span className='flex items-center gap-2'>
+                          <Loader2 className='h-5 w-5 animate-spin' />
+                          Generando...
+                        </span>
+                      ) : (
+                        productCode || (
+                          <span className='text-gray-400'>----</span>
+                        )
+                      )}
+                    </Badge>
+                  </div>
+                </div>
                 {/* Temporada */}
                 <FormField
                   control={form.control}
