@@ -11,13 +11,40 @@ import { Separator } from '@/components/ui/separator';
 import { TableCustom } from '@/components/table';
 import { columnsSale } from '@/features/sales/components/sales-product-table/columns';
 import { usePOSStore } from '@/store/pos-state';
+import { SalesTicketPreview } from '@/features/sales/components/sales-ticket-preview';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { useState } from 'react';
 
 function StartPostPage() {
   const { cashRegister, products, currentSale, addToSale, completeSale } =
     usePOSStore();
 
+  const [showTicket, setShowTicket] = useState(false);
+  const [ticketNumber, setTicketNumber] = useState('');
+
+  const handleCompleteSale = () => {
+    // Generar número de ticket (puedes adaptarlo según tus necesidades)
+    const newTicketNumber = `T${Date.now().toString().slice(-6)}`;
+    setTicketNumber(newTicketNumber);
+    setShowTicket(true);
+    // completeSale(); // Comentado hasta que confirmes la venta
+  };
+
   return (
     <>
+      <Dialog open={showTicket} onOpenChange={setShowTicket}>
+        <DialogContent className='max-w-md'>
+          <SalesTicketPreview
+            ticketNumber={ticketNumber}
+            items={currentSale.map((item) => ({
+              name: item.product.name,
+              price: item.unit_price,
+              quantity: item.quantity
+            }))}
+            total={currentSale.reduce((sum, item) => sum + item.subtotal, 0)}
+          />
+        </DialogContent>
+      </Dialog>
       <PageContainer scrollable={true}>
         <div className='flex flex-1 flex-col space-y-4'>
           <Heading
