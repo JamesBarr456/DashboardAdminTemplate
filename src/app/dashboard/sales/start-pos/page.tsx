@@ -1,16 +1,16 @@
 'use client';
 
-import PageContainer from '@/components/layout/page-container';
-import { TableCustom } from '@/components/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Heading } from '@/components/ui/heading';
-import { Separator } from '@/components/ui/separator';
+import { Search, ShoppingCart, ShoppingCartIcon } from 'lucide-react';
 
-import { columnsSale } from '@/features/sales/components/sales-product-table/columns';
+import { Heading } from '@/components/ui/heading';
+import PageContainer from '@/components/layout/page-container';
 import { ProductSearchDropdown } from '@/features/sales/components/sales-search-product';
 import SalesSummary from '@/features/sales/components/sales-summary';
+import { Separator } from '@/components/ui/separator';
+import { TableCustom } from '@/components/table';
+import { columnsSale } from '@/features/sales/components/sales-product-table/columns';
 import { usePOSStore } from '@/store/pos-state';
-import { Search, ShoppingCart, ShoppingCartIcon } from 'lucide-react';
 
 function StartPostPage() {
   const { cashRegister, products, currentSale, addToSale, completeSale } =
@@ -26,7 +26,7 @@ function StartPostPage() {
           />
 
           <Separator />
-          {/* <Suspense fallback={<div>Loading....</div>}> */}
+
           {!cashRegister.isOpen ? (
             <Card className='p-8 text-center'>
               <CardContent>
@@ -80,10 +80,8 @@ function StartPostPage() {
               </div>
             </div>
           )}
-          {/* </Suspense> */}
         </div>
       </PageContainer>
-      {/* Busqueda de productos */}
     </>
   );
 }

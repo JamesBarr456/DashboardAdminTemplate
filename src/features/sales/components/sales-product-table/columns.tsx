@@ -53,7 +53,24 @@ export const columnsSale: ColumnDef<SaleItem>[] = [
   {
     accessorKey: 'unit_price',
     header: 'Precio Unit.',
-    cell: ({ row }) => <span>{formatPrice(row.original.unit_price)}</span>
+    cell: ({ row }) => {
+      const item = row.original;
+      if (item.defectiveCount > 0) {
+        return (
+          <div className='space-y-1'>
+            <div className='flex gap-1'>
+              <span>{item.quantity - item.defectiveCount}x</span>
+              <span>{formatPrice(item.unit_price)}</span>
+            </div>
+            <div className='flex gap-1 text-red-600'>
+              <span>{item.defectiveCount}x</span>
+              <span>{formatPrice(item.unit_price * 0.9)} (defectuoso)</span>
+            </div>
+          </div>
+        );
+      }
+      return <span>{formatPrice(item.unit_price)}</span>;
+    }
   },
   {
     accessorKey: 'subtotal',

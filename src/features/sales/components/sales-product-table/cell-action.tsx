@@ -1,21 +1,23 @@
 'use client';
 
-import { IconTrash } from '@tabler/icons-react';
-import { AlertModal } from '@/components/modal/alert-modal';
-
-import { MinusCircle, PlusCircle } from 'lucide-react';
+import { AlertCircle, MinusCircle, PlusCircle } from 'lucide-react';
 import { SaleItem, usePOSStore } from '@/store/pos-state';
-import { useState } from 'react';
+
+import { AlertModal } from '@/components/modal/alert-modal';
 import { IconTooltipButton } from '@/components/common/icon-tooltip-button';
+import { IconTrash } from '@tabler/icons-react';
+import { Input } from '@/components/ui/input';
+import { useState } from 'react';
 
 interface CellActionProps {
   data: SaleItem;
 }
 
 export const CellSalesAction: React.FC<CellActionProps> = ({ data }) => {
-  const { removeFromSale, updateSaleQuantity } = usePOSStore();
+  const { removeFromSale, updateSaleQuantity, updateDefectiveCount } =
+    usePOSStore();
   const [open, setOpen] = useState(false);
-  const { product, quantity, size } = data;
+  const { product, quantity, size, defectiveCount } = data;
 
   const handleAdd = () => {
     updateSaleQuantity(String(product.id), size, quantity + 1);
@@ -63,6 +65,23 @@ export const CellSalesAction: React.FC<CellActionProps> = ({ data }) => {
           handleDelete,
           'destructive'
         )}
+        <div className='flex items-center gap-2'>
+          <AlertCircle
+            className={`h-4 w-4 ${defectiveCount > 0 ? 'text-red-600' : 'text-gray-600'}`}
+          />
+          <Input
+            type='number'
+            value={defectiveCount}
+            onChange={(e) => {
+              const value = parseInt(e.target.value) || 0;
+              updateDefectiveCount(String(product.id), size, value);
+            }}
+            className='h-8 w-20'
+            min={0}
+            max={quantity}
+            placeholder='Defectuosos'
+          />
+        </div>
       </div>
     </>
   );

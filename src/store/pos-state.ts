@@ -9,6 +9,8 @@ export interface SaleItem {
   unit_price: number;
   quantity: number;
   subtotal: number;
+  defectiveCount: number;
+  discountedPrice?: number;
 }
 
 export interface Sale {
@@ -37,6 +39,8 @@ export interface CashRegister {
   isOpen: boolean;
   initialAmount: number;
   currentAmount: number;
+  cashAmount: number;
+  transferAmount: number;
   openedAt?: Date;
   closedAt?: Date;
   cashier: string;
@@ -51,6 +55,11 @@ interface POSState {
 
   // acciones
   fetchProducts: () => Promise<void>;
+  updateDefectiveCount: (
+    productId: string,
+    size: string,
+    count: number
+  ) => void;
 
   openRegister: (initialAmount: number, cashier: string) => void;
   closeRegister: () => void;
@@ -78,6 +87,8 @@ export const usePOSStore = create<POSState>((set) => ({
     isOpen: false,
     initialAmount: 0,
     currentAmount: 0,
+    cashAmount: 0,
+    transferAmount: 0,
     cashier: 'Sistema'
   },
   products: [],
@@ -98,6 +109,8 @@ export const usePOSStore = create<POSState>((set) => ({
         isOpen: true,
         initialAmount,
         currentAmount: initialAmount,
+        cashAmount: initialAmount,
+        transferAmount: 0,
         openedAt: new Date(),
         cashier
       },
@@ -144,7 +157,8 @@ export const usePOSStore = create<POSState>((set) => ({
             size,
             quantity,
             unit_price: product.sale_price,
-            subtotal: product.sale_price * quantity
+            subtotal: product.sale_price * quantity,
+            defectiveCount: 0
           });
         }
       });
@@ -233,10 +247,15 @@ export const usePOSStore = create<POSState>((set) => ({
 
         cashRegister: {
           ...state.cashRegister,
-          currentAmount:
+          currentAmount: state.cashRegister.currentAmount + finalTotal,
+          cashAmount:
             paymentMethod === 'cash'
-              ? state.cashRegister.currentAmount + finalTotal
-              : state.cashRegister.currentAmount
+              ? state.cashRegister.cashAmount + finalTotal
+              : state.cashRegister.cashAmount,
+          transferAmount:
+            paymentMethod === 'transfer'
+              ? state.cashRegister.transferAmount + finalTotal
+              : state.cashRegister.transferAmount
         }
       };
     }),
@@ -267,5 +286,24 @@ export const usePOSStore = create<POSState>((set) => ({
             ? state.cashRegister.currentAmount + movement.amount
             : state.cashRegister.currentAmount - movement.amount
       }
+    })),
+
+  updateDefectiveCount: (productId: string, size: string, count: number) =>
+    set((state) => ({
+      currentSale: state.currentSale.map((item) => {
+        if (item.product.id === +productId && item.size === size) {
+          const defectiveCount = Math.min(Math.max(0, count), item.quantity); // Aseguramos que esté entre 0 y quantity
+          const regularPrice =
+            item.unit_price * (item.quantity - defectiveCount);
+          const defectivePrice = item.unit_price * 0.9 * defectiveCount; // 10% de descuento en unidades defectuosas
+
+          return {
+            ...item,
+            defectiveCount,
+            subtotal: regularPrice + defectivePrice
+          };
+        }
+        return item;
+      })
     }))
 }));
