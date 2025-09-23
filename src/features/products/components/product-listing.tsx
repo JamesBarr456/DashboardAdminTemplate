@@ -1,8 +1,8 @@
 import { Product } from '@/types/product';
-import { ProductTable } from './product-tables';
 import { columns } from './product-tables/columns';
 import { fakeProducts } from '@/services/product-mock-api';
 import { searchParamsCache } from '@/lib/searchparams';
+import { TableCustom } from '@/components/table';
 
 type ProductListingPage = {};
 
@@ -25,10 +25,6 @@ export default async function ProductListingPage({}: ProductListingPage) {
   const products: Product[] = data.products;
 
   return (
-    <ProductTable
-      data={products}
-      totalItems={totalProducts}
-      columns={columns}
-    />
+    <TableCustom data={products} totalItems={totalProducts} columns={columns} />
   );
 }
