@@ -1,11 +1,10 @@
 'use client';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
 import OrdersTableView from './view-page/cash-register-view';
-import QuickActions from './view-page/quick-actions';
+import ControlPanel from './view-page/control-panel';
 import { useEffect } from 'react';
 import { usePOSStore } from '@/store/pos-state';
+import TabsCustom from '@/components/common/tabs-custom';
 
 export default function SalesViewPage() {
   const { fetchProducts } = usePOSStore();
@@ -14,31 +13,27 @@ export default function SalesViewPage() {
     fetchProducts();
   }, [fetchProducts]);
 
+  const tabsData = [
+    {
+      trigger: 'Pedidos Pendientes',
+      value: 'pedidos-pendientes',
+      content: <OrdersTableView activeTab='pending' />
+    },
+    {
+      trigger: 'Pedidos Retirados',
+      value: 'pedidos-retirados',
+      content: <OrdersTableView activeTab='delivered' />
+    }
+  ];
+
   return (
     <>
       <div className='grid grid-cols-1 gap-4 md:grid-cols-5'>
         <div className='md:col-span-2'>
-          <QuickActions />
+          <ControlPanel />
         </div>
         <div className='md:col-span-3'>
-          <Tabs defaultValue='pedidos-pendientes' className='w-full'>
-            <TabsList>
-              <TabsTrigger value='pedidos-pendientes'>
-                Pedidos Pendientes
-              </TabsTrigger>
-              <TabsTrigger value='pedidos-retirados'>
-                Pedidos Retirados
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value='pedidos-pendientes'>
-              <OrdersTableView activeTab='pending' />
-            </TabsContent>
-
-            <TabsContent value='pedidos-retirados'>
-              <OrdersTableView activeTab='delivered' />
-            </TabsContent>
-          </Tabs>
+          <TabsCustom data={tabsData} />
         </div>
       </div>
     </>
