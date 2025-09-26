@@ -1,4 +1,4 @@
-import HistoryViewPage from './components/history-view-page';
+import HistoryViewPage from './history-view-page';
 import { searchParamsCacheHistory } from '@/lib/searh-params-history';
 
 type HistoryListingPage = {};

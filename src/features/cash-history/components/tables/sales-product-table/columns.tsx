@@ -3,9 +3,8 @@ import { ColumnDef } from '@tanstack/react-table';
 import { HISTORY_TYPES } from './options';
 import { Movement } from '@/store/pos-state';
 import MovementDetailsView from './movement-details-view';
-import { formatDateTime } from '@/lib/format';
-import { formatPrice } from '../../../../lib/format';
-import { translateMovementType } from '../../../../lib/translation';
+import { formatDateTime, formatPrice } from '@/lib/format';
+import { translateMovementType } from '@/lib/translation';
 
 export const columnsHistory: ColumnDef<Movement>[] = [
   {

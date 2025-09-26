@@ -1,6 +1,6 @@
 'use client';
 import { QuickActionButton } from '@/components/common/quick-action-button';
-import HistoryModalNew from '@/features/history/components/history-modal-new';
+import HistoryModalNew from '@/features/cash-history/components/modal/history-modal-new';
 import { CashRegisterModal } from './button-open-cash';
 import { CashRegister, Movement } from '@/store/pos-state';
 import { useRouter } from 'next/router';

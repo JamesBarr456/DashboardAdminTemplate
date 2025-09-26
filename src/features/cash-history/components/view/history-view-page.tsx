@@ -1,8 +1,9 @@
 'use client';
 
-import { HistoryTable } from './sales-product-table/index';
-import { columnsHistory } from './sales-product-table/columns';
 import { usePOSStore } from '@/store/pos-state';
+
+import { columnsHistory } from '../tables/sales-product-table/columns';
+import { TableCustom } from '@/components/table';
 
 interface Props {
   filters: {
@@ -18,11 +19,7 @@ export default function HistoryViewPage({ filters }: Props) {
 
   return (
     <>
-      {/* <HistoryModalNew
-        addMovement={addMovement}
-        cashier={cashRegister.cashier}
-      /> */}
-      <HistoryTable
+      <TableCustom
         data={movements}
         totalItems={totalMovements}
         columns={columnsHistory}

@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { formatPrice } from '@/lib/format';
 import { translatePaymentMethod } from '@/lib/translation';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { SalesTicketPreview } from './sales-ticket-preview';
+import { SalesTicketPreview } from '../ticket/sales-ticket-preview';
 
 interface Props {
   currentSale: SaleItem[];

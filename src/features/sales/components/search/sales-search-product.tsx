@@ -12,7 +12,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import Image from 'next/image';
 import { Product } from '@/types/product';
-import SalesModalProduct from './sales-modal-product';
+import SalesModalProduct from '../modal/sales-modal-product';
 import { cn } from '@/lib/utils';
 import { formatPrice } from '@/lib/format';
 

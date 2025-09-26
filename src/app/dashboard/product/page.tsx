@@ -3,7 +3,7 @@ import { Heading } from '@/components/ui/heading';
 import { IconPlus } from '@tabler/icons-react';
 import Link from 'next/link';
 import PageContainer from '@/components/layout/page-container';
-import ProductListingPage from '@/features/products/components/product-listing';
+import ProductListingPage from '@/features/products/components/view/product-listing';
 import { SearchParams } from 'nuqs/server';
 import { Separator } from '@/components/ui/separator';
 import { Suspense } from 'react';

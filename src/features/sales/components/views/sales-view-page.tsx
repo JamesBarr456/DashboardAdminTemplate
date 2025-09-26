@@ -1,10 +1,10 @@
 'use client';
 
-import OrdersTableView from './view-page/cash-register-view';
-import ControlPanel from './view-page/control-panel';
 import { useEffect } from 'react';
 import { usePOSStore } from '@/store/pos-state';
 import TabsCustom from '@/components/common/tabs-custom';
+import OrdersTableView from './cash-register-view';
+import ControlPanel from './control-panel';
 
 export default function SalesViewPage() {
   const { fetchProducts } = usePOSStore();

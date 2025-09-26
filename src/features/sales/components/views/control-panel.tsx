@@ -5,7 +5,7 @@ import { Separator } from '@/components/ui/separator';
 
 import { usePOSStore } from '@/store/pos-state';
 
-import { useRegisterStats } from '../../hooks/use-register-stats';
+import { useRegisterStats } from '../../../../hooks/use-register-stats';
 import QuickButtons from './quick-buttons';
 import RegisterStatsGrid from './register-stat-grid';
 import { StatusBadge } from '@/components/common/status-badge';

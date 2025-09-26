@@ -1,5 +1,5 @@
 import { Product } from '@/types/product';
-import ProductForm from './product-form';
+import ProductForm from '../form/product-form';
 import { fakeProducts } from '@/services/product-mock-api';
 import { notFound } from 'next/navigation';
 

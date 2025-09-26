@@ -1,7 +1,7 @@
 import { Clock, Package } from 'lucide-react';
 
 import OrdersTable from './orders-table';
-import { columns as ordersPendingColumn } from '../sales-orders-pending/columns';
+import { columns as ordersPendingColumn } from '../tables/sales-orders-pending/columns';
 import { useOrderStore } from '@/store/order-state';
 
 interface OrdersTableViewProps {

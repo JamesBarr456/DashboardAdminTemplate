@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { LucideIcon } from 'lucide-react';
 
 import { TableCustom } from '@/components/table';
-import { columns } from '../sales-orders-pending/columns';
+import { columns } from '../tables/sales-orders-pending/columns';
 import { NewOrder as Order } from '@/types/order-new';
 
 interface OrdersTableProps {

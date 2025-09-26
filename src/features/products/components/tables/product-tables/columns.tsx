@@ -9,7 +9,7 @@ import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-h
 import Image from 'next/image';
 import { Product } from '@/types/product';
 import { Text } from 'lucide-react';
-import { formatPrice } from '../../../../lib/format';
+import { formatPrice } from '@/lib/format';
 
 export const columns: ColumnDef<Product>[] = [
   {
