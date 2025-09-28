@@ -1,9 +1,11 @@
 'use client';
-import { QuickActionButton } from '@/components/common/quick-action-button';
-import HistoryModalNew from '@/features/cash-history/components/modal/history-modal-new';
-import { CashRegisterModal } from './button-open-cash';
+
 import { CashRegister, Movement } from '@/store/pos-state';
-import { useRouter } from 'next/router';
+
+import { CashRegisterModal } from './button-open-cash';
+import HistoryModalNew from '@/features/cash-history/components/modal/history-modal-new';
+import { QuickActionButton } from '@/components/common/quick-action-button';
+import { useRouter } from 'next/navigation';
 
 interface QuickActionButtonsProps {
   isOpen: boolean;
@@ -20,7 +22,7 @@ function QuickButtons({
   const router = useRouter();
   const handleStartSale = () => {
     if (cashRegister.isOpen) {
-      router.push('/dashboard/sales/start-pos');
+      router.push('/dashboard/sales/start-pos', { scroll: false });
     }
   };
   return (
