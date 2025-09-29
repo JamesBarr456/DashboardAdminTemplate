@@ -1,17 +1,18 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Search, ShoppingCart, ShoppingCartIcon } from 'lucide-react';
 
 import { Heading } from '@/components/ui/heading';
 import PageContainer from '@/components/layout/page-container';
-
+import { ProductSearchDropdown } from '@/features/sales/components/search/sales-search-product';
+import SalesSummary from '@/features/sales/components/summary/sales-summary';
+import { SalesTicketPreview } from '@/features/sales/components/ticket/sales-ticket-preview';
 import { Separator } from '@/components/ui/separator';
 import { TableCustom } from '@/components/table';
-
+import { columnsSale } from '@/features/sales/components/tables/sales-product-table/columns';
 import { usePOSStore } from '@/store/pos-state';
-
-import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useState } from 'react';
 import { SalesTicketPreview } from '@/features/sales/components/ticket/sales-ticket-preview';
 import { ProductSearchDropdown } from '@/features/sales/components/search/sales-search-product';
