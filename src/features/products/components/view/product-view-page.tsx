@@ -1,7 +1,9 @@
 import { Product } from '@/types/product';
-import ProductForm from '../form/product-form';
+
 import { fakeProducts } from '@/services/product-mock-api';
 import { notFound } from 'next/navigation';
+import { Heading } from '@/components/ui/heading';
+import FormProduct from '../form/form-product';
 
 type TProductViewPageProps = {
   productSKU: string;
@@ -22,5 +24,13 @@ export default async function ProductViewPage({
     pageTitle = `Editar Producto`;
   }
 
-  return <ProductForm initialData={product} pageTitle={pageTitle} />;
+  return (
+    <>
+      <Heading
+        title={pageTitle}
+        description='Complete la información del producto.'
+      />
+      <FormProduct initialData={product} />
+    </>
+  );
 }

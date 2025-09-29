@@ -9,21 +9,20 @@ import {
   FormItem,
   FormMessage
 } from '@/components/ui/form';
-import { Control } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
 interface FormImageUploadProps {
-  control: Control<any>;
   name: string;
   maxFiles?: number;
   maxSize?: number;
 }
 
 export function FormImageUpload({
-  control,
   name,
   maxFiles = 4,
   maxSize = 4 * 1024 * 1024
 }: FormImageUploadProps) {
+  const { control } = useFormContext();
   return (
     <Card>
       <CardHeader className='pb-4'>
