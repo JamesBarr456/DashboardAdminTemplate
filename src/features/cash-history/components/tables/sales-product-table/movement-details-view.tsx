@@ -28,9 +28,10 @@ import { formatDateTime, formatPrice } from '@/lib/format';
 import { Button } from '@/components/ui/button';
 import { Eye } from 'lucide-react';
 import { IconDotsVertical } from '@tabler/icons-react';
-import { translatePaymentMethod } from '../../../../lib/translation';
+
 import { usePOSStore } from '@/store/pos-state';
 import { useState } from 'react';
+import { translatePaymentMethod } from '@/lib/translation';
 
 interface Props {
   id: string;

@@ -1,13 +1,19 @@
+import { Suspense } from 'react';
+import Link from 'next/link';
+import { IconPlus } from '@tabler/icons-react';
+import { SearchParams } from 'nuqs/server';
+
+// UI Components
 import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton';
 import { Heading } from '@/components/ui/heading';
-import { IconPlus } from '@tabler/icons-react';
-import Link from 'next/link';
-import PageContainer from '@/components/layout/page-container';
-import ProductListingPage from '@/features/products/components/view/product-listing';
-import { SearchParams } from 'nuqs/server';
 import { Separator } from '@/components/ui/separator';
-import { Suspense } from 'react';
 import { buttonVariants } from '@/components/ui/button';
+import PageContainer from '@/components/layout/page-container';
+
+// Features
+import ProductListingPage from '@/features/products/components/view/product-listing';
+
+// Utils
 import { cn } from '@/lib/utils';
 import { searchParamsCache } from '@/lib/searchparams';
 
@@ -21,11 +27,8 @@ type pageProps = {
 
 export default async function Page(props: pageProps) {
   const searchParams = await props.searchParams;
-  // Allow nested RSCs to access the search params (in a type-safe way)
+  // Parse search params for nested components
   searchParamsCache.parse(searchParams);
-
-  // This key is used for invoke suspense if any of the search params changed (used for filters).
-  // const key = serialize({ ...searchParams });
 
   return (
     <PageContainer scrollable={false}>
@@ -41,7 +44,6 @@ export default async function Page(props: pageProps) {
         </div>
         <Separator />
         <Suspense
-          // key={key}
           fallback={
             <DataTableSkeleton columnCount={5} rowCount={8} filterCount={2} />
           }
