@@ -103,40 +103,72 @@ export function FormSizesSection({
               </Select>
               <FormMessage />
 
-              {field.value && getAvailableSizes(field.value).length > 0 && (
+              {field.value === 'sin-talle' && (
                 <div className='mt-6 space-y-4'>
                   <div className='flex items-center gap-2'>
                     <FormLabel className='text-base font-medium'>
-                      Stock por Talle
+                      Stock general (sin talle)
                     </FormLabel>
-                    <Badge variant='secondary' className='text-xs'>
-                      {getAvailableSizes(field.value).length} talles
-                    </Badge>
                   </div>
                   <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6'>
-                    {getAvailableSizes(field.value).map((size) => (
-                      <div key={size} className='space-y-2'>
-                        <FormLabel className='block text-center text-sm font-medium'>
-                          Talle {size}
-                        </FormLabel>
-                        <SimpleInput
-                          type='number'
-                          min='0'
-                          placeholder='0'
-                          className='text-center'
-                          value={stockQuantities[size.toLowerCase()] || ''}
-                          onChange={(e) =>
-                            handleStockChange(
-                              size.toLowerCase(),
-                              Number(e.target.value) || 0
-                            )
-                          }
-                        />
-                      </div>
-                    ))}
+                    <div className='space-y-2'>
+                      <FormLabel className='block text-center text-sm font-medium'>
+                        Cantidad
+                      </FormLabel>
+                      <SimpleInput
+                        type='number'
+                        min='0'
+                        placeholder='0'
+                        className='text-center'
+                        value={stockQuantities['unico'] || ''}
+                        onChange={(e) =>
+                          handleStockChange(
+                            'unico',
+                            Number(e.target.value) || 0
+                          )
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
               )}
+
+              {field.value &&
+                field.value !== 'sin-talle' &&
+                getAvailableSizes(field.value).length > 0 && (
+                  <div className='mt-6 space-y-4'>
+                    <div className='flex items-center gap-2'>
+                      <FormLabel className='text-base font-medium'>
+                        Stock por Talle
+                      </FormLabel>
+                      <Badge variant='secondary' className='text-xs'>
+                        {getAvailableSizes(field.value).length} talles
+                      </Badge>
+                    </div>
+                    <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6'>
+                      {getAvailableSizes(field.value).map((size) => (
+                        <div key={size} className='space-y-2'>
+                          <FormLabel className='block text-center text-sm font-medium'>
+                            Talle {size}
+                          </FormLabel>
+                          <SimpleInput
+                            type='number'
+                            min='0'
+                            placeholder='0'
+                            className='text-center'
+                            value={stockQuantities[size.toLowerCase()] || ''}
+                            onChange={(e) =>
+                              handleStockChange(
+                                size.toLowerCase(),
+                                Number(e.target.value) || 0
+                              )
+                            }
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
             </FormItem>
           )}
         />

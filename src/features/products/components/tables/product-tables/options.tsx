@@ -31,6 +31,11 @@ export const CODIGO_OPTIONS = [
 ];
 export const SIZE_RANGE_OPTIONS = [
   {
+    value: 'sin-talle',
+    label: 'Sin talle',
+    sizes: []
+  },
+  {
     value: 'normal-t1-t5',
     label: 'Talles normales T1 - T5',
     sizes: ['T1', 'T2', 'T3', 'T4', 'T5']

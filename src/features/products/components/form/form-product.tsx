@@ -25,43 +25,31 @@ import { FormTextAreaField } from '@/components/forms/form-textarea-field';
 
 import { type ProductType, productSchema } from '@/schemas/product-schema';
 
-import { Button } from '@/components/ui/button';
+// Button no se usa en este componente
 
 import type { Product } from '@/types/product';
 
-import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover';
-import { CalendarIcon, Package } from 'lucide-react';
+import { Package } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
+// removed unused format and cn
 import { toast } from 'sonner';
 import { SIZE_RANGE_OPTIONS } from '../tables/product-tables/options';
 import { FormSizesSection } from '@/features/products/components/form/form-sizes-section';
 import FormSummaryProduct from './form-summary-product';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
+import { DateTimePicker } from '@/components/datetime-picker';
+// Select UI se usa dentro de FormSelectField
 
 interface FormProductProps {
   initialData: Product | null;
 }
 export default function FormProduct({ initialData }: FormProductProps) {
-  const [stockQuantities, setStockQuantities] = useState<
-    Record<string, number>
-  >(initialData?.stock || {});
-  const [purchaseDate, setPurchaseDate] = useState<Date>();
+  const [, setStockQuantities] = useState<Record<string, number>>(
+    initialData?.stock || {}
+  );
+  // sin estado local: se maneja desde react-hook-form
 
   const form = useForm<ProductType>({
     resolver: zodResolver(productSchema),
@@ -84,7 +72,7 @@ export default function FormProduct({ initialData }: FormProductProps) {
     }
   });
 
-  function onSubmit(_values: ProductType) {
+  function onSubmit() {
     toast.success('Producto guardado con éxito');
   }
 
@@ -136,43 +124,29 @@ export default function FormProduct({ initialData }: FormProductProps) {
                         label='Descripción'
                         placeholder='Descripción detallada del producto, materiales, características especiales...'
                         minHeight='100px'
+                        required
                         description='Incluya detalles relevantes sobre el producto'
                       />
 
                       <div className='grid grid-cols-2 items-end gap-6 md:grid-cols-2 lg:grid-cols-4'>
-                        <FormField
+                        <FormSelectField
                           control={form.control}
                           name='segment'
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Rubro *</FormLabel>
-                              <Select
-                                onValueChange={(val) =>
-                                  field.onChange(JSON.parse(val))
-                                }
-                                value={
-                                  field.value ? JSON.stringify(field.value) : ''
-                                }
-                              >
-                                <FormControl>
-                                  <SelectTrigger className='w-full'>
-                                    <SelectValue placeholder='Seleccione un Rubro' />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  {SEGMENT_OPTIONS.map((opt) => (
-                                    <SelectItem
-                                      key={opt.value}
-                                      value={opt.value}
-                                    >
-                                      {opt.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
+                          label='Rubro'
+                          required
+                          options={SEGMENT_OPTIONS.map((opt) => ({
+                            label: opt.label,
+                            value: String(opt.value.code)
+                          }))}
+                          placeholder='Seleccione un Rubro'
+                          valueSelector={(val) =>
+                            val ? String(val.code) : undefined
+                          }
+                          valueParser={(code) =>
+                            SEGMENT_OPTIONS.find(
+                              (o) => String(o.value.code) === code
+                            )?.value
+                          }
                         />
                         <FormSelectField
                           control={form.control}
@@ -195,49 +169,29 @@ export default function FormProduct({ initialData }: FormProductProps) {
                           name='provider'
                           label='Nombre del Proveedor'
                           placeholder='Ej: Nike, Adidas'
-                          required
                         />
                         <FormField
                           control={form.control}
                           name='purchase_date'
-                          render={() => (
+                          render={({ field }) => (
                             <FormItem className='flex flex-col'>
                               <FormLabel>Fecha de Compra (Opcional)</FormLabel>
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <FormControl>
-                                    <Button
-                                      variant='outline'
-                                      className={cn(
-                                        'w-full pl-3 text-left font-normal',
-                                        !purchaseDate && 'text-muted-foreground'
-                                      )}
-                                    >
-                                      {purchaseDate ? (
-                                        format(purchaseDate, 'PPP')
-                                      ) : (
-                                        <span>Seleccionar fecha</span>
-                                      )}
-                                      <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                                    </Button>
-                                  </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent
-                                  className='w-auto p-0'
-                                  align='start'
-                                >
-                                  <Calendar
-                                    mode='single'
-                                    selected={purchaseDate}
-                                    onSelect={setPurchaseDate}
-                                    disabled={(date) =>
-                                      date > new Date() ||
-                                      date < new Date('1900-01-01')
-                                    }
-                                    initialFocus
-                                  />
-                                </PopoverContent>
-                              </Popover>
+                              <FormControl>
+                                <DateTimePicker
+                                  value={
+                                    field.value
+                                      ? new Date(field.value)
+                                      : undefined
+                                  }
+                                  onChange={(d) =>
+                                    field.onChange(d ? d.toISOString() : '')
+                                  }
+                                  hideTime
+                                  clearable
+                                  min={new Date('1900-01-01')}
+                                  max={new Date()}
+                                />
+                              </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}

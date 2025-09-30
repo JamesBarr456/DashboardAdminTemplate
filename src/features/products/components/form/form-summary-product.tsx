@@ -41,7 +41,7 @@ function FormSummaryProduct({ initialData }: FormSummaryProductProps) {
       <CardHeader>
         <CardTitle>Resumen del Producto</CardTitle>
       </CardHeader>
-      <CardContent className='space-y-4'>
+      <CardContent className='grid grid-cols-2 space-y-4'>
         {render({ label: 'Nombre', value: name })}
         {render({ label: 'Marca', value: brand })}
         {render({ label: 'Rubro', value: segment?.name })}

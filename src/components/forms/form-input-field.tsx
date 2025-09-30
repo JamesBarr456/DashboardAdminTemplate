@@ -59,13 +59,13 @@ export function FormInputField({
             {label} {required && '*'}
           </FormLabel>
           {description && <FormDescription>{description}</FormDescription>}
-          <FormControl>
-            <div className='relative'>
-              {leftIcon && (
-                <span className='text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2'>
-                  {leftIcon}
-                </span>
-              )}
+          <div className='relative'>
+            {leftIcon && (
+              <span className='text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2'>
+                {leftIcon}
+              </span>
+            )}
+            <FormControl>
               <Input
                 {...field}
                 type={type}
@@ -81,13 +81,13 @@ export function FormInputField({
                 step={step}
                 autoFocus={autoFocus}
               />
-              {rightIcon && (
-                <span className='text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2'>
-                  {rightIcon}
-                </span>
-              )}
-            </div>
-          </FormControl>
+            </FormControl>
+            {rightIcon && (
+              <span className='text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2'>
+                {rightIcon}
+              </span>
+            )}
+          </div>
           <FormMessage />
         </FormItem>
       )}

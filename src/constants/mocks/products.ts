@@ -102,20 +102,20 @@ export const colors = [
 ];
 
 export const SEGMENT_OPTIONS = [
-  { label: 'Hombre', value: JSON.stringify({ code: 1, name: 'hombre' }) },
-  { label: 'Dama', value: JSON.stringify({ code: 2, name: 'dama' }) },
-  { label: 'Nene', value: JSON.stringify({ code: 3, name: 'nene' }) },
-  { label: 'Nena', value: JSON.stringify({ code: 4, name: 'nena' }) },
-  { label: 'Bebé', value: JSON.stringify({ code: 5, name: 'bebe' }) },
-  { label: 'Beba', value: JSON.stringify({ code: 6, name: 'beba' }) },
-  { label: 'Otros', value: JSON.stringify({ code: 7, name: 'otros' }) },
+  { label: 'Hombre', value: { code: 1, name: 'hombre' } },
+  { label: 'Dama', value: { code: 2, name: 'dama' } },
+  { label: 'Nene', value: { code: 3, name: 'nene' } },
+  { label: 'Nena', value: { code: 4, name: 'nena' } },
+  { label: 'Bebé', value: { code: 5, name: 'bebe' } },
+  { label: 'Beba', value: { code: 6, name: 'beba' } },
+  { label: 'Otros', value: { code: 7, name: 'otros' } },
   {
     label: 'Ropa interior',
-    value: JSON.stringify({ code: 8, name: 'ropa interior' })
+    value: { code: 8, name: 'ropa interior' }
   },
   {
     label: 'Ropa interior importada',
-    value: JSON.stringify({ code: 9, name: 'ropa interior importada' })
+    value: { code: 9, name: 'ropa interior importada' }
   }
 ];
 

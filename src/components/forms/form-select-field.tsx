@@ -33,6 +33,10 @@ interface FormSelectFieldProps {
   defaultValue?: string;
   className?: string;
   onChange?: (value: string) => void;
+  // Mapea el valor actual del campo (puede ser objeto) a string para el Select
+  valueSelector?: (fieldValue: any) => string | undefined;
+  // Convierte el string seleccionado por el Select al valor que se debe guardar en el form (string u objeto)
+  valueParser?: (value: string) => any;
 }
 
 export function FormSelectField({
@@ -45,7 +49,9 @@ export function FormSelectField({
   required = false,
   defaultValue,
   className,
-  onChange
+  onChange,
+  valueSelector,
+  valueParser
 }: FormSelectFieldProps) {
   return (
     <FormField
@@ -59,10 +65,14 @@ export function FormSelectField({
           {description && <FormDescription>{description}</FormDescription>}
           <Select
             onValueChange={(value) => {
-              field.onChange(value);
+              const parsed = valueParser ? valueParser(value) : value;
+              field.onChange(parsed);
               onChange?.(value);
             }}
-            value={field.value || defaultValue}
+            value={
+              (valueSelector ? valueSelector(field.value) : field.value) ||
+              defaultValue
+            }
           >
             <FormControl>
               <SelectTrigger>
