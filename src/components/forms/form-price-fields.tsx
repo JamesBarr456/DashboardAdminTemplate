@@ -1,8 +1,6 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 import {
   FormControl,
   FormField,
@@ -10,7 +8,10 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form';
+
 import { Control } from 'react-hook-form';
+import { DollarSign } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 
 interface FormPriceFieldsProps {
   control: Control<any>;
@@ -25,7 +26,7 @@ export function FormPriceFields({
 }: FormPriceFieldsProps) {
   return (
     <Card>
-      <CardHeader className='pb-4'>
+      <CardHeader>
         <CardTitle className='flex items-center gap-2 text-lg'>
           <DollarSign className='h-5 w-5 text-yellow-600' />
           Precios

@@ -25,6 +25,7 @@ export const segmentSchema = z.object({
 });
 
 export const productSchema = z.object({
+  sku: z.string().optional(),
   image: z
     .any()
     .optional()

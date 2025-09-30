@@ -3,11 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-  FormDescription
+  FormMessage
 } from '@/components/ui/form';
 import {
   Select,
@@ -16,10 +16,11 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { SimpleInput } from '@/components/common/input-common';
+
 import { Badge } from '@/components/ui/badge';
-import { Ruler } from 'lucide-react';
 import { Control } from 'react-hook-form';
+import { Ruler } from 'lucide-react';
+import { SimpleInput } from '@/components/common/input-common';
 import { useState } from 'react';
 
 interface SizeRange {
@@ -62,7 +63,7 @@ export function FormSizesSection({
 
   return (
     <Card>
-      <CardHeader className='pb-4'>
+      <CardHeader>
         <CardTitle className='flex items-center gap-2 text-lg'>
           <Ruler className='h-5 w-5 text-purple-600' />
           Talles y Gestión de Stock

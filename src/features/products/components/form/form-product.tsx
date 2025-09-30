@@ -1,6 +1,8 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import {
   Form,
   FormControl,
@@ -9,7 +11,11 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form';
-import { PACK_SIZE_OPTIONS, SEASON_OPTIONS } from '@/constants/mocks/products';
+import {
+  PACK_SIZE_OPTIONS,
+  SEASON_OPTIONS,
+  SEGMENT_OPTIONS
+} from '@/constants/mocks/products';
 import { FormInputField } from '@/components/forms/form-input-field';
 import { FormSelectField } from '@/components/forms/form-select-field';
 import { FormImageUpload } from '@/components/forms/form-image-upload';
@@ -39,7 +45,14 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { SIZE_RANGE_OPTIONS } from '../tables/product-tables/options';
 import { FormSizesSection } from '@/features/products/components/form/form-sizes-section';
-import FormSegmentCode from './form-segment-code';
+import FormSummaryProduct from './form-summary-product';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 
 interface FormProductProps {
   initialData: Product | null;
@@ -53,6 +66,7 @@ export default function FormProduct({ initialData }: FormProductProps) {
   const form = useForm<ProductType>({
     resolver: zodResolver(productSchema),
     defaultValues: {
+      sku: initialData?.sku || '',
       name: initialData?.name || '',
       segment: initialData?.segment || { code: 1, name: 'hombre' },
       cost_price: initialData?.cost_price || 0,
@@ -70,154 +84,200 @@ export default function FormProduct({ initialData }: FormProductProps) {
     }
   });
 
-  function onSubmit(values: ProductType) {
-    console.log('✅ Producto enviado:', values);
+  function onSubmit(_values: ProductType) {
     toast.success('Producto guardado con éxito');
   }
 
   return (
-    <div className='mx-auto w-full max-w-6xl space-y-8'>
+    <div className='mx-auto w-full max-w-6xl'>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-          {/* Section 1: Imágenes */}
-          <FormImageUpload name='image' />
+          <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
+            {/* Columna izquierda - Formulario con tabs */}
+            <div className='md:col-span-2'>
+              <Tabs defaultValue='general' className='space-y-6'>
+                <TabsList className='grid w-full grid-cols-5'>
+                  <TabsTrigger value='general'>Información</TabsTrigger>
+                  <TabsTrigger value='prices'>Precios</TabsTrigger>
+                  <TabsTrigger value='sizes'>Talles y Stock</TabsTrigger>
+                  <TabsTrigger value='images'>Imágenes</TabsTrigger>
+                  <TabsTrigger value='colors'>Colores</TabsTrigger>
+                </TabsList>
 
-          {/* Section 2: Información General */}
-          <Card>
-            <CardHeader className='pb-4'>
-              <CardTitle className='flex items-center gap-2 text-lg'>
-                <Package className='h-5 w-5 text-green-600' />
-                Información General
-              </CardTitle>
-            </CardHeader>
-            <CardContent className='space-y-6'>
-              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                {/* Nombre */}
-                <FormInputField
-                  control={form.control}
-                  name='name'
-                  label='Nombre del Producto'
-                  placeholder='Ej: Remera básica algodón'
-                  required
-                />
+                {/* Tab: Información General */}
+                <TabsContent value='general'>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className='flex items-center gap-2 text-lg'>
+                        <Package className='h-5 w-5 text-green-600' />
+                        Información General
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className='space-y-4'>
+                      <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                        <FormInputField
+                          control={form.control}
+                          name='name'
+                          label='Nombre del Producto'
+                          placeholder='Ej: Remera básica algodón'
+                          required
+                        />
+                        <FormInputField
+                          control={form.control}
+                          name='brand'
+                          label='Marca'
+                          placeholder='Ej: Nike, Adidas'
+                        />
+                      </div>
 
-                {/* Marca */}
-                <FormInputField
-                  control={form.control}
-                  name='brand'
-                  label='Marca'
-                  placeholder='Ej: Nike, Adidas'
-                />
-              </div>
+                      <FormTextAreaField
+                        control={form.control}
+                        name='description'
+                        label='Descripción'
+                        placeholder='Descripción detallada del producto, materiales, características especiales...'
+                        minHeight='100px'
+                        description='Incluya detalles relevantes sobre el producto'
+                      />
 
-              {/* Descripción */}
-              <FormTextAreaField
-                control={form.control}
-                name='description'
-                label='Descripción'
-                placeholder='Descripción detallada del producto, materiales, características especiales...'
-                minHeight='100px'
-                description='Incluya detalles relevantes sobre el producto'
-              />
+                      <div className='grid grid-cols-2 items-end gap-6 md:grid-cols-2 lg:grid-cols-4'>
+                        <FormField
+                          control={form.control}
+                          name='segment'
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Rubro *</FormLabel>
+                              <Select
+                                onValueChange={(val) =>
+                                  field.onChange(JSON.parse(val))
+                                }
+                                value={
+                                  field.value ? JSON.stringify(field.value) : ''
+                                }
+                              >
+                                <FormControl>
+                                  <SelectTrigger className='w-full'>
+                                    <SelectValue placeholder='Seleccione un Rubro' />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {SEGMENT_OPTIONS.map((opt) => (
+                                    <SelectItem
+                                      key={opt.value}
+                                      value={opt.value}
+                                    >
+                                      {opt.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormSelectField
+                          control={form.control}
+                          name='season'
+                          label='Temporada'
+                          options={SEASON_OPTIONS}
+                          defaultValue='seasonal'
+                        />
+                        <FormSelectField
+                          control={form.control}
+                          name='pack_size'
+                          label='Cantidad por Pack'
+                          options={PACK_SIZE_OPTIONS}
+                          defaultValue='1'
+                        />
+                      </div>
+                      <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                        <FormInputField
+                          control={form.control}
+                          name='provider'
+                          label='Nombre del Proveedor'
+                          placeholder='Ej: Nike, Adidas'
+                          required
+                        />
+                        <FormField
+                          control={form.control}
+                          name='purchase_date'
+                          render={() => (
+                            <FormItem className='flex flex-col'>
+                              <FormLabel>Fecha de Compra (Opcional)</FormLabel>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <FormControl>
+                                    <Button
+                                      variant='outline'
+                                      className={cn(
+                                        'w-full pl-3 text-left font-normal',
+                                        !purchaseDate && 'text-muted-foreground'
+                                      )}
+                                    >
+                                      {purchaseDate ? (
+                                        format(purchaseDate, 'PPP')
+                                      ) : (
+                                        <span>Seleccionar fecha</span>
+                                      )}
+                                      <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                                    </Button>
+                                  </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                  className='w-auto p-0'
+                                  align='start'
+                                >
+                                  <Calendar
+                                    mode='single'
+                                    selected={purchaseDate}
+                                    onSelect={setPurchaseDate}
+                                    disabled={(date) =>
+                                      date > new Date() ||
+                                      date < new Date('1900-01-01')
+                                    }
+                                    initialFocus
+                                  />
+                                </PopoverContent>
+                              </Popover>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
 
-              <div className='grid grid-cols-2 items-end gap-6 md:grid-cols-2 lg:grid-cols-4'>
-                {/* Rubro */}
-                <FormSegmentCode />
-                {/* Temporada */}
-                <FormSelectField
-                  control={form.control}
-                  name='season'
-                  label='Temporada'
-                  options={SEASON_OPTIONS}
-                  defaultValue='seasonal'
-                />
+                {/* Tab: Precios */}
+                <TabsContent value='prices'>
+                  <FormPriceFields control={form.control} />
+                </TabsContent>
 
-                {/* Pack size */}
-                <FormSelectField
-                  control={form.control}
-                  name='pack_size'
-                  label='Cantidad por Pack'
-                  options={PACK_SIZE_OPTIONS}
-                  defaultValue='1'
-                />
-              </div>
-              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                {/* Proveedor */}
-                <FormInputField
-                  control={form.control}
-                  name='provider'
-                  label='Nombre del Proveedor'
-                  placeholder='Ej: Nike, Adidas'
-                  required
-                />
-                {/* Fecha de compra */}
-                <FormField
-                  control={form.control}
-                  name='purchase_date'
-                  render={({ field }) => (
-                    <FormItem className='flex flex-col'>
-                      <FormLabel>Fecha de Compra (Opcional)</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant='outline'
-                              className={cn(
-                                'w-full pl-3 text-left font-normal',
-                                !purchaseDate && 'text-muted-foreground'
-                              )}
-                            >
-                              {purchaseDate ? (
-                                format(purchaseDate, 'PPP')
-                              ) : (
-                                <span>Seleccionar fecha</span>
-                              )}
-                              <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className='w-auto p-0' align='start'>
-                          <Calendar
-                            mode='single'
-                            selected={purchaseDate}
-                            onSelect={setPurchaseDate}
-                            disabled={(date) =>
-                              date > new Date() || date < new Date('1900-01-01')
-                            }
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
+                {/* Tab: Talles y Stock */}
+                <TabsContent value='sizes'>
+                  <FormSizesSection
+                    control={form.control}
+                    sizeRangeOptions={SIZE_RANGE_OPTIONS}
+                    onStockChange={setStockQuantities}
+                    defaultStockValues={initialData?.stock || {}}
+                  />
+                </TabsContent>
 
-          {/* Section 3: Precios y Descuentos */}
-          <FormPriceFields control={form.control} />
+                {/* Tab: Imágenes */}
+                <TabsContent value='images'>
+                  <FormImageUpload name='image' />
+                </TabsContent>
 
-          {/* Section 4: Talles y Stock */}
-          <FormSizesSection
-            control={form.control}
-            sizeRangeOptions={SIZE_RANGE_OPTIONS}
-            onStockChange={setStockQuantities}
-            defaultStockValues={initialData?.stock || {}}
-          />
+                {/* Tab: Colores */}
+                <TabsContent value='colors'>
+                  <FormColorSection control={form.control} />
+                </TabsContent>
+              </Tabs>
+            </div>
 
-          {/* Section 5: Colores y Configuración */}
-          <FormColorSection control={form.control} />
-
-          {/* Submit Button */}
-          <div className='flex justify-end gap-4 pt-6'>
-            <Button type='button' variant='outline' size='lg'>
-              Cancelar
-            </Button>
-            <Button type='submit' size='lg' className='min-w-[150px]'>
-              {initialData ? 'Actualizar Producto' : 'Crear Producto'}
-            </Button>
+            {/* Columna derecha - Resumen del producto */}
+            <div>
+              <FormSummaryProduct initialData={!!initialData} />
+            </div>
           </div>
         </form>
       </Form>

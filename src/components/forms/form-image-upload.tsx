@@ -1,14 +1,15 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ImageIcon } from 'lucide-react';
-import { FileUploader } from '@/components/file-uploader';
 import {
   FormControl,
   FormField,
   FormItem,
   FormMessage
 } from '@/components/ui/form';
+
+import { FileUploader } from '@/components/file-uploader';
+import { ImageIcon } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 
 interface FormImageUploadProps {
@@ -25,7 +26,7 @@ export function FormImageUpload({
   const { control } = useFormContext();
   return (
     <Card>
-      <CardHeader className='pb-4'>
+      <CardHeader>
         <CardTitle className='flex items-center gap-2 text-lg'>
           <ImageIcon className='h-5 w-5 text-blue-600' />
           Imágenes del Producto

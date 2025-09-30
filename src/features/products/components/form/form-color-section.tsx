@@ -1,20 +1,21 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Palette, Check } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
+import { Check, Palette } from 'lucide-react';
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormDescription,
   FormMessage
 } from '@/components/ui/form';
+import { colorMap, colors } from '@/constants/mocks/products';
+
+import { Button } from '@/components/ui/button';
 import { Control } from 'react-hook-form';
+import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
-import { colors, colorMap } from '@/constants/mocks/products';
 
 interface FormColorSectionProps {
   control: Control<any>;
@@ -38,7 +39,7 @@ export function FormColorSection({
 
   return (
     <Card>
-      <CardHeader className='pb-4'>
+      <CardHeader>
         <CardTitle className='flex items-center gap-2 text-lg'>
           <Palette className='h-5 w-5 text-pink-600' />
           Colores y Configuración
