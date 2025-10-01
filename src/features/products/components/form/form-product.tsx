@@ -89,12 +89,12 @@ export default function FormProduct({ initialData }: FormProductProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='relative'>
-        <div className='mx-auto max-w-6xl space-y-8 p-5 pb-20'>
-          <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
+        <div className='mx-auto max-w-6xl space-y-8 p-5 pb-40 md:pb-20'>
+          <div className='grid grid-cols-1 lg:grid-cols-3 lg:gap-6'>
             {/* Columna izquierda - Formulario con tabs */}
             <div className='md:col-span-2'>
               <Tabs defaultValue='general' className='space-y-6'>
-                <TabsList className='grid w-full grid-cols-5'>
+                <TabsList className='grid h-full w-full grid-cols-3 md:grid-cols-5'>
                   <TabsTrigger value='general'>Información</TabsTrigger>
                   <TabsTrigger value='prices'>Precios</TabsTrigger>
                   <TabsTrigger value='sizes'>Talles y Stock</TabsTrigger>
@@ -244,10 +244,11 @@ export default function FormProduct({ initialData }: FormProductProps) {
           </div>
         </div>
         <div className='bg-background fixed right-0 bottom-0 left-0 border p-5'>
-          <div className='mx-auto flex w-full max-w-6xl items-center justify-end gap-3'>
+          <div className='flex w-full flex-col items-center gap-3 md:flex-row md:justify-end'>
             <Button
               variant='outline'
               type='button'
+              className='w-full font-medium sm:w-auto'
               onClick={() => history.back()}
             >
               Regresar
