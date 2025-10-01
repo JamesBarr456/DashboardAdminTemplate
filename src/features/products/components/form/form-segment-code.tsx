@@ -14,29 +14,29 @@ function FormSegmentCode() {
   const [productCode, setProductCode] = useState<string>(codePrevious || '');
   const [loadingCode, setLoadingCode] = useState<boolean>(false);
 
-  // Guardar el segmento anterior para detectar cambios
   const [prevSegment, setPrevSegment] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    // Si no hay segment → limpiar
     if (!segment?.code) {
       setProductCode('');
       setPrevSegment(undefined);
       return;
     }
 
-    // Caso 1: Si existe sku y aún no cambió el segmento → mostrar sku
     if (codePrevious && !prevSegment) {
       setProductCode(codePrevious);
       setPrevSegment(segment.code);
       return;
     }
 
-    // Caso 2: Si no hay sku (nuevo producto) o cambió el segmento → generar código
     if (!codePrevious || prevSegment !== segment.code) {
       setLoadingCode(true);
       const timeout = setTimeout(() => {
-        const codeSegment = Math.floor(100 + Math.random() * 900);
+        // Cálculo determinista a partir del código del segmento
+        const codeBase = String(segment.code)
+          .split('')
+          .reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+        const codeSegment = 100 + (codeBase % 900);
         setProductCode(`${segment.code}${codeSegment}`);
         setPrevSegment(segment.code);
         setLoadingCode(false);
@@ -47,10 +47,7 @@ function FormSegmentCode() {
   }, [segment, codePrevious, prevSegment]);
 
   return (
-    <Badge
-      variant='outline'
-      className='flex h-10 min-w-[70px] items-center justify-center px-4 py-2 text-lg'
-    >
+    <Badge variant='outline' className='flex items-center justify-center'>
       {loadingCode ? (
         <span className='flex items-center gap-2'>
           <Loader2 className='h-5 w-5 animate-spin' />

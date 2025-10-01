@@ -1,11 +1,11 @@
 'use client';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { formatPrice } from '@/lib/format';
 
 import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { format } from 'date-fns';
+import { formatPrice } from '@/lib/format';
 
 interface SalesTicketPreviewProps {
   ticketNumber: string;
@@ -15,6 +15,7 @@ interface SalesTicketPreviewProps {
     quantity: number;
   }>;
   total: number;
+  now?: Date;
   className?: string;
 }
 
@@ -22,6 +23,7 @@ export function SalesTicketPreview({
   ticketNumber,
   items,
   total,
+  now,
   className
 }: SalesTicketPreviewProps) {
   return (
@@ -33,7 +35,11 @@ export function SalesTicketPreview({
           <div className='text-sm'>
             <p>Tel: 3794678774 / 3794350739</p>
             <p>Ticket #: {ticketNumber}</p>
-            <p>{format(new Date(), 'dd/MM/yyyy HH:mm:ss', { locale: es })}</p>
+            <p>
+              {format(now ?? new Date(0), 'dd/MM/yyyy HH:mm:ss', {
+                locale: es
+              })}
+            </p>
           </div>
         </div>
 

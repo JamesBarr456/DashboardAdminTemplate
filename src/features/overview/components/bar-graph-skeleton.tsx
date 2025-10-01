@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function BarGraphSkeleton() {
@@ -24,15 +25,17 @@ export function BarGraphSkeleton() {
       <CardContent className='px-2 sm:p-6'>
         {/* Bar-like shapes */}
         <div className='flex aspect-auto h-[280px] w-full items-end justify-around gap-2 pt-8'>
-          {Array.from({ length: 12 }).map((_, i) => (
-            <Skeleton
-              key={i}
-              className='w-full'
-              style={{
-                height: `${Math.max(20, Math.random() * 100)}%`
-              }}
-            />
-          ))}
+          {Array.from({ length: 12 }).map((_, i) => {
+            // Alturas deterministas (20% a 99%) para evitar mismatch SSR/CSR
+            const height = 20 + ((i * 37) % 80);
+            return (
+              <Skeleton
+                key={i}
+                className='w-full'
+                style={{ height: `${height}%` }}
+              />
+            );
+          })}
         </div>
       </CardContent>
     </Card>

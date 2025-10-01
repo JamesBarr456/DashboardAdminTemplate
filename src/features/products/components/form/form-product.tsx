@@ -40,12 +40,15 @@ import { SIZE_RANGE_OPTIONS } from '../tables/product-tables/options';
 import { FormSizesSection } from '@/features/products/components/form/form-sizes-section';
 import FormSummaryProduct from './form-summary-product';
 import { DateTimePicker } from '@/components/datetime-picker';
+import { Button } from '@/components/ui/button';
 // Select UI se usa dentro de FormSelectField
 
 interface FormProductProps {
   initialData: Product | null;
 }
 export default function FormProduct({ initialData }: FormProductProps) {
+  // Fechas estáticas para evitar hidrations mismatch
+  const minPurchaseDate = '1900-01-01T00:00:00.000Z';
   const [, setStockQuantities] = useState<Record<string, number>>(
     initialData?.stock || {}
   );
@@ -59,7 +62,7 @@ export default function FormProduct({ initialData }: FormProductProps) {
       segment: initialData?.segment || { code: 1, name: 'hombre' },
       cost_price: initialData?.cost_price || 0,
       description: initialData?.description || '',
-      is_active: initialData?.is_active ?? true,
+      is_active: initialData?.is_active ?? false,
       sale_price: initialData?.sale_price || 0,
       brand: initialData?.brand || '',
       sizes: initialData?.sizes || '',
@@ -72,14 +75,21 @@ export default function FormProduct({ initialData }: FormProductProps) {
     }
   });
 
-  function onSubmit() {
+  function onSubmit(values: ProductType) {
+    // Log completo en consola para inspección detallada
+    // Nota: abrir la consola del navegador para verlo formateado
+    // eslint-disable-next-line no-console
+    console.log('[FormProduct] Datos enviados:', values);
+
+    // Además, mostramos un resumen en un toast
+
     toast.success('Producto guardado con éxito');
   }
 
   return (
-    <div className='mx-auto w-full max-w-6xl'>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='relative'>
+        <div className='mx-auto max-w-6xl space-y-8 p-5 pb-20'>
           <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
             {/* Columna izquierda - Formulario con tabs */}
             <div className='md:col-span-2'>
@@ -188,8 +198,8 @@ export default function FormProduct({ initialData }: FormProductProps) {
                                   }
                                   hideTime
                                   clearable
-                                  min={new Date('1900-01-01')}
-                                  max={new Date()}
+                                  min={new Date(minPurchaseDate)}
+                                  // No fijamos max dinámico en SSR; si se necesita límite, validar en cliente
                                 />
                               </FormControl>
                               <FormMessage />
@@ -229,12 +239,29 @@ export default function FormProduct({ initialData }: FormProductProps) {
             </div>
 
             {/* Columna derecha - Resumen del producto */}
-            <div>
-              <FormSummaryProduct initialData={!!initialData} />
-            </div>
+
+            <FormSummaryProduct />
           </div>
-        </form>
-      </Form>
-    </div>
+        </div>
+        <div className='bg-background fixed right-0 bottom-0 left-0 border p-5'>
+          <div className='mx-auto flex w-full max-w-6xl items-center justify-end gap-3'>
+            <Button
+              variant='outline'
+              type='button'
+              onClick={() => history.back()}
+            >
+              Regresar
+            </Button>
+            <Button
+              type='submit'
+              className='w-full font-medium sm:w-auto'
+              size='lg'
+            >
+              {initialData ? 'Actualizar Producto' : 'Crear Producto'}
+            </Button>
+          </div>
+        </div>
+      </form>
+    </Form>
   );
 }

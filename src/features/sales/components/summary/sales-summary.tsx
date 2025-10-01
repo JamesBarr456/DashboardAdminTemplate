@@ -1,16 +1,17 @@
 'use client';
-import { useState, useMemo } from 'react';
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CreditCard, DollarSign } from 'lucide-react';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardTitle, CardHeader } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { CreditCard, DollarSign } from 'lucide-react';
 import { SaleItem } from '@/store/pos-state';
-import { toast } from 'sonner';
-import { formatPrice } from '@/lib/format';
-import { translatePaymentMethod } from '@/lib/translation';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { SalesTicketPreview } from '../ticket/sales-ticket-preview';
+import { Separator } from '@/components/ui/separator';
+import { formatPrice } from '@/lib/format';
+import { toast } from 'sonner';
+import { translatePaymentMethod } from '@/lib/translation';
 
 interface Props {
   currentSale: SaleItem[];
@@ -23,6 +24,7 @@ export default function SalesSummary({ currentSale, completeSale }: Props) {
   >('cash');
   const [showTicket, setShowTicket] = useState(false);
   const [ticketNumber, setTicketNumber] = useState('');
+  const [now, setNow] = useState<Date | undefined>(undefined);
 
   const subtotal = useMemo(() => {
     return currentSale.reduce((sum, item) => sum + item.subtotal, 0);
@@ -37,6 +39,8 @@ export default function SalesSummary({ currentSale, completeSale }: Props) {
     if (currentSale.length === 0) return;
     const newTicketNumber = `T${Date.now().toString().slice(-6)}`;
     setTicketNumber(newTicketNumber);
+    // fijamos "ahora" en el cliente para pasarlo al preview y evitar new Date() dentro del render del niño
+    setNow(new Date());
     setShowTicket(true);
   };
 
@@ -62,6 +66,7 @@ export default function SalesSummary({ currentSale, completeSale }: Props) {
               quantity: item.quantity
             }))}
             total={finalTotal}
+            now={now}
           />
           <div className='mt-4 flex justify-end space-x-2'>
             <Button variant='outline' onClick={() => setShowTicket(false)}>
