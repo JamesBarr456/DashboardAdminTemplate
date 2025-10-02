@@ -61,6 +61,8 @@ export interface NewOrder {
   shipping_information: ShippingInformation;
   summary: Summary;
   status: OrderStatus;
+  // Motivo del rechazo (opcional)
+  reject_comment?: string;
   createdAt: string;
   updatedAt: string;
 }

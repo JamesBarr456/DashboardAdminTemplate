@@ -22,7 +22,7 @@ export const productSchema = z
     unavailable: z.boolean()
   })
   .refine(
-    (data) => {
+    () => {
       // Esta validación se aplicará dinámicamente en el componente
       // ya que necesitamos acceso a la cantidad total del producto
       return true;
@@ -62,7 +62,12 @@ export const orderUpdateSchema = z.object({
     required_error: 'El método de pago es requerido'
   }),
   status: statusSchema.optional(),
-  items: z.array(productSchema).optional()
+  items: z.array(productSchema).optional(),
+  // Comentario opcional cuando se rechaza la orden
+  reject_comment: z
+    .string()
+    .max(500, 'El comentario no puede exceder 500 caracteres')
+    .optional()
 });
 
 export type OrderUpdate = z.infer<typeof orderUpdateSchema>;
