@@ -47,11 +47,12 @@ export const shippingInformationSchema = z.object({
   shipping_type: z.enum(['express', 'standard'])
 });
 export const statusSchema = z.enum([
-  'pending',
-  'confirmed',
-  'delivered',
-  'canceled',
-  'sending'
+  'pending', //, Recién llegado, necesita revisión
+  'in_process', // Aceptado, separando productos
+  'delivered', // Paquete armado, listo para entrega
+  'canceled', //, Proceso completado exitosamente
+  'completed', // No aceptado con motivo
+  'rejected' //, No completado por diversos motivos
 ]);
 // Lo que efectivamente podés mandar en el PATCH
 export const orderUpdateSchema = z.object({

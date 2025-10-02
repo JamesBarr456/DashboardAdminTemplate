@@ -1,5 +1,5 @@
 import { NewOrder as Order } from '@/types/order-new';
-import OrderForm from './order-form';
+import OrderForm from '../components/order-form';
 
 import { fakeOrders } from '@/services/order-mock-api';
 import { notFound } from 'next/navigation';

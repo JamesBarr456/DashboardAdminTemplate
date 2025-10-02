@@ -46,11 +46,12 @@ export interface Summary {
 }
 
 export type OrderStatus =
-  | 'pending'
-  | 'confirmed'
-  | 'delivered'
-  | 'canceled'
-  | 'sending';
+  | 'pending' // Recién llegado, necesita revisión
+  | 'in_process' // Aceptado, separando productos
+  | 'delivered' // Paquete armado, listo para entrega
+  | 'canceled' // Proceso completado exitosamente
+  | 'completed' // No aceptado con motivo
+  | 'rejected'; // No completado por diversos motivos
 
 export interface NewOrder {
   _id: string;

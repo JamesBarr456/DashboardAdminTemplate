@@ -8,6 +8,7 @@ import { CellAction } from './cell-action';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
 import { NewOrder as Order } from '@/types/order-new';
 import { translatePaymentMethod } from '@/lib/translation';
+import { STATUS_OPTIONS } from './options';
 
 export const columns: ColumnDef<Order>[] = [
   {
@@ -57,19 +58,12 @@ export const columns: ColumnDef<Order>[] = [
       const status = cell.getValue<Order['status']>();
       const options = column.columnDef.meta?.options || [];
       const option = options.find((opt: any) => opt.value === status);
-      const colorVariants: Record<
-        Order['status'],
-        'outline' | 'secondary' | 'default' | 'destructive'
-      > = {
-        canceled: 'destructive',
-        pending: 'outline',
-        delivered: 'default',
-        confirmed: 'secondary',
-        sending: 'default'
-      } as const;
+      const variant =
+        STATUS_OPTIONS.find((opt) => opt.value === status)?.variant ||
+        'default';
 
       return (
-        <Badge variant={colorVariants[status]} className='capitalize'>
+        <Badge variant={variant} className='capitalize'>
           {option ? option.label : status}
         </Badge>
       );
@@ -78,13 +72,7 @@ export const columns: ColumnDef<Order>[] = [
     meta: {
       label: 'estado',
       variant: 'multiSelect',
-      options: [
-        { value: 'confirmed', label: 'Confirmado' },
-        { value: 'pending', label: 'En proceso' },
-        { value: 'delivered', label: 'Enviandose' },
-        { value: 'canceled', label: 'Cancelado' },
-        { value: 'sending', label: 'Entregado' }
-      ]
+      options: STATUS_OPTIONS
     }
   },
   {

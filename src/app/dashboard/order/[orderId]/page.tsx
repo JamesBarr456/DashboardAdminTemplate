@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import OrderViewPage from '@/features/orders/components/order-view-page';
+import OrderViewPage from '@/features/orders/views/order-view-page';
 import PageContainer from '@/components/layout/page-container';
 import { Suspense } from 'react';
 import OrderFormSkeleton from '@/components/form-card-order-skeleton';

@@ -1,6 +1,6 @@
 import { NewOrder } from '@/types/order-new';
 import { TableCustom } from '@/components/table';
-import { columns } from './order-tables/columns';
+import { columns } from '../components/order-tables/columns';
 import { fakeOrders } from '@/services/order-mock-api';
 import { searchParamsOrderCache } from '@/lib/search-params-order';
 
