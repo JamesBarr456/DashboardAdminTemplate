@@ -27,6 +27,5 @@ export const STATUS_OPTIONS: StatusOption[] = [
   { value: 'in_process', label: 'En proceso', number: 2, variant: 'secondary' },
   { value: 'completed', label: 'Completo', number: 3, variant: 'default' },
   { value: 'delivered', label: 'Entregado', number: 4, variant: 'default' },
-  { value: 'rejected', label: 'Rechazado', number: 5, variant: 'destructive' },
   { value: 'canceled', label: 'Cancelado', number: 6, variant: 'destructive' }
 ];

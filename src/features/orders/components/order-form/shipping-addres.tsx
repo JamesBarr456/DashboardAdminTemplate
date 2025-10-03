@@ -37,7 +37,7 @@ export const ShippingAddress = ({
     defaultValue: data.delivery_option ?? ''
   });
 
-  const isEditable = status === 'pending';
+  const isEditable = status === 'in_process';
 
   return (
     <Card>

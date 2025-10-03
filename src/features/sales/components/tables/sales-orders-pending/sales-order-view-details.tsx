@@ -10,13 +10,13 @@ import {
 
 import { Badge } from '@/components/ui/badge';
 import { NewOrder as Order } from '@/types/order-new';
-import { STATUS } from '@/constants/mocks/orders';
 
 import { formatPrice } from '@/lib/format';
 import {
   translateDeliveryOption,
   translatePaymentMethod
 } from '@/lib/translation';
+import { STATUS_OPTIONS } from '@/features/orders/components/order-tables/options';
 
 interface OrderDetailsProps {
   order: Order;
@@ -24,7 +24,7 @@ interface OrderDetailsProps {
 
 type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline';
 export function OrderDetails({ order }: OrderDetailsProps) {
-  const statusInfo = STATUS.find((s) => s.value === order.status)!;
+  const statusInfo = STATUS_OPTIONS.find((s) => s.value === order.status)!;
 
   return (
     <div className='space-y-6'>

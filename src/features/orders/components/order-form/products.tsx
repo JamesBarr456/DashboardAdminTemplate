@@ -38,7 +38,7 @@ export const ProductEditCard = ({
     control,
     name: `items.${index}.unavailable`
   });
-  const isEditable = status === 'pending';
+  const isEditable = status === 'in_process';
 
   return (
     <Card

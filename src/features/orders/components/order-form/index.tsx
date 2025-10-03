@@ -29,6 +29,7 @@ import { useOrderStore } from '@/store/order-state';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { toast } from 'sonner';
 
 export default function OrderForm({
   initialData,
@@ -46,6 +47,10 @@ export default function OrderForm({
   const [approvalOpen, setApprovalOpen] = useState<boolean>(
     (order?.status ?? 'pending') === 'pending'
   );
+  // Modal secundario de rechazo
+  const [rejectOpen, setRejectOpen] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
+
   const form = useForm<OrderUpdate>({
     resolver: zodResolver(orderUpdateSchema),
     defaultValues: {
@@ -97,100 +102,124 @@ export default function OrderForm({
   async function handleSave(data: OrderUpdate) {
     if (!order) return;
 
-    // Actualiza solo el status, o toda la orden según tu lógica
     if (data.status && data.status !== order.status) {
       updateOrderStatus(order._id, data.status);
     }
-    // Si quieres actualizar más campos:
     updateOrder(order._id, data);
+    toast.success('Cambios guardados');
   }
 
   async function handleApprove() {
     if (!order) return;
     await updateOrderStatus(order._id, 'in_process');
-    setApprovalOpen(false);
+    form.setValue('status', 'in_process');
+    toast.success('Pedido aceptado y en proceso');
   }
 
   async function handleReject() {
     if (!order) return;
-    const comment = form.getValues('reject_comment')?.trim();
+    const comment = rejectReason.trim();
     if (comment) {
-      // Guardamos el comentario de rechazo junto al patch
       await updateOrder(order._id, { reject_comment: comment });
     }
     await updateOrderStatus(order._id, 'rejected');
-    setApprovalOpen(false);
+    form.setValue('status', 'rejected');
+    setRejectOpen(false);
+    toast.success('Pedido rechazado');
   }
+
+  const currentStatus = form.watch('status');
+  const canEdit = currentStatus === 'in_process';
 
   return (
     <>
-      {/* Diálogo de aprobación cuando el estado es pending */}
+      {/* Modal informativo al entrar en pending: solo historial + continuar */}
       {order.status === 'pending' && (
         <Dialog open={approvalOpen} onOpenChange={setApprovalOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Revisión del pedido</DialogTitle>
+              <DialogTitle>Historial de riesgo del cliente</DialogTitle>
               <DialogDescription>
-                Antes de procesar, decidí si aceptás o rechazás este pedido.
+                Revisá el comportamiento previo del cliente antes de tomar una
+                decisión.
               </DialogDescription>
             </DialogHeader>
 
             <div className='space-y-4'>
-              <div>
-                <p className='text-muted-foreground text-sm'>
-                  Historial de cancelaciones del cliente
-                </p>
-                <div className='mt-2 grid grid-cols-2 gap-2 text-sm'>
-                  <div className='rounded-md border p-3'>
-                    <div className='font-medium'>Canceladas</div>
-                    <div className='text-muted-foreground'>
-                      {order.customer.stats.cancelledOrders}
-                    </div>
+              <div className='grid grid-cols-2 gap-2 text-sm'>
+                <div className='rounded-md border p-3'>
+                  <div className='font-medium'>Canceladas</div>
+                  <div className='text-muted-foreground'>
+                    {order.customer.stats.cancelledOrders}
                   </div>
-                  <div className='rounded-md border p-3'>
-                    <div className='font-medium'>Rechazadas</div>
-                    <div className='text-muted-foreground'>
-                      {order.customer.stats.rejectedOrders}
-                    </div>
+                </div>
+                <div className='rounded-md border p-3'>
+                  <div className='font-medium'>Rechazadas</div>
+                  <div className='text-muted-foreground'>
+                    {order.customer.stats.rejectedOrders}
                   </div>
                 </div>
               </div>
 
-              {(order.customer.stats.cancelledOrders > 0 ||
-                order.customer.stats.rejectedOrders > 0) && (
+              {order.customer.stats.cancelledOrders > 0 ||
+              order.customer.stats.rejectedOrders > 0 ? (
                 <Alert variant='destructive'>
-                  <AlertTitle>Atención</AlertTitle>
+                  <AlertTitle>Aviso de riesgo</AlertTitle>
                   <AlertDescription>
-                    Este cliente registra {order.customer.stats.cancelledOrders}{' '}
-                    cancelación(es) y {order.customer.stats.rejectedOrders}{' '}
-                    rechazo(s).
+                    Este cliente presenta historial con cancelaciones o
+                    rechazos. No es conveniente aceptar el pedido sin
+                    verificación adicional.
+                  </AlertDescription>
+                </Alert>
+              ) : (
+                <Alert>
+                  <AlertTitle>Buen historial</AlertTitle>
+                  <AlertDescription>
+                    No hay antecedentes negativos. Es conveniente aceptar el
+                    pedido.
                   </AlertDescription>
                 </Alert>
               )}
             </div>
 
-            <DialogFooter className='gap-4'>
-              <div className='grid w-full gap-2'>
-                <Label htmlFor='reject_comment'>
-                  Motivo del rechazo (opcional)
-                </Label>
-                <Textarea
-                  id='reject_comment'
-                  placeholder='Escribí el motivo del rechazo...'
-                  value={form.watch('reject_comment') || ''}
-                  onChange={(e) =>
-                    form.setValue('reject_comment', e.target.value)
-                  }
-                />
-              </div>
-              <Button variant='destructive' onClick={handleReject}>
-                Rechazar
+            <DialogFooter>
+              <Button onClick={() => setApprovalOpen(false)}>
+                Continuar al detalle
               </Button>
-              <Button onClick={handleApprove}>Confirmar</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Modal secundario para rechazar con comentario */}
+      <Dialog open={rejectOpen} onOpenChange={setRejectOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Rechazar Pedido?</DialogTitle>
+            <DialogDescription>
+              Por favor, agregá un comentario explicando el motivo del rechazo.
+              Esta acción no se puede deshacer.
+            </DialogDescription>
+          </DialogHeader>
+          <div className='grid gap-2'>
+            <Label htmlFor='reject-reason'>Comentario de Rechazo</Label>
+            <Textarea
+              id='reject-reason'
+              placeholder='Ej: Producto fuera de stock'
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant='outline' onClick={() => setRejectOpen(false)}>
+              Cancelar
+            </Button>
+            <Button variant='destructive' onClick={handleReject}>
+              Rechazar Pedido
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Card className='mx-auto w-full'>
         <Form {...form}>
@@ -199,13 +228,27 @@ export default function OrderForm({
               <CardTitle className='text-left text-2xl font-bold'>
                 {pageTitle}
               </CardTitle>
-              <Button
-                type='submit'
-                className='cursor-pointer'
-                disabled={form.watch('status') !== 'pending'}
-              >
-                Guardar Cambios
-              </Button>
+              <div className='flex items-center gap-2'>
+                {currentStatus === 'pending' && (
+                  <>
+                    <Button
+                      variant='destructive'
+                      type='button'
+                      onClick={() => setRejectOpen(true)}
+                    >
+                      Rechazar
+                    </Button>
+                    <Button type='button' onClick={handleApprove}>
+                      Confirmar
+                    </Button>
+                  </>
+                )}
+                {canEdit && (
+                  <Button type='submit' className='cursor-pointer'>
+                    Guardar Cambios
+                  </Button>
+                )}
+              </div>
             </CardHeader>
             <CardContent>
               <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
@@ -236,7 +279,7 @@ export default function OrderForm({
                             <ProductEditCard
                               product={product}
                               index={index}
-                              status={form.watch('status')}
+                              status={currentStatus}
                             />
                             {index < order.items.length - 1 && (
                               <Separator className='my-4' />
@@ -253,20 +296,20 @@ export default function OrderForm({
                   <CustomerInfo
                     control={form.control}
                     order={order.customer}
-                    status={form.watch('status')}
+                    status={currentStatus}
                   />
 
                   {/* Shipping Address */}
                   <ShippingAddress
                     data={order.shipping_information}
-                    status={form.watch('status')}
+                    status={currentStatus}
                     control={form.control}
                   />
 
                   {/* Payment Info */}
                   <PaymentInfo
                     paymentMethod={order.payment_method}
-                    status={form.watch('status')}
+                    status={currentStatus}
                     control={form.control}
                   />
                 </div>

@@ -47,7 +47,7 @@ export default function CellTableOrderPendingsAction({ id }: CellActionProps) {
       message: 'Finalizado'
     },
     delivery: {
-      next: 'sending',
+      next: 'delivered',
       message: 'Retirado'
     },
     canceled: {
