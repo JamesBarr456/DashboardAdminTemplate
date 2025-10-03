@@ -25,16 +25,27 @@ export const segmentSchema = z.object({
 });
 
 export const productSchema = z.object({
+  sku: z.string().optional(),
   image: z
     .any()
-    .refine(
-      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
-      `El tamaño máximo del archivo es 5MB.`
-    )
-    .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      'Se aceptan archivos .jpg, .jpeg, .png y .webp.'
-    ),
+    .optional()
+    .superRefine((files, ctx) => {
+      if (!files || files.length === 0) return true;
+
+      if (files?.[0]?.size > MAX_FILE_SIZE) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `El tamaño máximo del archivo es 5MB.`
+        });
+      }
+
+      if (!ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Se aceptan archivos .jpg, .jpeg, .png y .webp.'
+        });
+      }
+    }),
   segment: segmentSchema,
   name: z.string().min(2, ''),
   brand: z.string().optional(),

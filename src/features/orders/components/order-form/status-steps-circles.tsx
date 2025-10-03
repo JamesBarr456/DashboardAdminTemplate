@@ -9,14 +9,9 @@ import {
 
 import { Control } from 'react-hook-form';
 import React from 'react';
-import { STATUS } from '@/constants/mocks/orders';
-import { cn } from '@/lib/utils';
 
-export interface StatusOption {
-  label: string;
-  value: string;
-  number: number;
-}
+import { cn } from '@/lib/utils';
+import { STATUS_OPTIONS } from '../order-tables/options';
 
 interface StatusCirclesProps {
   control: Control<any>;
@@ -53,18 +48,18 @@ export const StatusCircles: React.FC<StatusCirclesProps> = ({
                 <div
                   className='absolute top-5 left-5 h-0.5 bg-gray-800 transition-all duration-300 ease-out'
                   style={{
-                    width: `calc(${(STATUS.slice(0, 4).findIndex((s) => s.value === field.value) / 3) * 75}% - 1.25rem)`
+                    width: `calc(${(STATUS_OPTIONS.slice(0, 4).findIndex((s) => s.value === field.value) / 3) * 75}% - 1.25rem)`
                   }}
                 />
               )}
 
               {/* Círculos */}
               <div className='relative flex items-start justify-between'>
-                {STATUS.map((status, index) => {
+                {STATUS_OPTIONS.map((status, index) => {
                   const isCanceled = field.value === 'canceled';
                   const isSelected =
                     !isCanceled && field.value === status.value;
-                  const currentIndex = STATUS.findIndex(
+                  const currentIndex = STATUS_OPTIONS.findIndex(
                     (s) => s.value === field.value
                   );
                   const isCompleted =

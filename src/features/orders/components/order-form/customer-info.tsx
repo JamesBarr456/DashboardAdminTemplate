@@ -24,7 +24,7 @@ interface CustomerInfoProps {
 
 export const CustomerInfo = ({ order, status, control }: CustomerInfoProps) => {
   const { snapshot, stats } = order;
-  const isEditable = status === 'pending';
+  const isEditable = status === 'in_process';
 
   return (
     <Card>

@@ -1,7 +1,7 @@
 import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton';
 import { Heading } from '@/components/ui/heading';
 import type { Metadata } from 'next';
-import OrderListingPage from '@/features/orders/components/order-listing';
+import OrderListingPage from '@/features/orders/views/order-listing';
 import PageContainer from '@/components/layout/page-container';
 import { SearchParams } from 'nuqs/server';
 import { Separator } from '@/components/ui/separator';

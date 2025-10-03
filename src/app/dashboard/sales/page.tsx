@@ -1,8 +1,12 @@
-import { Heading } from '@/components/ui/heading';
-import PageContainer from '@/components/layout/page-container';
-import SalesViewPage from '@/features/sales/components/sales-view-page';
-import { Separator } from '@/components/ui/separator';
 import { Suspense } from 'react';
+
+// UI Components
+import { Heading } from '@/components/ui/heading';
+import { Separator } from '@/components/ui/separator';
+import PageContainer from '@/components/layout/page-container';
+
+// Features
+import SalesViewPage from '@/features/sales/components/views/sales-view-page';
 
 export default function SalesPage() {
   return (

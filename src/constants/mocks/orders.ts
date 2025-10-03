@@ -94,7 +94,7 @@ export const newOrderMock: NewOrder[] = [
       shipping_cost: 0,
       grand_total: 53000
     },
-    status: 'confirmed',
+    status: 'pending',
     createdAt: '2025-09-05T12:30:00.000Z',
     updatedAt: '2025-09-05T12:45:00.000Z'
   },
@@ -251,7 +251,7 @@ export const newOrderMock: NewOrder[] = [
       shipping_cost: 2500,
       grand_total: 44500
     },
-    status: 'sending',
+    status: 'in_process',
     createdAt: '2025-09-09T14:20:00.000Z',
     updatedAt: '2025-09-09T14:30:00.000Z'
   },
@@ -295,7 +295,7 @@ export const newOrderMock: NewOrder[] = [
       shipping_cost: 0,
       grand_total: 70000
     },
-    status: 'confirmed',
+    status: 'in_process',
     createdAt: '2025-09-10T16:00:00.000Z',
     updatedAt: '2025-09-10T16:10:00.000Z'
   },
@@ -389,12 +389,4 @@ export const newOrderMock: NewOrder[] = [
     createdAt: '2025-09-12T09:30:00.000Z',
     updatedAt: '2025-09-12T09:30:00.000Z'
   }
-];
-
-export const STATUS = [
-  { label: 'Pendiente', value: 'pending', number: 1, variant: 'outline' },
-  { label: 'Confirmado', value: 'confirmed', number: 2, variant: 'default' },
-  { label: 'Enviando', value: 'sending', number: 3, variant: 'secondary' },
-  { label: 'Entregado', value: 'delivered', number: 4, variant: 'default' },
-  { label: 'Cancelado', value: 'canceled', number: 5, variant: 'destructive' }
 ];

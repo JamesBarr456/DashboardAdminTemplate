@@ -22,7 +22,7 @@ export const productSchema = z
     unavailable: z.boolean()
   })
   .refine(
-    (data) => {
+    () => {
       // Esta validación se aplicará dinámicamente en el componente
       // ya que necesitamos acceso a la cantidad total del producto
       return true;
@@ -47,11 +47,12 @@ export const shippingInformationSchema = z.object({
   shipping_type: z.enum(['express', 'standard'])
 });
 export const statusSchema = z.enum([
-  'pending',
-  'confirmed',
-  'delivered',
-  'canceled',
-  'sending'
+  'pending', //, Recién llegado, necesita revisión
+  'in_process', // Aceptado, separando productos
+  'delivered', // Paquete armado, listo para entrega
+  'canceled', //, Proceso completado exitosamente
+  'completed', // No aceptado con motivo
+  'rejected' //, No completado por diversos motivos
 ]);
 // Lo que efectivamente podés mandar en el PATCH
 export const orderUpdateSchema = z.object({
@@ -61,7 +62,12 @@ export const orderUpdateSchema = z.object({
     required_error: 'El método de pago es requerido'
   }),
   status: statusSchema.optional(),
-  items: z.array(productSchema).optional()
+  items: z.array(productSchema).optional(),
+  // Comentario opcional cuando se rechaza la orden
+  reject_comment: z
+    .string()
+    .max(500, 'El comentario no puede exceder 500 caracteres')
+    .optional()
 });
 
 export type OrderUpdate = z.infer<typeof orderUpdateSchema>;

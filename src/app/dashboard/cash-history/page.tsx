@@ -1,11 +1,12 @@
 import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton';
 import { Heading } from '@/components/ui/heading';
-import HistoryListingPage from '@/features/history/history-listing';
+
 import PageContainer from '@/components/layout/page-container';
 import { SearchParams } from 'nuqs';
 import { Separator } from '@/components/ui/separator';
 import { Suspense } from 'react';
 import { searchParamsCacheHistory } from '@/lib/searh-params-history';
+import HistoryListingPage from '@/features/cash-history/components/view/history-listing';
 
 type pageProps = {
   searchParams: Promise<SearchParams>;

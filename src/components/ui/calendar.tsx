@@ -6,11 +6,7 @@ import type { ComponentProps } from 'react';
 
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
-import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
-
-// Custom icons that meet the DayPicker requirements
-const LeftIcon = () => <ChevronLeftIcon className='size-4' />;
-const RightIcon = () => <ChevronRightIcon className='size-4' />;
+// Nota: En react-day-picker v9 no es necesario sobreescribir los iconos via `components`.
 
 function Calendar({
   className,
@@ -64,10 +60,7 @@ function Calendar({
         day_hidden: 'invisible',
         ...classNames
       }}
-      components={{
-        IconLeft: LeftIcon,
-        IconRight: RightIcon
-      }}
+      // components: se usan los iconos por defecto de DayPicker
       {...props}
     />
   );

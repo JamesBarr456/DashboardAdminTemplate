@@ -26,7 +26,7 @@ interface PaymentInfoProps {
 }
 
 export const PaymentInfo = ({ status, control }: PaymentInfoProps) => {
-  const isEditable = status === 'pending';
+  const isEditable = status === 'in_process';
 
   return (
     <Card>
