@@ -3,6 +3,7 @@ import { TableCustom } from '@/components/table';
 import { columns } from '../components/order-tables/columns';
 import { fakeOrders } from '@/services/order-mock-api';
 import { searchParamsOrderCache } from '@/lib/search-params-order';
+import PendingBadge from '../components/order-tables/pending-badge';
 
 type OrderListingPage = {};
 
@@ -25,8 +26,12 @@ export default async function OrderListingPage({}: OrderListingPage) {
 
   const totalOrders = data.total_orders;
   const orders: NewOrder[] = data.orders;
+  const pendingCount = fakeOrders.getPendingCount();
 
   return (
-    <TableCustom data={orders} totalItems={totalOrders} columns={columns} />
+    <TableCustom data={orders} totalItems={totalOrders} columns={columns}>
+      {/* Action area: badge de pendientes */}
+      <PendingBadge count={pendingCount} />
+    </TableCustom>
   );
 }

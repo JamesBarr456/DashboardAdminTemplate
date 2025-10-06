@@ -28,7 +28,7 @@ export default async function Page(props: pageProps) {
       <div className='flex flex-1 flex-col space-y-4'>
         <Heading
           title='Historial de Pedidos'
-          description='Administra todas las órdenes de tu tienda aquí.'
+          description='Administra todos los pedidos de tu tienda aquí.'
         />
 
         <Separator />

@@ -94,7 +94,7 @@ export const newOrderMock: NewOrder[] = [
       shipping_cost: 0,
       grand_total: 53000
     },
-    status: 'pending',
+    status: 'completed',
     createdAt: '2025-09-05T12:30:00.000Z',
     updatedAt: '2025-09-05T12:45:00.000Z'
   },

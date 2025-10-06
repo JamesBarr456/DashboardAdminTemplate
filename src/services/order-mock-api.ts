@@ -60,6 +60,14 @@ export const fakeOrders = {
       limit,
       orders: paginatedOrders
     };
+  },
+
+  getPendingCount() {
+    try {
+      return this.records.filter((o) => o.status === 'pending').length;
+    } catch {
+      return 0;
+    }
   }
 };
 

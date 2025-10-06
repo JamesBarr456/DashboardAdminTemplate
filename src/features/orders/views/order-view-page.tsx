@@ -13,7 +13,7 @@ export default async function OrderViewPage({
 }: TProductViewPageProps) {
   let order = null;
 
-  let pageTitle = 'Editar Órden';
+  let pageTitle = 'Editar Pedido';
 
   try {
     const data = await fakeOrders.getOrderById(orderId);

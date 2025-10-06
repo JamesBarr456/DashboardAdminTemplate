@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/table';
 import { getCommonPinningStyles } from '@/lib/data-table';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
 
 interface DataTableProps<TData> extends React.ComponentProps<'div'> {
   table: TanstackTable<TData>;
@@ -23,6 +24,21 @@ export function DataTable<TData>({
   actionBar,
   children
 }: DataTableProps<TData>) {
+  // Determina si una fila debe resaltarse por estar en estado "pending"
+  const getRowHighlightClass = (row: any) => {
+    try {
+      const status = (row?.original as any)?.status;
+      if (status !== 'pending') return undefined;
+      // Colores que funcionan bien en light/dark
+      return cn(
+        'bg-amber-100 dark:bg-amber-900/40',
+        'ring-1 ring-amber-300 dark:ring-amber-700'
+      );
+    } catch {
+      return undefined;
+    }
+  };
+
   return (
     <div className='flex flex-1 flex-col space-y-4'>
       {children}
@@ -57,6 +73,7 @@ export function DataTable<TData>({
                   table.getRowModel().rows.map((row) => (
                     <TableRow
                       key={row.id}
+                      className={cn(getRowHighlightClass(row))}
                       data-state={row.getIsSelected() && 'selected'}
                     >
                       {row.getVisibleCells().map((cell) => (

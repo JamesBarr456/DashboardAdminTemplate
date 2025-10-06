@@ -15,7 +15,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CustomerInfo } from './customer-info';
 import { Form } from '@/components/ui/form';
-import { NewOrder as Order } from '@/types/order-new';
+import { NewOrder as Order, OrderStatus } from '@/types/order-new';
 import { OrderStatusCard } from './information-order';
 import { Package } from 'lucide-react';
 import { PaymentInfo } from './payment-info';
@@ -24,12 +24,13 @@ import { Separator } from '@/components/ui/separator';
 import { ShippingAddress } from './shipping-addres';
 import { StatusCircles } from './status-steps-circles';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useOrderStore } from '@/store/order-state';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
+import { CompleteOrderModal } from './print-ticket-modal';
 
 export default function OrderForm({
   initialData,
@@ -50,6 +51,9 @@ export default function OrderForm({
   // Modal secundario de rechazo
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
+  // Modal de impresión de ticket cuando el estado pasa a "completed"
+  const [completeOpen, setCompleteOpen] = useState(false);
+  const prevStatusRef = useRef<OrderStatus | undefined>(order?.status);
 
   const form = useForm<OrderUpdate>({
     resolver: zodResolver(orderUpdateSchema),
@@ -83,6 +87,21 @@ export default function OrderForm({
       reject_comment: ''
     }
   });
+  // Observa status actual para habilitar acciones y gatillar modal de impresión
+  const currentStatus = form.watch('status');
+  const canEdit = currentStatus === 'in_process';
+
+  // Abre el modal sólo en el momento que cambia a "completed"
+  useEffect(() => {
+    if (
+      prevStatusRef.current !== 'completed' &&
+      currentStatus === 'completed'
+    ) {
+      setCompleteOpen(true);
+    }
+    prevStatusRef.current = currentStatus as OrderStatus | undefined;
+  }, [currentStatus]);
+
   if (!order) {
     return (
       <div className='space-y-6'>
@@ -128,8 +147,17 @@ export default function OrderForm({
     toast.success('Pedido rechazado');
   }
 
-  const currentStatus = form.watch('status');
-  const canEdit = currentStatus === 'in_process';
+  const handleCompletePrint = async (orderId: string, shouldPrint: boolean) => {
+    void shouldPrint; // ya se maneja dentro del modal
+    // Aseguramos que el estado quede persistido en store
+    try {
+      updateOrderStatus(orderId, 'completed');
+      form.setValue('status', 'completed');
+      toast.success('Pedido marcado como completo');
+    } catch (e) {
+      // noop
+    }
+  };
 
   return (
     <>
@@ -221,34 +249,20 @@ export default function OrderForm({
         </DialogContent>
       </Dialog>
 
-      <Card className='mx-auto w-full'>
+      <Card className='mx-auto mb-12 w-full'>
+        {/* Modal para imprimir ticket al completar */}
+        <CompleteOrderModal
+          order={order}
+          open={completeOpen}
+          onOpenChange={setCompleteOpen}
+          onComplete={handleCompletePrint}
+        />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSave)} className='space-y-8'>
             <CardHeader className='flex items-center justify-between'>
               <CardTitle className='text-left text-2xl font-bold'>
                 {pageTitle}
               </CardTitle>
-              <div className='flex items-center gap-2'>
-                {currentStatus === 'pending' && (
-                  <>
-                    <Button
-                      variant='destructive'
-                      type='button'
-                      onClick={() => setRejectOpen(true)}
-                    >
-                      Rechazar
-                    </Button>
-                    <Button type='button' onClick={handleApprove}>
-                      Confirmar
-                    </Button>
-                  </>
-                )}
-                {canEdit && (
-                  <Button type='submit' className='cursor-pointer'>
-                    Guardar Cambios
-                  </Button>
-                )}
-              </div>
             </CardHeader>
             <CardContent>
               <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
@@ -315,6 +329,39 @@ export default function OrderForm({
                 </div>
               </div>
             </CardContent>
+            <div className='bg-background fixed right-0 bottom-0 left-0 border p-5'>
+              <div className='flex w-full flex-col items-center gap-3 md:flex-row md:justify-end'>
+                {currentStatus === 'pending' && (
+                  <>
+                    <Button
+                      variant='destructive'
+                      type='button'
+                      onClick={() => setRejectOpen(true)}
+                    >
+                      Rechazar
+                    </Button>
+                    <Button type='button' onClick={handleApprove}>
+                      Confirmar
+                    </Button>
+                  </>
+                )}
+                {canEdit && (
+                  <>
+                    <Button
+                      variant='outline'
+                      type='button'
+                      className='w-full font-medium sm:w-auto'
+                      onClick={() => history.back()}
+                    >
+                      Regresar
+                    </Button>
+                    <Button type='submit' className='cursor-pointer'>
+                      Guardar Cambios
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
           </form>
         </Form>
       </Card>
