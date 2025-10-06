@@ -12,11 +12,13 @@ interface TableCustomParams<TData, TValue> {
   data: TData[];
   totalItems: number;
   columns: ColumnDef<TData, TValue>[];
+  children?: React.ReactNode;
 }
 export function TableCustom<TData, TValue>({
   data,
   totalItems,
-  columns
+  columns,
+  children
 }: TableCustomParams<TData, TValue>) {
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
 
@@ -32,7 +34,7 @@ export function TableCustom<TData, TValue>({
 
   return (
     <DataTable table={table}>
-      <DataTableToolbar table={table} />
+      <DataTableToolbar table={table}>{children}</DataTableToolbar>
     </DataTable>
   );
 }

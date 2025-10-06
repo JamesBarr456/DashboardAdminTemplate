@@ -19,7 +19,18 @@ export const productSchema = z
       .string()
       .max(500, 'El comentario no puede exceder 500 caracteres')
       .optional(),
-    unavailable: z.boolean()
+    unavailable: z.boolean(),
+    // Extensiones para edición desde la página de orden
+    quantity: z
+      .preprocess((val) => {
+        if (typeof val === 'string' && val.trim() !== '') {
+          const parsed = Number(val);
+          return isNaN(parsed) ? undefined : parsed;
+        }
+        return val;
+      }, z.number().min(0))
+      .optional(),
+    remove: z.boolean().optional()
   })
   .refine(
     () => {
