@@ -1,22 +1,48 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Control, useWatch } from 'react-hook-form';
+import { formatDate, formatPrice } from '@/lib/format';
 
-import { Control } from 'react-hook-form';
 import { NewOrder as Order } from '@/types/order-new';
 import { OrderUpdate } from '@/schemas/order-schema';
-import { formatDate, formatPrice } from '@/lib/format';
 
 interface OrderStatusCardProps {
   order: Order;
-  totalDefectiveValue: number;
   control: Control<OrderUpdate>;
 }
 
-export function OrderStatusCard({
-  order,
-  totalDefectiveValue
-}: OrderStatusCardProps) {
+export function OrderStatusCard({ order, control }: OrderStatusCardProps) {
+  // Observa items del formulario para recalcular totales en vivo
+  const items = useWatch({ control, name: 'items' }) as
+    | Array<{
+        id: string;
+        quantity?: number;
+        defective_quantity?: number;
+        remove?: boolean;
+      }>
+    | undefined;
+
+  // Recalcular totales en base al estado actual (order.items + parches del form)
+  const { totalOriginal, totalDefectDiscount, totalFinal } = (() => {
+    let totalOriginal = 0;
+    let totalDefectDiscount = 0;
+
+    for (const it of order.items) {
+      const patch = items?.find((p) => p?.id === it._id);
+      if (patch?.remove) continue;
+      const qty = patch?.quantity ?? it.quantity;
+      const defQ = patch?.defective_quantity ?? it.defective_quantity ?? 0;
+      const defect = Math.max(0, Math.min(qty, defQ));
+
+      totalOriginal += qty * it.price;
+      totalDefectDiscount += defect * it.price * 0.1; // 10% descuento en defectuosos
+    }
+
+    const totalFinal = totalOriginal - totalDefectDiscount;
+    return { totalOriginal, totalDefectDiscount, totalFinal };
+  })();
+
   return (
     <Card>
       <CardHeader>
@@ -32,21 +58,17 @@ export function OrderStatusCard({
           </div>
           <div>
             <p className='text-sm text-gray-600'>Total Original</p>
-            <p className='font-medium'>
-              {formatPrice(order.summary.grand_total + totalDefectiveValue)}
-            </p>
+            <p className='font-medium'>{formatPrice(totalOriginal)}</p>
           </div>
           <div>
             <p className='text-sm text-gray-600'>Productos Defectuosos</p>
             <p className='font-medium text-red-600'>
-              -{formatPrice(totalDefectiveValue)}
+              -{formatPrice(totalDefectDiscount)}
             </p>
           </div>
           <div>
             <p className='text-sm text-gray-600'>Total Final</p>
-            <p className='text-lg font-bold'>
-              {formatPrice(order.summary.grand_total)}
-            </p>
+            <p className='text-lg font-bold'>{formatPrice(totalFinal)}</p>
           </div>
         </div>
       </CardContent>

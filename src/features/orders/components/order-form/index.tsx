@@ -1,9 +1,7 @@
 'use client';
 
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { OrderUpdate, orderUpdateSchema } from '@/schemas/order-schema';
-
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -12,25 +10,28 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { NewOrder as Order, OrderStatus } from '@/types/order-new';
+import { OrderUpdate, orderUpdateSchema } from '@/schemas/order-schema';
+import { useEffect, useRef, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { CompleteOrderModal } from './print-ticket-modal';
 import { CustomerInfo } from './customer-info';
 import { Form } from '@/components/ui/form';
-import { NewOrder as Order, OrderStatus } from '@/types/order-new';
+import { Label } from '@/components/ui/label';
+import { OrderItemsTable } from './order-items-table';
 import { OrderStatusCard } from './information-order';
 import { Package } from 'lucide-react';
 import { PaymentInfo } from './payment-info';
-import { ProductEditCard } from './products';
-import { Separator } from '@/components/ui/separator';
 import { ShippingAddress } from './shipping-addres';
 import { StatusCircles } from './status-steps-circles';
-import { useForm } from 'react-hook-form';
-import { useEffect, useRef, useState } from 'react';
-import { useOrderStore } from '@/store/order-state';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { CompleteOrderModal } from './print-ticket-modal';
+import { useForm } from 'react-hook-form';
+import { useOrderStore } from '@/store/order-state';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+// import { ProductEditCard } from './products';
 
 export default function OrderForm({
   initialData,
@@ -273,11 +274,7 @@ export default function OrderForm({
                     name='status'
                     label='Progreso del proceso'
                   />
-                  <OrderStatusCard
-                    order={order}
-                    totalDefectiveValue={0}
-                    control={form.control}
-                  />
+                  <OrderStatusCard order={order} control={form.control} />
                   {/* Products */}
                   <Card>
                     <CardHeader>
@@ -286,21 +283,8 @@ export default function OrderForm({
                         Productos ({order.items.length})
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      <div className='space-y-4'>
-                        {order.items.map((product, index) => (
-                          <div key={product._id}>
-                            <ProductEditCard
-                              product={product}
-                              index={index}
-                              status={currentStatus}
-                            />
-                            {index < order.items.length - 1 && (
-                              <Separator className='my-4' />
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                    <CardContent className='flex h-[500px] flex-col'>
+                      <OrderItemsTable items={order.items} canEdit={canEdit} />
                     </CardContent>
                   </Card>
                 </div>
@@ -329,18 +313,23 @@ export default function OrderForm({
                 </div>
               </div>
             </CardContent>
-            <div className='bg-background fixed right-0 bottom-0 left-0 border p-5'>
+            <div className='bg-background fixed right-0 bottom-0 left-0 z-10 border p-5 md:z-0'>
               <div className='flex w-full flex-col items-center gap-3 md:flex-row md:justify-end'>
                 {currentStatus === 'pending' && (
                   <>
                     <Button
                       variant='destructive'
                       type='button'
+                      className='w-full font-medium sm:w-auto'
                       onClick={() => setRejectOpen(true)}
                     >
                       Rechazar
                     </Button>
-                    <Button type='button' onClick={handleApprove}>
+                    <Button
+                      type='button'
+                      className='w-full font-medium sm:w-auto'
+                      onClick={handleApprove}
+                    >
                       Confirmar
                     </Button>
                   </>

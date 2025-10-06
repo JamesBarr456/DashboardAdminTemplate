@@ -7,12 +7,11 @@ import {
   FormMessage
 } from '@/components/ui/form';
 
+import { AlertModal } from '@/components/modal/alert-modal';
 import { Control } from 'react-hook-form';
 import React from 'react';
-
-import { cn } from '@/lib/utils';
 import { STATUS_OPTIONS } from '../order-tables/options';
-import { AlertModal } from '@/components/modal/alert-modal';
+import { cn } from '@/lib/utils';
 
 interface StatusCirclesProps {
   control: Control<any>;
@@ -86,9 +85,7 @@ export const StatusCircles: React.FC<StatusCirclesProps> = ({
               cancelText='Cancelar'
             />
 
-            <FormLabel className='text-base font-medium text-gray-900'>
-              {label}
-            </FormLabel>
+            <FormLabel className='text-base font-medium'>{label}</FormLabel>
             <FormControl>
               <div className='relative'>
                 {/* Línea de fondo - solo entre los primeros 4 círculos */}
