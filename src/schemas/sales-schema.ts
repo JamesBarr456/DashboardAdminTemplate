@@ -1,7 +1,9 @@
 import { z } from 'zod';
 
 export const cashRegisterOpeningSchema = z.object({
-  initialAmount: z.coerce.number().min(0, 'El monto no puede ser negativo')
+  initialAmount: z.coerce
+    .number({ message: 'Debes ingresar un número valido.' })
+    .min(0, 'El monto no puede ser negativo')
 });
 
 export const cashRegisterClosingSchema = z.object({

@@ -52,10 +52,32 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
             });
         }
 
+        // Recalcular totales basados en items y defectuosos (10% descuento)
+        const items_total = updatedItems.reduce((sum, item) => {
+          const qty = item.quantity ?? 0;
+          const price = item.price ?? 0;
+          const defQ = Math.min(
+            Math.max(0, Number(item.defective_quantity ?? 0)),
+            qty
+          );
+          const goodUnits = Math.max(0, qty - defQ);
+          const subtotal = goodUnits * price + defQ * price * 0.9;
+          return sum + subtotal;
+        }, 0);
+
+        const shipping_cost = order.summary.shipping_cost ?? 0;
+        const grand_total =
+          Math.round((items_total + shipping_cost) * 100) / 100;
+
         return {
           ...order,
           ...data,
-          items: updatedItems // 👈 ahora sí es Item[]
+          items: updatedItems, // 👈 ahora sí es Item[]
+          summary: {
+            ...order.summary,
+            items_total,
+            grand_total
+          }
         };
       })
     })),
