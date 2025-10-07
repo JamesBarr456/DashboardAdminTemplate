@@ -13,7 +13,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
+  DialogClose
 } from '@/components/ui/dialog';
 import {
   Form,
@@ -39,6 +40,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 export function CashRegisterModal() {
   const { cashRegister, openRegister, closeRegister } = usePOSStore();
   const [showCloseModal, setShowCloseModal] = useState(false);
+  const [showOpenModal, setShowOpenModal] = useState(false);
 
   const openingForm = useForm<CashRegisterOpening>({
     resolver: zodResolver(cashRegisterOpeningSchema),
@@ -54,6 +56,8 @@ export function CashRegisterModal() {
     openRegister(values.initialAmount, cashRegister.cashier);
     toast.success('Caja abierta con éxito');
     openingForm.reset();
+    // Cerrar el modal de apertura explícitamente tras confirmar
+    setShowOpenModal(false);
   };
 
   const handleClosingSubmit = (values: CashRegisterClosing) => {
@@ -193,12 +197,16 @@ export function CashRegisterModal() {
 
   return (
     <Dialog
+      open={showOpenModal}
       onOpenChange={(open) => {
+        setShowOpenModal(open);
         if (!open) openingForm.reset();
       }}
     >
       <DialogTrigger asChild>
-        <Button variant='outline'>Abrir Caja</Button>
+        <Button variant='outline' onClick={() => setShowOpenModal(true)}>
+          Abrir Caja
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className='text-center'>
@@ -232,12 +240,13 @@ export function CashRegisterModal() {
                       <DollarSign className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
                       <FormControl>
                         <Input
-                          type='number'
+                          type='text'
                           placeholder='0.00'
                           {...field}
                           className='h-12 pl-10 text-lg'
                           min='0'
                           step='0.01'
+                          onFocus={(e) => e.currentTarget.select()}
                           autoFocus
                         />
                       </FormControl>
@@ -253,14 +262,16 @@ export function CashRegisterModal() {
             </div>
 
             <DialogFooter className='gap-2'>
-              <Button
-                type='button'
-                variant='outline'
-                onClick={() => openingForm.reset()}
-                className='flex-1'
-              >
-                Cancelar
-              </Button>
+              <DialogClose asChild>
+                <Button
+                  type='button'
+                  variant='outline'
+                  onClick={() => openingForm.reset()}
+                  className='flex-1'
+                >
+                  Cancelar
+                </Button>
+              </DialogClose>
               <Button type='submit' className='flex-1'>
                 <DollarSign className='mr-2 h-4 w-4' />
                 Inicio de Turno

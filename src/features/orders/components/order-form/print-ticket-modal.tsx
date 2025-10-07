@@ -146,48 +146,71 @@ export function CompleteOrderModal({
               style={{ fontSize: '10px' }}
             >
               <div className='header mb-2 border-b-2 border-black pb-2 text-center'>
-                <h2 className='store-name m-0 text-2xl font-bold'>Yosé</h2>
-                <p className='order-id mt-1 mb-0 text-xs'>{order._id}</p>
+                {/* Tienda */}
+                <h2 className='store-name m-0 text-xl font-bold'>
+                  PILCHERÍA YOSE
+                </h2>
+                <p className='order-id mt-1 mb-0 text-xs'>#{order._id}</p>
               </div>
 
-              <div className='section mb-2'>
-                <div className='label mb-1 text-xs font-bold'>
-                  MODO DE ENTREGA
-                </div>
-                <div className='delivery-badge inline-block rounded bg-black px-2 py-1 text-xs font-bold text-white'>
+              {/* Encabezado sección según entrega */}
+              <div className='mb-1 text-center'>
+                <span className='inline-block rounded bg-black px-2 py-1 text-[10px] font-extrabold tracking-wide text-white uppercase'>
                   {order.shipping_information.delivery_option === 'pickup'
-                    ? 'RETIRO EN LOCAL'
-                    : 'ENVÍO A DOMICILIO'}
-                </div>
+                    ? 'Para Retirar'
+                    : 'Para Envío'}
+                </span>
               </div>
 
-              <div className='section mb-2'>
-                <div className='label mb-1 text-xs font-bold'>CLIENTE</div>
-                <div className='value mb-1 text-sm'>
-                  {order.customer.snapshot.firstName}{' '}
-                  {order.customer.snapshot.lastName}
-                </div>
+              {/* Contenido en bullets según opción */}
+              <div className='mt-1'>
+                <ul className='m-0 list-disc pl-4 text-[11px]'>
+                  {/* Nombre y apellido */}
+                  <li className='mb-1'>
+                    Cliente: {order.customer.snapshot.firstName}{' '}
+                    {order.customer.snapshot.lastName}
+                  </li>
+
+                  {/* Localidad */}
+                  <li className='mb-1'>
+                    Localidad: {order.shipping_information.locality || '-'}
+                  </li>
+
+                  {/* Monto */}
+                  <li className='mb-1'>
+                    Monto: ${order.summary.grand_total.toLocaleString('es-AR')}
+                  </li>
+
+                  {/* Pago */}
+                  <li className='mb-1'>
+                    {order.payment_method === 'cash'
+                      ? 'Efectivo: PAGAR'
+                      : 'Transferencia: PAGADO'}
+                  </li>
+
+                  {/* Campos específicos */}
+                  {order.shipping_information.delivery_option === 'pickup' ? (
+                    <>
+                      <li className='mb-1'>RETIRA</li>
+                    </>
+                  ) : (
+                    <>
+                      <li className='mb-1'>
+                        Nro. de contacto: (
+                        {order.customer.snapshot.phone.areaCode}){' '}
+                        {order.customer.snapshot.phone.number}
+                      </li>
+                      <li className='mb-1'>Colocar &quot;ENVÍO&quot;</li>
+                      <li className='mb-1'>
+                        Nombre de la empresa de envío: __________________
+                      </li>
+                    </>
+                  )}
+                </ul>
               </div>
 
-              <div className='section mb-2'>
-                <div className='label mb-1 text-xs font-bold'>LOCALIDAD</div>
-                <div className='value mb-1 text-sm'>
-                  {order.shipping_information.locality || '-'}
-                </div>
-              </div>
-
-              <div className='section mb-2'>
-                <div className='label mb-1 text-xs font-bold'>PAGO</div>
-                <div className='value mb-1 text-sm'>
-                  {order.payment_method === 'cash'
-                    ? 'Efectivo'
-                    : 'Transferencia'}{' '}
-                  - ${order.summary.grand_total.toLocaleString('es-AR')}
-                </div>
-              </div>
-
-              <div className='footer border-t border-black pt-2 text-center text-xs'>
-                {new Date().toLocaleDateString('es-AR')}
+              <div className='footer mt-auto border-t border-black pt-2 text-center text-[10px]'>
+                Fecha: {new Date().toLocaleDateString('es-AR')}
               </div>
             </div>
           </div>

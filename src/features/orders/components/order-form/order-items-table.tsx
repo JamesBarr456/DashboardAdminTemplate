@@ -124,7 +124,7 @@ function useOrderItemsColumns(canEdit: boolean) {
               <div className='space-y-1'>
                 <div>{formatPrice(item.unit_price)}</div>
                 <div className='text-red-600'>
-                  {formatPrice(item.unit_price * 0.9)} (defectuoso)
+                  {formatPrice(item.unit_price * 0.9)}
                 </div>
               </div>
             );
@@ -144,7 +144,7 @@ function useOrderItemsColumns(canEdit: boolean) {
               <div className='space-y-1'>
                 <div>{formatPrice(normalSubtotal)}</div>
                 <div className='text-red-600'>
-                  {formatPrice(discountedSubtotal)} (con defecto)
+                  {formatPrice(discountedSubtotal)}
                 </div>
               </div>
             );

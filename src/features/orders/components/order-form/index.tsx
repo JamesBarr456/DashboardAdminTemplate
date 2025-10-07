@@ -91,6 +91,7 @@ export default function OrderForm({
   // Observa status actual para habilitar acciones y gatillar modal de impresión
   const currentStatus = form.watch('status');
   const canEdit = currentStatus === 'in_process';
+  const formValues = form.watch();
 
   // Abre el modal sólo en el momento que cambia a "completed"
   useEffect(() => {
@@ -152,6 +153,9 @@ export default function OrderForm({
     void shouldPrint; // ya se maneja dentro del modal
     // Aseguramos que el estado quede persistido en store
     try {
+      // Persistimos los cambios del formulario antes de marcar como completado
+      const currentData = form.getValues();
+      updateOrder(orderId, currentData);
       updateOrderStatus(orderId, 'completed');
       form.setValue('status', 'completed');
       toast.success('Pedido marcado como completo');
@@ -159,6 +163,64 @@ export default function OrderForm({
       // noop
     }
   };
+
+  // Construye una versión "lista para imprimir" con totales recalculados según el formulario
+  const printOrder: Order | null = (() => {
+    if (!order) return null;
+    try {
+      const patches = new Map<string, any>();
+      (formValues.items || []).forEach((p: any) => {
+        if (p?.id) patches.set(p.id, p);
+      });
+
+      const itemsTotal = order.items.reduce((sum, it) => {
+        const patch = patches.get(it._id);
+        // Si el item fue marcado para eliminarse, lo omitimos del total
+        if (patch?.remove) return sum;
+
+        // Usar la cantidad actualizada si existe, de lo contrario la original
+        const qty = Number(patch?.quantity ?? it.quantity ?? 0);
+        const price = Number(it.price ?? 0);
+        const defQ = Math.min(
+          Math.max(
+            0,
+            Number(patch?.defective_quantity ?? it.defective_quantity ?? 0)
+          ),
+          qty
+        );
+        const goodUnits = Math.max(0, qty - defQ);
+        const subtotal = goodUnits * price + defQ * price * 0.9;
+        return sum + subtotal;
+      }, 0);
+
+      const shippingCost = order.summary.shipping_cost ?? 0;
+      const grandTotal = Math.round((itemsTotal + shippingCost) * 100) / 100;
+
+      return {
+        ...order,
+        payment_method: formValues.payment_method ?? order.payment_method,
+        customer: {
+          ...order.customer,
+          snapshot: formValues.snapshot
+            ? { ...order.customer.snapshot, ...formValues.snapshot }
+            : order.customer.snapshot
+        },
+        shipping_information: formValues.shipping_information
+          ? {
+              ...order.shipping_information,
+              ...formValues.shipping_information
+            }
+          : order.shipping_information,
+        summary: {
+          ...order.summary,
+          items_total: itemsTotal,
+          grand_total: grandTotal
+        }
+      } as Order;
+    } catch {
+      return order;
+    }
+  })();
 
   return (
     <>
@@ -253,7 +315,7 @@ export default function OrderForm({
       <Card className='mx-auto mb-12 w-full'>
         {/* Modal para imprimir ticket al completar */}
         <CompleteOrderModal
-          order={order}
+          order={printOrder}
           open={completeOpen}
           onOpenChange={setCompleteOpen}
           onComplete={handleCompletePrint}
